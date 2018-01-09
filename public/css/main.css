@@ -4,6 +4,11 @@ header {
 main {
 	margin: 0 50px;
 }
+
+a:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
 .hidden {
 	display: none;
 }

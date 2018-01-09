@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Fungi Files</title>
+	<title>Mushroom Journal</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
@@ -9,14 +9,14 @@
 </head>
 <body>
 	<header>
-		<h1>The Fungi Files</h1>
+		<h1>Mushroom Journal</h1>
 		<ul>
-			<li>Observations</li>
-			<li>Add New Observation</li>
+			<li><a onclick="show('.observations')">Observations</a></li>
+			<li><a onclick="show('.new.observation')">Add New Observation</a></li>
 		</ul>
 	</header>
 	<main>
-		<section class="new observation hidden" role="section">
+		<section class="new observation hidden" role="region">
 			<h2>Add New Observation</h2>
 			<form>
 				<input type="file" accept="image/*">
@@ -42,24 +42,26 @@
 				</p>
 
 				<span class="label">Location: </span>
-				<button class="address-button" onclick="locationOption('address')">Address</button>
-				<button class="latlng-button" onclick="locationOption('latlng')">Latitude & Longitude</button>
-				<button class="exif-button" onclick="locationOption('exif')">Photo Location Data</button>
-				<button class="geolocation-button" onclick="locationOption('geolocation')">Current Location</button>
-						<div class="loc-opt address hidden" id="address">
-							<input type="text" placeholder="Address">
-						</div>
-						<div class="loc-opt latlng hidden" id="latlng">
-							<input type="text" placeholder="Latitude & Longitude">
-						</div>
-						<div class="loc-opt exif hidden" id="exif">
-							<input type="text" placeholder="Photo Location Data">
-						</div>
-						<div class="loc-opt geolocation hidden" id="geolocation">
-							<input type="text" placeholder="Current Location">
-						</div>
+				<div class="loc-opts">
+					<button class="address-button" onclick="show('address')">Address</button>
+					<button class="latlng-button" onclick="show('latlng')">Latitude & Longitude</button>
+					<button class="exif-button" onclick="show('exif')">Photo Location Data</button>
+					<button class="geolocation-button" onclick="show('geolocation')">Current Location</button>
+				</div>
+				<div class="loc-opt address hidden" id="address">
+					<input type="text" placeholder="Address">
+				</div>
+				<div class="loc-opt latlng hidden" id="latlng">
+					<input type="text" placeholder="Latitude & Longitude">
+				</div>
+				<div class="loc-opt exif hidden" id="exif">
+					<input type="text" placeholder="Photo Location Data">
+				</div>
+				<div class="loc-opt geolocation hidden" id="geolocation">
+					<input type="text" placeholder="Current Location">
+				</div>
 				<p><span class="label">add notes</span>
-						<button onclick="showNotes('mushroom')">Mushroom</button> <button onclick="showNotes('habitat')">Habitat</button>
+						<button onclick="show('mushroom')">Mushroom</button> <button onclick="show('habitat')">Habitat</button>
 						<div class="mushroom-notes" style="display:none;">
 								<textarea rows="5" placeholder="Mushroom Notes"></textarea>
 							</div>
@@ -70,13 +72,14 @@
 				<button type="submit">Submit New Observation</button>
 			</form>
 		</section>
-		<section class="edit observation" role="section">
-
+		<section class="edit observation hidden" role="region">
+			edit the observation via the passed in (id)
 		</section>
-		<section class="observations" role="section">
+		<section class="observations" role="region">
 				<div class="obs-list"></div>
-			</section>
-		</main>
+		</section>
+	</main>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs&libraries=places"></script>
 	<script src="js/index.js"></script>
 </body>
 </html>

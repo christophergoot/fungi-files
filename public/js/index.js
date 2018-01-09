@@ -1,5 +1,7 @@
 'use strict'
 
+const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
+
 const MOCK_OBSERVATIONS = { "observations": [
 	{
 		"id": 11111111,
@@ -68,23 +70,36 @@ const MOCK_OBSERVATIONS = { "observations": [
 ]};
 
 function locationOption (opt) {
-	// opt.preventDefault();
 	let optClass = `.${opt}`;
 	$('.loc-opt').not(optClass).addClass('hidden');
 	$('button').not(optClass).removeClass('selected');
 	$(optClass).removeClass('hidden');
 	$(`.${opt}-button`).addClass('selected');
-
-	// $(optClass).toggle('.hidden');
 }
 
-function showNotes(type) {
-	$(`.${type}-button`).addClass('selected');
-	$(`.${type}-notes`).toggle('.hidden');
-}
+// function showNotes(type) {
+// 	$(`.${type}-button`).addClass('selected');
+// 	$(`.${type}-notes`).toggle('.hidden');
+// }
 
+
+function show(sec) {
+	if (['address', 'latlng', 'exif', 'geolocation']
+		.includes(sec)) locationOption(sec);
+	if (['.observations', '.new.observation']
+		.includes(sec)) {
+			$('section').not(sec).addClass('hidden');
+			$(sec).removeClass('hidden');
+		};
+	if (['habitat', 'mushroom']
+		.includes(sec)) {
+			$(`.${sec}-button`).addClass('selected');
+			$(`.${sec}-notes`).toggle('.hidden');
+		};
+}
 
 function submitImage(file) {
+	console.log('submitting image');
 	console.log(file);
 }
 
@@ -108,9 +123,7 @@ function renderObservation(obs) {
 function displayObservations(res) {
 	console.log(res.observations);
 	let obsList = "<h2>Observations</h2>";
-	res.observations.forEach((obs) => {
-		obsList = (obsList + renderObservation(obs));
-	});
+	res.observations.forEach((obs) => obsList += renderObservation(obs));
 	$('.obs-list').html(obsList);
 }
 
