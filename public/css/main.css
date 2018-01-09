@@ -1,0 +1,50 @@
+header {
+	background-color: #eeeeee;
+}
+main {
+	margin: 0 50px;
+}
+.hidden {
+	display: none;
+}
+
+.selected {
+	color: red;
+}
+
+.obs-list {
+	display:flex;
+	flex-direction: column;
+}
+
+.obs-list-item {
+	border: 1px #b1b1b1 dashed;
+	padding: 5px;
+	margin: 2px;
+}
+
+.obs-thumb {
+	max-width: 200px;
+	max-height: 200px;
+	float: left;
+	padding-right: 10px;
+	display: block;
+}
+
+.title{
+	font-size: 1.5em;
+    display: block;
+}
+
+.label {
+	color: gray;
+	font-size: .75em;
+}
+
+.observation .label {
+	padding: 0 10px;
+}
+
+.fungi, .habitat {
+	display:block;
+}

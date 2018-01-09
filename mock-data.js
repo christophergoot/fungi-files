@@ -1,10 +1,11 @@
 'use strict'
 
 
-let MOCK_OBSERVATIONS = { "observations": [
+const MOCK_OBSERVATIONS = { "observations": [
 	{
 		"id": 11111111,
 		"fungi": {
+			"nickname": "pretty blue",
 			"commonName": "Blue Chanterelle",
 			"genus":	"Polyozellus",
 			"species":	"P. multiplex"
@@ -21,6 +22,7 @@ let MOCK_OBSERVATIONS = { "observations": [
 	{
 		"id": 22222222,
 		"fungi": {
+			"nickname": "pretty red",
 			"commonName": "Red Cracked Bolete",
 			"genus":	"Boletus",
 			"species":	"Chrysenteron"
@@ -36,4 +38,4 @@ let MOCK_OBSERVATIONS = { "observations": [
 	},
 ]};
 
-module.exports = {MOCK_OBSERVATIONS};
+module.exports = { MOCK_OBSERVATIONS };
