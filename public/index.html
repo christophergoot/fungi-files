@@ -38,9 +38,9 @@
 						<span class="label">species</span>
 						<span id="species">Unknown</span>
 				</p>
+				<p>
 					<label><span class="label">Observation Date</span><input type="date"></label>
 				</p>
-
 				<span class="label">Location: </span>
 				<div class="loc-opts">
 					<button class="address-button" onclick="show('address')">Address</button>
@@ -49,19 +49,39 @@
 					<button class="geolocation-button" onclick="show('geolocation')">Current Location</button>
 				</div>
 				<div class="loc-opt address hidden" id="address">
-					<input type="text" placeholder="Address">
+					<label><span class="label">Longitude</span>
+						<input type="text" placeholder="Address">
+					</label>
 				</div>
 				<div class="loc-opt latlng hidden" id="latlng">
-					<input type="text" placeholder="Latitude & Longitude">
+					<label><span class="label">Latitude</span>
+						<input type="number" placeholder="Latitude">						
+					</label>
+					<label><span class="label">Longitude</span>
+						<input type="number" placeholder="Longitude">						
+					</label>
 				</div>
 				<div class="loc-opt exif hidden" id="exif">
-					<input type="text" placeholder="Photo Location Data">
+					<span class="label">Latitude</span>
+					<span id="lat">Unknown</span>
+					<span class="label">Longitude</span>
+					<span id="lng">Unknown</span>
+					<p>
+							<span class="error">Please select a file above for upload</span>
+					</p>
 				</div>
 				<div class="loc-opt geolocation hidden" id="geolocation">
-					<input type="text" placeholder="Current Location">
+					<span class="label">Latitude</span>
+					<span id="lat">Unknown</span>
+					<span class="label">Longitude</span>
+					<span id="lng">Unknown</span>
+					<p>
+						<button>Refresh Current Location</button>
+					</p>
 				</div>
-				<p><span class="label">add notes</span>
-						<button onclick="show('mushroom')">Mushroom</button> <button onclick="show('habitat')">Habitat</button>
+				<p>
+					<span class="label">add notes</span>
+					<button onclick="show('mushroom')">Mushroom</button> <button onclick="show('habitat')">Habitat</button>
 						<div class="mushroom-notes" style="display:none;">
 								<textarea rows="5" placeholder="Mushroom Notes"></textarea>
 							</div>
@@ -69,6 +89,20 @@
 							<textarea rows="5" placeholder="Habitat Notes"></textarea>
 						</div>
 				</p>
+				<p>
+					<span class="label">Habitat</span>
+					<div class="habitat-details">
+						<label><input type="checkbox" value="Deciduous Woodlot">Deciduous Woodlot</label>
+						<label><input type="checkbox" value="Coniferous Woodlot">Coniferous Woodlot</label>
+						<label><input type="checkbox" value="Mixed Woodlot">Mixed Woodlot</label>
+						<label><input type="checkbox" value="Grassland">Grassland</label>
+						<label><input type="checkbox" value="On Wood">On Wood</label>
+						<label><input type="checkbox" value="Leaf Litter">Leaf Litter</label>
+						<label><input type="checkbox" value="On Soil">On Soil</label>
+						<label><input type="checkbox" value="Swamp / Bog">Swamp / Bog</label>
+					</div>
+				</p>
+
 				<button type="submit">Submit New Observation</button>
 			</form>
 		</section>

@@ -46,10 +46,22 @@ a:hover {
 	font-size: .75em;
 }
 
+.error {
+	color: red;
+}
+.loc-opt {
+	border: 1px #b1b1b1 dashed;
+	padding: 10px;
+}
+
 .observation .label {
 	padding: 0 10px;
 }
 
 .fungi, .habitat {
 	display:block;
+}
+.habitat-details {
+	display: flex;
+	flex-direction: column;
 }
