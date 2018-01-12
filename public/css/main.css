@@ -17,7 +17,7 @@ a:hover {
 	color: red;
 }
 
-.obs-list {
+#obs-list {
 	display:flex;
 	flex-direction: column;
 }
@@ -26,6 +26,7 @@ a:hover {
 	border: 1px #b1b1b1 dashed;
 	padding: 5px;
 	margin: 2px;
+	cursor: pointer;
 }
 
 .obs-thumb {
@@ -36,6 +37,14 @@ a:hover {
 	display: block;
 }
 
+/* .loc-method:not(.grayed) {
+	border: 5px red dashed;
+} */
+
+.grayed {
+	/* background-color: gray; */
+	opacity: .5;
+}
 .title{
 	font-size: 1.5em;
     display: block;
@@ -49,13 +58,20 @@ a:hover {
 .error {
 	color: red;
 }
-.loc-opt {
+.loc-opts {
 	border: 1px #b1b1b1 dashed;
 	padding: 10px;
+	display: grid;
+	grid-template-columns: 30px 100%;
 }
-
+input.address {
+	width: 200px;
+}
+.coord {
+	width: 75px;
+}
 .observation .label {
-	padding: 0 10px;
+/* 	padding: 0 10px; */
 }
 
 .fungi, .habitat {
