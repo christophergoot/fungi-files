@@ -39,6 +39,7 @@ a:hover {
 
 #view-observation {
 	position: fixed;
+	z-index: 1;
 }
 
 .grayed {

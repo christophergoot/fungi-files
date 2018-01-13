@@ -107,7 +107,7 @@ function updateLatlng (latlng) {
 }
 
 function updateAddress (addressString) {
-	document.querySelector('#addressString').setAttribute('value', addressString);
+	document.querySelector('#address-input').setAttribute('value', addressString);
 }
 
 function geolocate(event) {
@@ -124,6 +124,56 @@ function geolocate(event) {
 function submitImage(file) {
 	console.log('submitting image');
 	console.log(file);
+}
+
+function toDecimal (number) {
+	return number[0].numerator + number[1].numerator /
+		(60 * number[1].denominator) + number[2].numerator / (3600 * number[2].denominator);
+};
+
+function updateExif (string, status) {
+	const exifTarget = document.querySelector('#exif-text');
+	exifTarget.innerHTML = string;
+	if (status) {
+		if (status === "error") exifTarget.classList.add('error')
+		else exifTarget.classList.remove('error');
+	}
+
+}
+
+document.getElementById("file-input").onchange = function (event) {
+	const file = event.target.files[0];
+	if (file && file.name) {
+		EXIF.getData(file, function () {
+			if (this.exifdata.GPSLatitude) {
+				let latRef = 1, lngRef = 1;
+				console.log(this.exifdata);
+				if (this.exifdata.GPSLatitudeRef === "S") latRef = -1
+				if (this.exifdata.GPSLongitudeRef === "W") lngRef = -1
+				const coords = {
+					'lat': toDecimal(this.exifdata.GPSLatitude) * latRef,
+					'lng': toDecimal(this.exifdata.GPSLongitude) * lngRef
+				};
+				const obs = {'location': coords};
+
+				getAddress(obs, function (addressString, obs) {
+					updateLatlng(coords);
+					updateExif("Location extracted from image '" + file.name + "'.", "no error")
+					updateAddress(addressString);
+				})
+			} else {
+				updateExif("No EXIF data found in image '" + file.name + "'.", "error");
+			}
+		});
+	}
+}
+
+document.querySelector('#lat').onchange = refreshAddress (event);
+document.querySelector('#lng').onchange = refreshAddress (event);
+
+function refreshAddress (event) {
+console.log(document.querySelector('#lng'));
+	const coords = {'lat': document.querySelector('#lat')};
 }
 
 function viewObservation(event) {
@@ -150,6 +200,7 @@ function getAddress (obs, callback) {
 	const coords = {'lat': obs.location.lat, 'lng': obs.location.lng};
 	const geocoder = new google.maps.Geocoder;
 	geocoder.geocode({'location': coords}, function(results, status) {
+		console.log(results);
 		const addressString = results[1].formatted_address;
 		callback(addressString, obs);
 	});
