@@ -70,7 +70,6 @@ const MOCK_OBSERVATIONS = { "observations": [
 ]};
 
 function locationOption (sec) {
-	// all loc-methods
 	const previousDiv = document.querySelector('.loc-method:not(.grayed)');
 	const previousInputs = previousDiv.querySelectorAll('inputs');
 	previousDiv.classList.add('grayed');
@@ -80,32 +79,7 @@ function locationOption (sec) {
 	const targetInputs = targetDiv.querySelectorAll("input");
 	if (targetInputs) for (let input of targetInputs) input.removeAttribute('readonly');
 	targetDiv.classList.remove('grayed');
-	// add readonly to inputs
-	// select target div
-	// remove readonly
-	// remove .grayed
 }
-
-
-
-
-
-
-// function BADlocationOption (sec) {
-// 	const allDivs = document.querySelectorAll("div.loc-method");
-// 	const allInputs = for(let div of allDivs.querySelector('input');
-// 	allDivs.forEach((div) => div.classList.add("grayed"));
-// 	for(let div of allDivs) div.classList.add("grayed");
-// 	const targetDiv = document.querySelector('#'+sec);
-// 	const targetInputs = targetDiv.querySelectorAll("input");
-// 	// document.getElementById('location').getElementByTagName('div').forEach(function(el) { el.classList.add('grayed')});
-// 	// document.getElementById('location').getElementByTagName('div').classList.add('grayed');
-// 	for (let input of allInputs) input.setAttribute("readonly", "readonly");
-// 	for (let input of targetInputs) input.removeAttribute("readonly");
-// 	targetDiv.classList.remove('grayed');
-// }
-
-
 
 function show(event) {
 	// console.log(event);
@@ -115,6 +89,7 @@ function show(event) {
 		.includes(sec)) locationOption(sec);
 	if (['.observations', '.new.observation']
 		.includes(sec)) {
+			// getAndDisplayObservations();
 			$('section').not(sec).addClass('hidden');
 			$(sec).removeClass('hidden');
 		};
@@ -125,57 +100,94 @@ function show(event) {
 		};
 }
 
+function updateLatlng (latlng) {
+	const {lat, lng} = latlng;
+	document.querySelector('#lat').setAttribute('value', lat);
+	document.querySelector('#lng').setAttribute('value', lng);
+}
+
+function updateAddress (addressString) {
+	document.querySelector('#addressString').setAttribute('value', addressString);
+}
+
+function geolocate(event) {
+	navigator.geolocation.getCurrentPosition((position) => {
+		const coords = {'lat': position.coords.latitude, 'lng': position.coords.longitude};
+		const obs = {'location': coords};
+		getAddress(obs, function(addressString, obs) {
+			updateLatlng(coords);
+			updateAddress(addressString);
+		});
+	});
+}
+
 function submitImage(file) {
 	console.log('submitting image');
 	console.log(file);
 }
 
-function getObservations(callback) {
-	setTimeout(function(){ callback(MOCK_OBSERVATIONS)}, 100);
+function viewObservation(event) {
+	console.log(event);
+	const id = event.attributes.value;
+	const startRect = event.getBoundingClientRect();
+	console.log(startRect);
+	const viewSection = document.querySelector('section#view-observation');
+	const startContent = event.innerHTML;
+	const startBox = `style="
+		top:${startRect.y}px; 
+		left:${startRect.x}px; 
+		width:${startRect.width}px; 
+		height:${startRect.height}px; 
+		background-color: white;
+		border: 1px solid blue;"`
+	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
+	let startDiv = document.querySelector('section#view-observation div');
+	document.querySelector('#obs-list').classList.add('grayed');
+	viewSection.classList.remove('hidden');
 }
 
-function viewObservation(id) {
-	document.getElementById('#obs-list').classList.add('hidden');
-	// render and display observation
-}
-
-function reverseGeocode (latlng) {
+function getAddress (obs, callback) {
+	const coords = {'lat': obs.location.lat, 'lng': obs.location.lng};
 	const geocoder = new google.maps.Geocoder;
-	geocoder.geocode({'location': latlng}, function(results, status) {
-		return (results[0].formatted_address);
-	})	
+	geocoder.geocode({'location': coords}, function(results, status) {
+		const addressString = results[1].formatted_address;
+		callback(addressString, obs);
+	});
 }
 
 function submitNewObservation (event) {
 	console.log (event);
 }
 
-async function renderObservation(obs) {
+ function renderObservation(address, obs) {
 	const obsDate = new Date(obs.obsDate);
-	const latlng = {lat: obs.location.lat, lng: obs.location.lng};
-	const obsAddress = await reverseGeocode(latlng);
-	let obsRender = `<div class="obs-list-item" onclick="viewObservation('${obs.id}')">`;
-	obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`
-	if (obs.fungi.nickname) obsRender += 
-		`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
-	if (obs.fungi.commonName) obsRender += 
-		`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`
-	if (obs.fungi.genus) obsRender += 
-		`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
-		<span class="label">species: </span>${obs.fungi.species}</span><span>`
-	if (obs.obsDate) obsRender += 
-		`<span class="fungi"><span class="label">observed </span>${obsDate.toDateString()} 
-		<span class="label">around </span>${obsAddress}</span>`
-	obsRender += `</div>`
-	return obsRender;
+	let obsRender = `<div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
+		obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`
+		if (obs.fungi.nickname) obsRender += 
+			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
+		if (obs.fungi.commonName) obsRender += 
+			`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`
+		if (obs.fungi.genus) obsRender += 
+			`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
+			<span class="label">species: </span>${obs.fungi.species}</span><span>`
+		if (obs.obsDate) obsRender += 
+			`<span class="fungi"><span class="label">observed </span>${obsDate.toDateString()} 
+			<span class="label">around </span><span id="list-address">${address}</span></span>`
+		obsRender += `</div>`
+		document.querySelector('#obs-list').innerHTML += obsRender;
+}
+
+function getObservations(callback) {
+	setTimeout(function(){ callback(MOCK_OBSERVATIONS)}, 100);
 }
 
 function displayObservations(res) {
-	let obsList = "<h2>Observations</h2>";
-	res.observations.forEach((obs) => obsList += renderObservation(obs));
-	document.getElementById('obs-list').innerHTML = obsList;
-}
 
+	// res.observations.forEach((obs) => obsList += getAddress(obs, renderObservation));
+	// document.getElementById('obs-list').innerHTML = obsList;
+	const observations = res.observations;
+	for(let obs of observations) getAddress(obs, renderObservation);
+}
 
 function getAndDisplayObservations() {
     getObservations(displayObservations);

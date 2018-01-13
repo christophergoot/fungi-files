@@ -37,9 +37,9 @@ a:hover {
 	display: block;
 }
 
-/* .loc-method:not(.grayed) {
-	border: 5px red dashed;
-} */
+#view-observation {
+	position: fixed;
+}
 
 .grayed {
 	/* background-color: gray; */

@@ -58,7 +58,7 @@
 					<div id="address" class="loc-method grayed">
 						<label>
 							<span class="label">Address</span>
-							<input class="address" type="text" placeholder="Address" readonly="readonly">
+							<input id="addressString" type="text" placeholder="Address" readonly="readonly">
 						</label>
 					</div>
 					<div>
@@ -67,11 +67,11 @@
 					<div id="latlng" class="loc-method grayed">
 						<label>
 							<span class="label">Latitude</span>
-							<input class="coord" type="number" placeholder="Latitude" readonly="readonly">
+							<input id="lat" class="coord" type="number" placeholder="Lat" readonly="readonly">
 						</label>
 						<label>
 							<span class="label">Longitude</span>
-							<input class="coord" type="number" placeholder="Longitude" readonly="readonly">
+							<input id="lng" class="coord" type="number" placeholder="Long" readonly="readonly">
 						</label>
 					</div>
 					<div>
@@ -84,14 +84,14 @@
 						<input type="radio" name='location-method' value='geolocation' onclick="show(event)"></input>
 					</div>
 					<div id="geolocation" class="loc-method grayed">
-						<input type="button" readonly="readonly" value="Refresh Current Location"></input>
+						<input type="button" readonly="readonly" onclick="geolocate(event)" value="Refresh Current Location"></input>
 					</div>
-					
-					</div>
+
+				</div>
 				<p>
 					<span class="label">add notes</span>
-					<button onclick="show('mushroom')">Mushroom</button>
-					<button onclick="show('habitat')">Habitat</button>
+					<button onclick="show(event)" value='mushroom'>Mushroom</button>
+					<button onclick="show(event)" value='habitat'>Habitat</button>
 					<div class="mushroom-notes" style="display:none;">
 						<textarea rows="5" placeholder="Mushroom Notes"></textarea>
 					</div>
@@ -120,15 +120,18 @@
 							<input type="checkbox" value="Swamp / Bog">Swamp / Bog</label>
 					</div>
 				</p>
-
 				<button type="submit" onclick="submitNewObservation(event, this)">Submit New Observation</button>
 			</form>
 		</section>
 		<section class="edit observation hidden" role="region">
 			edit the observation via the passed in (id)
 		</section>
+		<section id="view-observation" class="view observation hidden" role="region">
+		</section>
 		<section class="observations" role="region">
-			<div id="obs-list" class="obs-list"></div>
+			<div id="obs-list" class="obs-list">
+				<h2>Observations</h2>
+			</div>
 		</section>
 	</main>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs&libraries=places"></script>
