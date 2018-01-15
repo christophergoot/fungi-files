@@ -42,6 +42,15 @@ a:hover {
 	z-index: 1;
 }
 
+#observation-detail {
+	transition: all 2s ease-in-out;
+	margin: 0 auto;
+	top: 40px;
+	max-height: 75%;
+	max-width: 75%;
+	padding: 15px;
+}
+
 .grayed {
 	/* background-color: gray; */
 	opacity: .5;

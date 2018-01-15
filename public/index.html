@@ -36,7 +36,8 @@
 				<p>
 					<input type="text" placeholder="Nickname">
 					<span class="label">and / or</span>
-					<input type="text" placeholder="Common Name">
+					<datalist id="common-names"></datalist>
+					<input id="common-name" type="text" placeholder="Common Name" list="common-names">
 				</p>
 				<p>
 					<span class="label">genus</span>
@@ -47,9 +48,13 @@
 				<p>
 					<label>
 						<span class="label">Observation Date</span>
-						<input type="date">
+						<input id="obs-date" type="date">
 					</label>
-				</p>
+					<label>
+							<span class="label">Observation Time</span>
+							<input id="obs-time" type="time">
+						</label>
+					</p>
 				<span>Location: </span>
 				<div id="location" class="loc-opts">
 					<div>
