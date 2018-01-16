@@ -144,8 +144,8 @@ function updateExif (string, status) {
 	}
 
 }
-
-document.getElementById("common-name").onchange = function (event) {
+function populateNames (event) {
+// document.getElementById("common-name").onchange = function (event) {
 	console.log(event);
 	const commonName = event.target.value;
 	for (let i = 0; i < MUSHROOMS.length; i++) {
@@ -154,14 +154,49 @@ document.getElementById("common-name").onchange = function (event) {
 			console.log(`found genus ${genus} and species ${species}`);
 			update('#genus', genus);
 			update('#species', species);
-		}
-	}
+		};
+	};
 }
 
+function uploadFile () {
+	document.querySelector("#file-input").click();
+}
 
+function receiveFiles (event) {
+	const files = event.target.files;
+	const file = files[0];
+	for(let i=0; i<files.length; i++) {
+	previewFile(files[0]);
+};
+	exifFromFile(file);
+}
 
-document.getElementById("file-input").onchange = function (event) {
-	const file = event.target.files[0];
+function deleteFile(event) {
+	event.preventDefault();
+	const fileName = event.currentTarget.dataset.filename;
+	const target = document.getElementById(`${fileName}-div`);
+	target.parentNode.removeChild(target);
+}
+
+function previewFile(file, i) {
+	const fileName = file.name;
+	const reader  = new FileReader();
+	reader.onloadend = function (event) {
+		const src = event.target.result;		
+		const newImg = `
+			<div id="${fileName}-div" class="thumb-div">
+				<a class="delete-img-action" onclick="deleteFile(event)" data-filename="${fileName}">X</a>
+				<img src="${src}" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
+				<p class="label">${fileName}</p>
+			</div>
+				`;
+		const thumbDiv = document.querySelector('.img-preview');
+		thumbDiv.innerHTML += newImg;
+	};
+	reader.readAsDataURL(file);
+  };
+
+function exifFromFile (file) {
 	if (file && file.name) {
 		EXIF.getData(file, function () {
 			if (this.exifdata.GPSLatitude) {
@@ -177,24 +212,25 @@ document.getElementById("file-input").onchange = function (event) {
 				const obsDate = str[0].replace(/:/g, "-");
 				const obsTime = str[1];
 				const obs = {'location': coords};
-
 				getAddress(obs, function (addressString, obs) {
 					updateValue('#obs-date', obsDate);
 					updateValue('#obs-time', obsTime);
 					updateValue('#lat', coords.lat);
 					updateValue('#lng', coords.lng);
-					updateExif("Location extracted from image '" + file.name + "'.", "no error")
+					updateExif("Location extracted from image '" + file.name + "'.", "no error");
 					updateAddress(addressString);
-				})
+				});
 			} else {
 				updateExif("No EXIF data found in image '" + file.name + "'.", "error");
-			}
+			};
 		});
-	}
+	};
 }
 
-document.querySelector('#lat').onchange = refreshAddress (event);
-document.querySelector('#lng').onchange = refreshAddress (event);
+
+// document.querySelector('#lat').onchange = refreshAddress (event);
+// document.querySelector('#lng').onchange = refreshAddress (event);
+
 
 function refreshAddress (event) {
 	const coords = {'lat': document.querySelector('#lat')};
@@ -207,19 +243,34 @@ function annimateObservation(event) {
 	const startContent = event.innerHTML;
 	const startBox = `
 		id="observation-detail";
-		value="${id}";
-		style="position:fixed;
-		top:${startRect.y}px; 
-		left:${startRect.x}px; 
-		width:${startRect.width}px; 
-		height:${startRect.height}px; 
-		background-color: white;"`
+		value="${id}";`;
 	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
 	let observationDiv = document.querySelector('#observation-detail');
-	document.querySelector('#obs-list').classList.add('grayed');
-	viewSection.classList.remove('hidden');
-	observationDiv.classList.add('observationBox');
+	
+	requestAnimationFrame(() => {
+		observationDiv.setAttribute("style", "transition: all .5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
+		viewSection.classList.add('popup');
+		observationDiv.classList.add('observationBox');
+		viewSection.classList.remove('hidden');
+		viewSection.addEventListener('click', () => {
+			viewSection.classList.remove('popup');
+			viewSection.classList.add('hidden');
+		});
+		requestAnimationFrame(() => {
+			observationDiv.removeAttribute("style");
+			observationDiv.querySelector('img').classList.add('obs-img');
+		});
+	
+	});
+
+
+	// setTimeout(() => {
+	// 	observationDiv.removeAttribute("style", "top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
+	// }, 100);
+
 }
+
+
 
  function getObservation(targetId, callback) {
 	setTimeout(() => { 

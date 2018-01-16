@@ -1,3 +1,6 @@
+body {
+	box-sizing: border-box;
+}
 header {
 	background-color: #eeeeee;
 }
@@ -30,31 +33,90 @@ a:hover {
 }
 
 .obs-thumb {
+	transition: all .75s ease-out;
 	max-width: 200px;
 	max-height: 200px;
 	float: left;
 	padding-right: 10px;
 	display: block;
 }
-
+.obs-img {
+	transition: all .75s ease-out;
+	max-width: 500px;
+	max-height: 500px;
+/* 	float: left; */
+	padding-right: 10px;
+	display: block;
+}
+/* 
 #view-observation {
 	position: fixed;
 	z-index: 1;
+} */
+
+.observationBox {
+	transition: all .5s ease-in-out;
+	margin: 0 auto;
+	/* text-align:  center; */
+	padding: 10px;
+	/* margin: 2px; */
+	border: 5px black dashed;
+	top: 40px;
+	left: 10%;
+	right: 10%;
+	/* height: 75%; */
+	width: 75%;
+	/* 	padding: 15px; */
+	position: fixed;
+	background: white;
+}
+.img-preview {
+	display: flex;
+	flex-direction: row;
 }
 
-#observation-detail {
-	transition: all 2s ease-in-out;
-	margin: 0 auto;
-	top: 40px;
-	max-height: 75%;
-	max-width: 75%;
-	padding: 15px;
+.thumb-div {
+	max-width: 100px;
+	text-align: center;
+	margin: 5px;
+	overflow-wrap: break-word;
+}
+
+.thumb-img {
+	height: 75px;
+	/* max-width: 100px; */
+}
+
+.delete-img-action {
+	position: relative;
+	size: .25em;
+	color: rgb(255, 255, 255);
+	text-shadow:
+   -1px -1px 0 #000,  
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+	
+	top: 20px;
+	left: 40px;
 }
 
 .grayed {
 	/* background-color: gray; */
 	opacity: .5;
 }
+
+.popup {
+	position: fixed;
+	/* display:flex; */
+	text-align:  center;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:url(../media/overlay.png) repeat;
+}
+
 .title{
 	font-size: 1.5em;
     display: block;

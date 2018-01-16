@@ -25,19 +25,18 @@
 		<section class="new observation hidden" role="region">
 			<h2>Add New Observation</h2>
 			<form>
-				<input id="file-input" type="file" accept="image/*">
-				<div class="img-preview" style="display:none;">
-					img previews go here
+				<button onclick="uploadFile()">Upload File</button>
+				<input onchange="receiveFiles(event)" id="file-input" type="file" accept="image/*" style="display:none;">
+				<div class="img-preview">
 				</div>
-				<button type="submit" onclick="submitImage()">Upload File</button>
-
-			</form>
-			<form>
+				<!-- <button type="submit" onclick="submitImage(event)">Upload File</button> -->
+			<!-- </form> -->
+			<!-- <form> -->
 				<p>
 					<input type="text" placeholder="Nickname">
 					<span class="label">and / or</span>
 					<datalist id="common-names"></datalist>
-					<input id="common-name" type="text" placeholder="Common Name" list="common-names">
+					<input id="common-name" onchange="populateNames(event)" type="text" placeholder="Common Name" list="common-names">
 				</p>
 				<p>
 					<span class="label">genus</span>
@@ -131,7 +130,7 @@
 		<section class="edit observation hidden" role="region">
 			edit the observation via the passed in (id)
 		</section>
-		<section id="view-observation" class="view observation hidden" role="region" >
+		<section id="view-observation" class="hidden" role="region" >
 		</section>
 		<section class="observations" role="region">
 			<div id="obs-list" class="obs-list">
