@@ -1,9 +1,11 @@
 body {
 	box-sizing: border-box;
 }
+
 header {
 	background-color: #eeeeee;
 }
+
 main {
 	margin: 0 50px;
 }
@@ -12,8 +14,69 @@ a:hover {
 	cursor: pointer;
 	text-decoration: underline;
 }
+
 .hidden {
 	display: none;
+}
+
+.edit-button {
+	/* background-color: lightgray; */
+	width:fit-content;
+	/* padding: 5px; */
+	/* border-radius: 100%; */
+	/* position: absolute; */
+	/* left: 40px; */
+	/* 	z-index: 1; */
+}
+
+.notes {
+	height: 75px;
+	transition: height .25s ease;
+	resize: none;
+	max-width: 75%
+}
+
+.area {
+	padding: 10px 10px 20px 10px;
+/* 	margin: 15px; */
+}
+
+h3 {
+	margin-top: 5px;
+}
+
+.area:nth-child(even) {
+/* 	border: 1px black solid; */
+	background-color: #f1f1f1;
+}
+
+.toggle-control::before {
+	content: "show ";
+}
+
+.toggle-control.visible::before {
+	content: "hide ";
+}
+
+.toggle-control {
+	display:block;
+	margin-top:10px;
+	font-size: .75em;
+}
+
+textarea {
+	resize: none;
+	height: 100%;
+	width: 100%;
+}
+
+.reveal {
+	height: 0px;
+	overflow:  none;
+	transition: height .25s ease;
+	height: 0px;
+	overflow: hidden;
+	margin-top: 10px;
 }
 
 .selected {
@@ -26,6 +89,7 @@ a:hover {
 }
 
 .obs-list-item {
+	position:  static;
 	border: 1px #b1b1b1 dashed;
 	padding: 5px;
 	margin: 2px;
@@ -41,7 +105,7 @@ a:hover {
 	display: block;
 }
 .obs-img {
-	transition: all .75s ease-out;
+/* 	transition: all .75s ease-out; */
 	max-width: 500px;
 	max-height: 500px;
 /* 	float: left; */
@@ -55,7 +119,7 @@ a:hover {
 } */
 
 .observationBox {
-	transition: all .5s ease-in-out;
+	transition: all .5s cubic-bezier(0, 0, 0.51, 1.51);
 	margin: 0 auto;
 	/* text-align:  center; */
 	padding: 10px;
@@ -69,6 +133,7 @@ a:hover {
 	/* 	padding: 15px; */
 	position: fixed;
 	background: white;
+	overflow: auto;
 }
 .img-preview {
 	display: flex;
@@ -88,17 +153,13 @@ a:hover {
 }
 
 .delete-img-action {
-	position: relative;
+	position: absolute;
 	size: .25em;
 	color: rgb(255, 255, 255);
-	text-shadow:
-   -1px -1px 0 #000,  
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-     1px 1px 0 #000;
-	
-	top: 20px;
-	left: 40px;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	margin: 3px;
+	/* top: 20px; */
+	/* right: 0; */
 }
 
 .grayed {
@@ -130,15 +191,14 @@ a:hover {
 .error {
 	color: red;
 }
+
 .loc-opts {
-	border: 1px #b1b1b1 dashed;
+/* 	border: 1px #b1b1b1 dashed; */
 	padding: 10px;
-	display: grid;
-	grid-template-columns: 30px 100%;
+	/* display: grid; */
+	/* grid-template-columns: 30px 100%; */
 }
-input.address {
-	width: 200px;
-}
+
 .coord {
 	width: 75px;
 }
@@ -146,10 +206,14 @@ input.address {
 /* 	padding: 0 10px; */
 }
 
-.fungi, .habitat {
-	display:block;
-}
 .habitat-details {
 	display: flex;
 	flex-direction: column;
+	flex-flow: wrap;
 }
+
+.habitat-details>label {
+	width: 32%;
+	margin: 2px;
+	/* background-color: pink; */
+	/* flex-grow:  1; */

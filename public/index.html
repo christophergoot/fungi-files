@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
 </head>
 
 <body>
@@ -14,121 +14,18 @@
 		<h1>Mushroom Journal</h1>
 		<ul>
 			<li>
-				<a value=".observations" onclick="show(event)">Observations</a>
+				<a onclick="getAndDisplayObservations()">Observations</a>
 			</li>
 			<li>
-				<a value=".new.observation" onclick="show(event)">Add New Observation</a>
+				<a onclick="newObservation()">Add New Observation</a>
 			</li>
 		</ul>
 	</header>
 	<main>
 		<section class="new observation hidden" role="region">
-			<h2>Add New Observation</h2>
-			<form>
-				<button onclick="uploadFile()">Upload File</button>
-				<input onchange="receiveFiles(event)" id="file-input" type="file" accept="image/*" style="display:none;">
-				<div class="img-preview">
-				</div>
-				<!-- <button type="submit" onclick="submitImage(event)">Upload File</button> -->
-			<!-- </form> -->
-			<!-- <form> -->
-				<p>
-					<input type="text" placeholder="Nickname">
-					<span class="label">and / or</span>
-					<datalist id="common-names"></datalist>
-					<input id="common-name" onchange="populateNames(event)" type="text" placeholder="Common Name" list="common-names">
-				</p>
-				<p>
-					<span class="label">genus</span>
-					<span id="genus">Unknown</span>
-					<span class="label">species</span>
-					<span id="species">Unknown</span>
-				</p>
-				<p>
-					<label>
-						<span class="label">Observation Date</span>
-						<input id="obs-date" type="date">
-					</label>
-					<label>
-							<span class="label">Observation Time</span>
-							<input id="obs-time" type="time">
-						</label>
-					</p>
-				<span>Location: </span>
-				<div id="location" class="loc-opts">
-					<div>
-						<input type="radio" name='location-method' value='address' onclick="show(event)"></input>
-					</div>
-					<div id="address" class="loc-method grayed">
-						<label>
-							<span class="label">Address</span>
-							<input id="address-input" type="text" placeholder="Address" readonly="readonly">
-						</label>
-					</div>
-					<div>
-						<input type="radio" name='location-method' value='latlng' onclick="show(event)"></input>
-					</div>
-					<div id="latlng" class="loc-method grayed">
-						<label>
-							<span class="label">Latitude</span>
-							<input id="lat" class="coord" type="number" placeholder="Lat" readonly="readonly">
-						</label>
-						<label>
-							<span class="label">Longitude</span>
-							<input id="lng" class="coord" type="number" placeholder="Long" readonly="readonly">
-						</label>
-					</div>
-					<div>
-<!-- 						<input type="radio" name='location-method' value="exif" onclick="show(event)" checked></input> -->
-					</div>
-					<div id="exif" class="loc-method">
-						<span id="exif-text" class="label">Please select a .jpeg or .tiff file above</span>
-					</div>
-					<div>
-<!-- 						<input type="radio" name='location-method' value='geolocation' onclick="show(event)"></input> -->
-					</div>
-					<div id="geolocation" class="loc-method grayed">
-						<input type="button" readonly="readonly" onclick="geolocate(event)" value="Use Current Location"></input>
-					</div>
-
-				</div>
-				<p>
-					<span class="label">add notes</span>
-					<button onclick="show(event)" value='mushroom'>Mushroom</button>
-					<button onclick="show(event)" value='habitat'>Habitat</button>
-					<div class="mushroom-notes" style="display:none;">
-						<textarea rows="5" placeholder="Mushroom Notes"></textarea>
-					</div>
-					<div class="habitat-notes" style="display:none;">
-						<textarea rows="5" placeholder="Habitat Notes"></textarea>
-					</div>
-				</p>
-				<p>
-					<span class="label">Habitat</span>
-					<div class="habitat-details">
-						<label>
-							<input type="checkbox" value="Deciduous Woodlot">Deciduous Woodlot</label>
-						<label>
-							<input type="checkbox" value="Coniferous Woodlot">Coniferous Woodlot</label>
-						<label>
-							<input type="checkbox" value="Mixed Woodlot">Mixed Woodlot</label>
-						<label>
-							<input type="checkbox" value="Grassland">Grassland</label>
-						<label>
-							<input type="checkbox" value="On Wood">On Wood</label>
-						<label>
-							<input type="checkbox" value="Leaf Litter">Leaf Litter</label>
-						<label>
-							<input type="checkbox" value="On Soil">On Soil</label>
-						<label>
-							<input type="checkbox" value="Swamp / Bog">Swamp / Bog</label>
-					</div>
-				</p>
-				<button type="submit" onclick="submitNewObservation(event, this)">Submit New Observation</button>
-			</form>
+			new observation
 		</section>
 		<section class="edit observation hidden" role="region">
-			edit the observation via the passed in (id)
 		</section>
 		<section id="view-observation" class="hidden" role="region" >
 		</section>
@@ -139,6 +36,7 @@
 		</section>
 	</main>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs&libraries=places"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.185.0.min.js"></script>
 	<script src="js/exif.js"></script>
 	<script src="js/index.js"></script>
 </body>
