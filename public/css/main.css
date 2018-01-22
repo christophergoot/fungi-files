@@ -1,5 +1,6 @@
 body {
 	box-sizing: border-box;
+padding-bottom: 50px;
 }
 
 header {
@@ -13,6 +14,10 @@ main {
 a:hover {
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+button {
+	margin: 5px 0;
 }
 
 .hidden {
@@ -152,13 +157,15 @@ textarea {
 	/* max-width: 100px; */
 }
 
-.delete-img-action {
+.img-action {
 	position: absolute;
+	display: block;
+	text-align: right;
 	size: .25em;
 	color: rgb(255, 255, 255);
 	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 	margin: 3px;
-	/* top: 20px; */
+	/* top: 40px; */
 	/* right: 0; */
 }
 

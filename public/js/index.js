@@ -21,8 +21,8 @@ let MOCK_OBSERVATIONS = { "observations": [
 			"location": "ugly trees"
 		},
 		"photos": ["https://78.media.tumblr.com/687d01d9e4dfdf30fd58269c129b2340/tumblr_inline_ndwz8sdzdY1qldys9.jpg", "http://www.mykoweb.com/CAF/photos/large/Polyozellus_multiplex%28mgw-01%29.jpg"],
-		"obsDate": "Mon Jan 08 2018",
-		"pubDate": 1513809468703
+		"obsDate": new Date (1513809468703),
+		"pubDate": new Date (1513809468703)
 	},
 	{
 		"id": 22222222,
@@ -35,8 +35,8 @@ let MOCK_OBSERVATIONS = { "observations": [
 		},
 		"notes": "pretty pretty mushroom",
 		"photos": ["http://northernbushcraft.com.s3-website-us-west-2.amazonaws.com/mushrooms/redCrackedBolete/1.jpg"],
-		"obsDate": 1501604220,
-		"pubDate": 1513809546654
+		"obsDate": new Date("2018-01-05T22:56:03.896Z"),
+		"pubDate": new Date("1513809546654")
 	},
 	{
 		"id": 33333333,
@@ -51,8 +51,8 @@ let MOCK_OBSERVATIONS = { "observations": [
 		},
 		"notes": "pretty pretty mushroom",
 		"photos": ["https://78.media.tumblr.com/687d01d9e4dfdf30fd58269c129b2340/tumblr_inline_ndwz8sdzdY1qldys9.jpg", "http://www.mykoweb.com/CAF/photos/large/Polyozellus_multiplex%28mgw-01%29.jpg"],
-		"obsDate": "2018-01-05T22:56:03.896Z",
-		"pubDate": 1513809468703
+		"obsDate": new Date("2018-01-05T22:56:03.896Z"),
+		"pubDate": new Date("Wed Jan 03 2018 14:56:00 GMT-0800 (PST)")
 	},
 	{
 		"id": 44444444,
@@ -68,8 +68,8 @@ let MOCK_OBSERVATIONS = { "observations": [
 		},
 		"notes": "pretty pretty mushroom",
 		"photos": ["http://northernbushcraft.com.s3-website-us-west-2.amazonaws.com/mushrooms/redCrackedBolete/1.jpg"],
-		"obsDate": 1501604220,
-		"pubDate": 1513809546654
+		"obsDate": new Date("1513809546654"),
+		"pubDate": new Date("1513809546654")
 	},
 
 ]};
@@ -166,6 +166,7 @@ const OBSERVATION_FORM = `
 			</div>
 		</div>
 	</div>
+<!--
 	<div class="area">
 		<h3>Habitat</h3>
 		<div class="habitat-details">
@@ -191,6 +192,7 @@ const OBSERVATION_FORM = `
 			<textarea name="habitatNotes" rows="5" placeholder="Habitat Notes"></textarea>
 		</div>
 	</div>
+	--!>
 </form>
 `;
 
@@ -270,6 +272,27 @@ function receiveFiles (event) {
 	exifFromFile(file);
 }
 
+function locationFromThumbnail(event) {
+	console.log(event);
+
+	const obs = {'location': {'lat': event.dataset.lat, 'lng': event.dataset.lng}}
+throw "look at obs"
+	getAddress(obs, function (obs, addressString) {
+		// const gpsBtn = document.getElementById(`${file.name}-gps-action`);
+		// gpsBtn.setAttribute('data-lat', coords.lat);
+		// gpsBtn.setAttribute('data-lng', coords.lng);
+
+		updateValue('obsDate', obsDate);
+		updateValue('obsTime', obsTime);
+		updateValue('lat', coords.lat);
+		updateValue('lng', coords.lng);
+		updateExif("Location extracted from '" + file.name + "'.", "no error");
+		updateValue('address', addressString);
+	});
+
+
+}
+
 function deleteFile(event) {
 	event.preventDefault();
 	const fileName = event.currentTarget.dataset.filename;
@@ -283,60 +306,21 @@ function previewFile(file) {
 	const reader  = new FileReader();
 	const newImg = `
 	<div id="${fileName}-div" class="thumb-div">
-		<a class="delete-img-action" onclick="deleteFile(event)" data-filename="${fileName}" title="Remove Image" alt="Remove Image">X</a>
-		<img src="media/loading.gif" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
+		<a class="img-action delete" onclick="deleteFile(event)" data-filename="${fileName}" title="Remove Image" alt="Remove Image">
+			X
+		</a>
+<!--		<a class="img-action location" onclick="locationFromThumbnail(event)" id="${file.name}-gps-action" title="Use photo's location" alt="Use photo's location">
+			GPS
+		</a>
+--!>		<img src="media/loading.gif" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
 		<p class="label">${fileName}</p>
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
 	thumbDiv.innerHTML += newImg;
 	reader.onloadend = function (event) {
-		// thumbDiv.firstChild
-		// const previewDiv = document.getElementsByClassName('loading-thumb')[0];
-		// const previewImg = previewDiv.getElementsByTagName('img')[0];
-		// console.log(fileName);
 		const previewImg = document.getElementById(`${fileName}-thumb`);
 		previewImg.src = event.target.result;
-		// previewDiv.classList.remove('loading-thumb');
-	};
-	reader.readAsDataURL(file);
-  }
-
-
-function ALTpreviewFile(file) {
-	const fileName = file.name;
-	const reader = new FileReader();
-	const newImg = `
-	<div id="${fileName}-div" class="thumb-div">
-		<a class="delete-img-action" onclick="deleteFile(event)" data-filename="${fileName}" title="Remove Image" alt="Remove Image">X</a>
-		<img src="media/loading.gif" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
-		<p class="label">${fileName}</p>
-	</div>
-	`;
-	const thumbDiv = document.querySelector('.img-preview');
-	thumbDiv.innerHTML += newImg;
-	reader.onloadend = function (event) {
-		document.querySelector(`#${fileName}-thumb`).src = event.target.result;
-	};
-	reader.readAsDataURL(file);
-}
-
-
-function OLDpreviewFile(file) {
-	const fileName = file.name;
-	const reader  = new FileReader();
-	reader.onloadend = function (event) {
-		console.log (event);
-		const src = event.target.result;		
-		const newImg = `
-			<div id="${fileName}-div" class="thumb-div">
-				<a class="delete-img-action" onclick="deleteFile(event)" data-filename="${fileName}" title="Remove Image" alt="Remove Image">X</a>
-				<img src="${src}" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
-				<p class="label">${fileName}</p>
-			</div>
-				`;
-		const thumbDiv = document.querySelector('.img-preview');
-		thumbDiv.innerHTML += newImg;
 	};
 	reader.readAsDataURL(file);
   }
@@ -346,7 +330,6 @@ function exifFromFile (file) {
 		EXIF.getData(file, function () {
 			if (this.exifdata.GPSLatitude) {
 				let latRef = 1, lngRef = 1;
-				console.log(this.exifdata);
 				if (this.exifdata.GPSLatitudeRef === "S") latRef = -1
 				if (this.exifdata.GPSLongitudeRef === "W") lngRef = -1
 				const coords = {
@@ -357,7 +340,12 @@ function exifFromFile (file) {
 				const obsDate = str[0].replace(/:/g, "-");
 				const obsTime = str[1];
 				const obs = {'location': coords};
+
 				getAddress(obs, function (obs, addressString) {
+// 					const gpsBtn = document.getElementById(`${file.name}-gps-action`);
+// 					gpsBtn.setAttribute('data-lat', coords.lat);
+// 					gpsBtn.setAttribute('data-lng', coords.lng);
+
 					updateValue('obsDate', obsDate);
 					updateValue('obsTime', obsTime);
 					updateValue('lat', coords.lat);
@@ -437,11 +425,40 @@ function getAddress (obs, callback) {
 }
 
 function newObservation () {
+	const header = "<h2>Add New Observation</h2>";
 	const newObs = 'section.new.observation';
-	const submitBtn = '<button onclick="submitNewObservation(event)">Submit New Observation</button>'
-	document.querySelector(newObs).innerHTML = "<h2>Add New Observation</h2>" + OBSERVATION_FORM + submitBtn;
+	const footer = `<button onclick="saveDraft(event)">Save Draft</button>
+		<button onclick="submitNewObservation(event)">Submit New Observation</button>
+		<button onclick="getAndDisplayObservations()">Cancel</button>`;
+	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
 	populateDatalists();
 	displaySection('.new.observation');
+}
+
+function saveDraft(event) {
+	event.preventDefault();
+	const form = document.querySelector('#new-observation');
+	const formData = new FormData(form); 
+	const entries = formData.entries();
+	const formObj = objFromIterator(entries);	
+	document.querySelector('section.edit.observation').innerHTML = "";
+	const bodyObj = mockSerialize (formObj);
+
+
+
+	const url = "http://localhost:8080/observations/drafts/";
+	if (formData.id) {
+		fetch(url, {'method':'PUT', 'body': formData})
+		.then((res) => savedDraftRes(res));
+	} else { 
+		fetch(url, {'method':'POST', 'body': formData})
+		.then((res) => savedDraftRes(res));
+	};
+}
+
+function savedDraftRes (res) {
+	// console.log(res);
+
 }
 
 const objFromIterator = (iterator) => {
@@ -481,6 +498,7 @@ function submitNewObservation (event) {
 function updateObservation (formObj) {
 	const arr = MOCK_OBSERVATIONS.observations;
 	const obs = mockSerialize(formObj);
+console.log('obs after edit', obs);
 	for (let i in arr) {
 		if (arr[i].id === obs.id) arr[i] = obs;
 	};
@@ -520,10 +538,24 @@ function mockSerialize (formObj) {
 	return obsObj;
 }
 
+function getTime(date) {
+	const hour = date.getHours();
+	const minute = date.getMinutes();
+	return `${hour}:${minute}`;
+}
+
+function getDate(date) {
+	const year = date.getFullYear();
+	const month = date.getMonth();
+	const day = date.getDate();
+	return `${year}-${month}-${day}`;
+}
+
 function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>"
-	const submitBtn = '<button onclick="saveObservation(event)">Save Observation</button>'
-	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + submitBtn;
+	const footer = `<button onclick="saveObservation(event)">Save Observation</button>
+		<button onclick="getAndDisplayObservations()">Cancel</button>`
+	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
 
 	getObservation(obsId, (obs) => {
 		const {id, fungi, location, notes, photos} = obs;
@@ -532,17 +564,20 @@ function editObservation(event, obsId) {
 		const mushroomNotes = notes.mushroom,
 			habitatNotes = notes.habitat,
 			locationNotes = notes.location;
-		const obsTime = new Date(obs.obsDate);
-		const obsDate = obsTime;
-		const possibleNames = {id, obsDate, obsTime, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, confidence, address};
+		const obsTime = getTime(obs.obsDate);
+		const obsDate = getDate(obs.obsDate);
+		const possibleNames = {id, obsDate, obsTime, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address};
 		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
+
+		if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
+
 		populateDatalists();
 		displaySection('.edit.observation');
 	})
 }
 
- function renderObservation(obs, address) {
-	const obsDate = new Date(obs.obsDate);
+function renderObservation(obs, address) {
+	// const obsDate = new Date(obs.obsDate);
 	let obsRender = `<a class="edit-button" onclick="editObservation(event, ${obs.id})">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
 		if (obs.photos) obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`;
 		else obsRender += `<img class="obs-thumb" src="media/mushroom.png">`;
@@ -554,7 +589,7 @@ function editObservation(event, obsId) {
 			`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
 			<span class="label">species: </span>${obs.fungi.species}</span><span>`;
 		if (obs.obsDate) obsRender += 
-			`<span class="fungi"><span class="label">observed </span>${obsDate.toDateString()} 
+			`<span class="fungi"><span class="label">observed </span>${obs.obsDate.toDateString()} 
 			<span class="label">around </span><span id="list-address">${address}</span></span>`;
 		obsRender += `</div>`
 		document.querySelector('#obs-list').innerHTML += obsRender;
