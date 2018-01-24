@@ -1,46 +1,69 @@
+// import { read } from 'fs';
+
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const multer = require('multer');
 const upload = multer();
+const {Observation} = require('./models');
 
 // const {MOCK_OBSERVATIONS} = require('./mock-data');
 
-
 router.get('/', (req, res) => {
-	res.json(MOCK_OBSERVATIONS);
+	Observation
+	.find()
+	.then(obs => {
+		// console.log(obs);
+		res.json(
+			obs.map(obs => obs.serialize())
+			// obs
+		);
+	})
+	.catch(err => {
+		console.error(err);
+	res.status(500).json({ error: 'something went wrong getting all observations' });
+	});
 });
+
+router.get('/:id', (req, res) => {
+	Observation
+	  .findById(req.params.id)
+	  .then(obs => res.json(obs.serialize()))
+	  .catch(err => {
+		console.error(err);
+		res.status(500).json({ error: 'something went wrong getting single observation' });
+	  });
+  });
 
 router.post('/drafts/', upload.array('photos', 24), (req, res) => {
 	// req will be a draft post
 	// console.log(req);
 	// console.log
 	// throw 'look at log'
-	const reply = req.body.commonName;
-	
-	return res.status(200).send(reply);
 
-
-// const requiredFields = ['title', 'content', 'author'];
-// for (let i=0; i<requiredFields.length; i++) {
-//   const field = requiredFields[i];
-//   if (!(field in req.body)) {
-// 	const message = `Missing \`${field}\` in request body`
-// 	console.error(message);
-// 	return res.status(400).send(message);
-//   }
-// }
-// const item = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate);
-// res.status(201).json(item);
-
-
-
-
-// mongodb://<dbuser>:<dbpassword>@ds111648.mlab.com:11648/mushroom-journal
-
-
-	// res will be confirmation 
+	Observation
+	.create({
+		'nickname': req.body.nickname,
+		// 'commonName': req.body.commonName,
+		// 'genus': req.body.genus,
+		// 'species': req.body.species,
+		// 'confidence': req.body.confidence,
+		'lat': req.body.lat,
+		'lng': req.body.lng,
+		'address': req.body.address,
+		// 'mushroomNotes': req.body.mushroomNotes,
+		// 'habitatNotes': req.body.habitatNotes,
+		// 'locationNotes': req.body.locationNotes,
+		// 'speciminNotes': req.body.speciminNotes,
+		// 'obsDate': new Date(req.body.obsDate + 'T' + req.body.obsTime),
+		// 'pubDate': req.body.pubDate
+	})
+	.then(obs => res.status(201).json(obs.serialize()))
+	.catch(err => {
+		console.error(err);
+		res.status(500).json({ error: 'Something went wrong' });
+	});
 
 })
 

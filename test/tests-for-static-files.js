@@ -17,6 +17,7 @@ describe('Static Files tests', () => {
     it('should serve a valid index.html', () => {
         return chai.request(app)
             .get('').then(res => {
+                console.log(res.status);
                 res.should.be.html;
                 res.should.have.status(200);
             })

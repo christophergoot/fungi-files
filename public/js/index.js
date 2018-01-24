@@ -4,79 +4,12 @@ const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'spe
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 
-let MOCK_OBSERVATIONS = { "observations": [
-	{
-		"id": 11111111,
-		"fungi": {
-			"commonName": "Blue Chanterelle",
-			"genus":	"Polyozellus",
-			"species":	"P. multiplex"
-		},
-		"location": {
-			"lat": 45.313,
-			"lng": -122.0868
-		},
-		"notes": {
-			"mushroom": "pretty pretty mushroom",
-			"location": "ugly trees"
-		},
-		"photos": ["https://78.media.tumblr.com/687d01d9e4dfdf30fd58269c129b2340/tumblr_inline_ndwz8sdzdY1qldys9.jpg", "http://www.mykoweb.com/CAF/photos/large/Polyozellus_multiplex%28mgw-01%29.jpg"],
-		"obsDate": new Date (1513809468703),
-		"pubDate": new Date (1513809468703)
-	},
-	{
-		"id": 22222222,
-		"fungi": {
-			"nickname": "Bubble Stubber",
-		},
-		"location": {
-			"lat": 45.3135,
-			"lng": -122.0869
-		},
-		"notes": "pretty pretty mushroom",
-		"photos": ["http://northernbushcraft.com.s3-website-us-west-2.amazonaws.com/mushrooms/redCrackedBolete/1.jpg"],
-		"obsDate": new Date("2018-01-05T22:56:03.896Z"),
-		"pubDate": new Date("1513809546654")
-	},
-	{
-		"id": 33333333,
-		"fungi": {
-			"commonName": "Blue Chanterelle",
-			"genus":	"Polyozellus",
-			"species":	"P. multiplex"
-		},
-		"location": {
-			"lat": 45.313,
-			"lng": -122.0868
-		},
-		"notes": "pretty pretty mushroom",
-		"photos": ["https://78.media.tumblr.com/687d01d9e4dfdf30fd58269c129b2340/tumblr_inline_ndwz8sdzdY1qldys9.jpg", "http://www.mykoweb.com/CAF/photos/large/Polyozellus_multiplex%28mgw-01%29.jpg"],
-		"obsDate": new Date("2018-01-05T22:56:03.896Z"),
-		"pubDate": new Date("Wed Jan 03 2018 14:56:00 GMT-0800 (PST)")
-	},
-	{
-		"id": 44444444,
-		"fungi": {
-			"nickname": "Bubble Stubber",
-			"commonName": "Red Cracked Bolete",
-			"genus":	"Boletus",
-			"species":	"Chrysenteron"
-		},
-		"location": {
-			"lat": 45.3135,
-			"lng": -122.0869
-		},
-		"notes": "pretty pretty mushroom",
-		"photos": ["http://northernbushcraft.com.s3-website-us-west-2.amazonaws.com/mushrooms/redCrackedBolete/1.jpg"],
-		"obsDate": new Date("1513809546654"),
-		"pubDate": new Date("1513809546654")
-	},
-
-]};
+const LOCAL_URL_ENDPOINT = "http://localhost:8080/observations/";
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation">
 <input type="hidden" name="id"> 
+<input type="hidden" name="photos"> 
 	<div  class="area">
 		<div>
 			<h3>Images</h3>
@@ -139,7 +72,7 @@ const OBSERVATION_FORM = `
 		<h3>Location:</h3>
 		<div id="location-options" class="loc-opts">
 			<div>
-				<span id="location-text" class="label"></span>
+				<span id="location-text"></span>
 			</div>
 			<div class="loc-method">
 				<label>
@@ -388,19 +321,18 @@ function annimateObservation(event) {
 }
 
  function getObservation(targetId, callback) {
-	setTimeout(() => { 
-		const db = MOCK_OBSERVATIONS.observations;
-		let target;
-// 		console.log(targetId);
-		for(let i=0; i < db.length; i++) {
-// 			console.log (db[i].id);
-			if (db[i].id === targetId) target = db[i];
-			if (target) callback(target);
-		};
-	}, 100);
+	fetch(LOCAL_URL_ENDPOINT + targetId, {method: 'GET'})
+	.then((res) => res.json())
+	.then((res) => {
+		console.log(res);
+		callback(res);
+	});
+
 }
 
 function displayObservation(obs) {
+	
+
 	console.log('observation is ' + obs);
 }
 
@@ -411,7 +343,6 @@ function viewObservation(event) {
 	// observation.then((obs) => {
 	// })	
 	getObservation(id, displayObservation);
-
 }
 
 function getAddress (obs, callback) {
@@ -444,20 +375,25 @@ function saveDraft(event) {
 	document.querySelector('section.edit.observation').innerHTML = "";
 	const bodyObj = mockSerialize (formObj);
 
-
-
-	const url = "http://localhost:8080/observations/drafts/";
 	if (formData.id) {
-		fetch(url, {'method':'PUT', 'body': formData})
+		fetch(LOCAL_URL_ENDPOINT + "/drafts", {'method':'PUT', 'body': formData})
+		.then((res) => {
+			console.log(res);
+			res.json();
+		})
 		.then((res) => savedDraftRes(res));
 	} else { 
-		fetch(url, {'method':'POST', 'body': formData})
+		fetch(LOCAL_URL_ENDPOINT + "drafts", {'method':'POST', 'body': formData})
+		.then((res) => {
+			console.log(res);
+			res.json();
+		})
 		.then((res) => savedDraftRes(res));
 	};
 }
 
 function savedDraftRes (res) {
-	// console.log(res);
+	console.log(res);
 
 }
 
@@ -479,7 +415,7 @@ function saveObservation (event) {
 }
 
 function dateFromDateTime(date, time) {
-    var combined = new Date(date + ' ' + time);
+    const combined = new Date(date + 'T' + time);
     return combined;
 };
 
@@ -496,46 +432,22 @@ function submitNewObservation (event) {
 }
 
 function updateObservation (formObj) {
-	const arr = MOCK_OBSERVATIONS.observations;
-	const obs = mockSerialize(formObj);
-console.log('obs after edit', obs);
-	for (let i in arr) {
-		if (arr[i].id === obs.id) arr[i] = obs;
-	};
+	alert('this has not been implemented with mongo yet');
+	// const arr = MOCK_OBSERVATIONS.observations;
+	// const obs = mockSerialize(formObj);
+	// console.log('obs after edit', obs);
+	// for (let i in arr) {
+	// 	if (arr[i].id === obs.id) arr[i] = obs;
+	// };
+
 	getAndDisplayObservations();
 }
 function publishNewObservation (formObj) {
-	const obs = mockSerialize(formObj);
-	MOCK_OBSERVATIONS.observations.push(obs);
-	getAndDisplayObservations();
-}
+	alert('this has not been implemented with mongo yet');
 
-function mockSerialize (formObj) {
-	formObj.obsDate = dateFromDateTime(formObj.obsDate, formObj.obsTime);
-	const obsObj = {
-			"id": Number(formObj.id),
-			"fungi": {
-				"nickname": formObj.nickname,
-				"commonName": formObj.commonName,
-				"genus":	formObj.genus,
-				"species":	formObj.species,
-				"confidence": Number(formObj.confidence)
-			},
-			"location": {
-				"address": formObj.address,
-				"lat": Number(formObj.lat),
-				"lng": Number(formObj.lng)
-			},
-			"notes": {
-				"mushroom": formObj.mushroomNotes,
-				"habitat": formObj.habitatNotes,
-				"location": formObj.location
-			},
-			"obsDate": formObj.obsDate,
-			"pubDate": formObj.pubDate
-			// "photos": 
-		};
-	return obsObj;
+	// const obs = mockSerialize(formObj);
+	// MOCK_OBSERVATIONS.observations.push(obs);
+	getAndDisplayObservations();
 }
 
 function getTime(date) {
@@ -578,7 +490,7 @@ function editObservation(event, obsId) {
 
 function renderObservation(obs, address) {
 	// const obsDate = new Date(obs.obsDate);
-	let obsRender = `<a class="edit-button" onclick="editObservation(event, ${obs.id})">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
+	let obsRender = `<a class="edit-button" onclick="editObservation(event, '${obs.id}')">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
 		if (obs.photos) obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`;
 		else obsRender += `<img class="obs-thumb" src="media/mushroom.png">`;
 		if (obs.fungi.nickname) obsRender += 
@@ -589,20 +501,26 @@ function renderObservation(obs, address) {
 			`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
 			<span class="label">species: </span>${obs.fungi.species}</span><span>`;
 		if (obs.obsDate) obsRender += 
-			`<span class="fungi"><span class="label">observed </span>${obs.obsDate.toDateString()} 
+			`<span class="fungi"><span class="label">observed </span>${obs.obsDate} 
 			<span class="label">around </span><span id="list-address">${address}</span></span>`;
 		obsRender += `</div>`
 		document.querySelector('#obs-list').innerHTML += obsRender;
 }
 
 function getObservations(callback) {
-	setTimeout(function(){ callback(MOCK_OBSERVATIONS)}, 100);
+	fetch(LOCAL_URL_ENDPOINT, {method: 'GET'})
+	.then((res) => res.json())
+	.then((res) => {
+		console.log(res);
+		callback(res);
+	})
 }
 
 function displayObservations(res) {
-	const observations = res.observations;
+	// const observations = res.observations;
+	const observations = res;	
 	for(let obs of observations) {
-		if (obs.location.lat && obs.location.lng) getAddress(obs, renderObservation);
+		if ((obs.location.lat) && (obs.location.lng)) getAddress(obs, renderObservation);
 		else renderObservation(obs, "Unknown Location");
 	};
 	displaySection('.observations');
