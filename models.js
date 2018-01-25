@@ -30,8 +30,6 @@ const observationSchema = mongoose.Schema({
 observationSchema.methods.serialize = function() {
 	const obsDateObj = new Date(this.obsDate);
 	const pubDateObj = new Date(this.pubDate);
-	
-	// console.log(this.id, this._id);
 	return {
 		id: this._id,
 		fungi: this.fungi,

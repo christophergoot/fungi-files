@@ -4,7 +4,8 @@ const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'spe
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 
-const LOCAL_URL_ENDPOINT = "http://localhost:8080/observations/";
+
+const URL = "http://localhost:8080/observations/";
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation">
@@ -303,7 +304,6 @@ function annimateObservation(event) {
 		value="${id}";`;
 	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
 	let observationDiv = document.querySelector('#observation-detail');
-	
 	requestAnimationFrame(() => {
 		observationDiv.setAttribute("style", "transition: all .5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
 		viewSection.classList.add('popup');
@@ -321,19 +321,29 @@ function annimateObservation(event) {
 }
 
  function getObservation(targetId, callback) {
-	fetch(LOCAL_URL_ENDPOINT + targetId, {method: 'GET'})
+	fetch(URL + targetId, {method: 'GET'})
 	.then((res) => res.json())
 	.then((res) => {
-		console.log(res);
+		console.log(typeof res.obsDate);
 		callback(res);
 	});
-
 }
 
 function displayObservation(obs) {
-	
-
+	const imageTag = `<img src="${staticMapUrl(obs.location)}" class="static-map">`;
+	document.querySelector('#observation-detail').innerHTML += imageTag;
 	console.log('observation is ' + obs);
+}
+
+function staticMapUrl(latlng) {
+	let url = "https://maps.googleapis.com/maps/api/staticmap?";
+	url += "size=200x200";
+	url += "&zoom=13";
+	url += "&maptype=roadmap";
+	url += `&markers=${latlng.lat},${latlng.lng}`;
+	url += `&key=${GOOGLEMAPS_API_KEY}`;
+
+	return url;
 }
 
 function viewObservation(event) {
@@ -358,8 +368,7 @@ function getAddress (obs, callback) {
 function newObservation () {
 	const header = "<h2>Add New Observation</h2>";
 	const newObs = 'section.new.observation';
-	const footer = `<button onclick="saveDraft(event)">Save Draft</button>
-		<button onclick="submitNewObservation(event)">Submit New Observation</button>
+	const footer = `<button onclick="submitNewObservation(event)">Submit New Observation</button>
 		<button onclick="getAndDisplayObservations()">Cancel</button>`;
 	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
 	populateDatalists();
@@ -373,17 +382,17 @@ function saveDraft(event) {
 	const entries = formData.entries();
 	const formObj = objFromIterator(entries);	
 	document.querySelector('section.edit.observation').innerHTML = "";
-	const bodyObj = mockSerialize (formObj);
+	// const bodyObj = mockSerialize (formObj);
 
 	if (formData.id) {
-		fetch(LOCAL_URL_ENDPOINT + "/drafts", {'method':'PUT', 'body': formData})
+		fetch(URL + "/drafts", {'method':'PUT', 'body': formData})
 		.then((res) => {
 			console.log(res);
 			res.json();
 		})
 		.then((res) => savedDraftRes(res));
 	} else { 
-		fetch(LOCAL_URL_ENDPOINT + "drafts", {'method':'POST', 'body': formData})
+		fetch(URL + "drafts", {'method':'POST', 'body': formData})
 		.then((res) => {
 			console.log(res);
 			res.json();
@@ -422,16 +431,12 @@ function dateFromDateTime(date, time) {
 function submitNewObservation (event) {
 	event.preventDefault();
 	let form = document.querySelector('#new-observation');
-	let formData = new FormData(form); 
-	const entries = formData.entries();
-	let formObj = objFromIterator(entries);
-	formObj.pubDate = new Date()
-	formObj.id = Math.floor(Math.random() * 90000000) + 10000000;
+	let formData = new FormData(form);
 	document.querySelector('section.new.observation').innerHTML = "";
-	publishNewObservation (formObj);
+	publishNewObservation (formData);
 }
 
-function updateObservation (formObj) {
+function updateObservation (formData) {
 	alert('this has not been implemented with mongo yet');
 	// const arr = MOCK_OBSERVATIONS.observations;
 	// const obs = mockSerialize(formObj);
@@ -439,45 +444,50 @@ function updateObservation (formObj) {
 	// for (let i in arr) {
 	// 	if (arr[i].id === obs.id) arr[i] = obs;
 	// };
-
 	getAndDisplayObservations();
 }
-function publishNewObservation (formObj) {
-	alert('this has not been implemented with mongo yet');
+function publishNewObservation (formData) {
+	// alert('this has not been implemented with mongo yet');
 
-	// const obs = mockSerialize(formObj);
+	fetch(URL, {method: 'POST', body: formData})
+	// .then((res) => res.json())
+	.catch(error => console.error('Error:', error))
+	.then((res) => {
+		console.log(res);
+	})	// const obs = mockSerialize(formObj);
 	// MOCK_OBSERVATIONS.observations.push(obs);
 	getAndDisplayObservations();
 }
 
 function getTime(date) {
-	const hour = date.getHours();
-	const minute = date.getMinutes();
-	return `${hour}:${minute}`;
+	// const hour = date.getHours();
+	// const minute = date.getMinutes();
+	// return `${hour}:${minute}`;
+
+
 }
 
 function getDate(date) {
-	const year = date.getFullYear();
-	const month = date.getMonth();
-	const day = date.getDate();
-	return `${year}-${month}-${day}`;
+	// const year = date.getFullYear();
+	// const month = date.getMonth();
+	// const day = date.getDate();
+	// return `${year}-${month}-${day}`;
+
+
 }
 
-function editObservation(event, obsId) {
-	const header = "<h2>Edit Observation</h2>"
-	const footer = `<button onclick="saveObservation(event)">Save Observation</button>
-		<button onclick="getAndDisplayObservations()">Cancel</button>`
-	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
+function populateFields(obs) {
+	// let fields = Object.keys(obs);
+	// for (let field in fields) fields.push(Object.keys(obs[fields[field]]));
+	// for (let key of fields) if (document.querySelector(`[name="${key}"]`)) updateValue(key, obs[key]);
 
-	getObservation(obsId, (obs) => {
+
 		const {id, fungi, location, notes, photos} = obs;
 		const {commonName, genus, species, nickname, confidence} = fungi;
 		const {lat, lng, address} = location;
-		const mushroomNotes = notes.mushroom,
-			habitatNotes = notes.habitat,
-			locationNotes = notes.location;
-		const obsTime = getTime(obs.obsDate);
-		const obsDate = getDate(obs.obsDate);
+		const {mushroomNotes, habitatNotes, locationNotes, speciminNotes} = notes;
+		// const obsTime = getTime(obs.obsDate);
+		// const obsDate = getDate(obs.obsDate);
 		const possibleNames = {id, obsDate, obsTime, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address};
 		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 
@@ -485,7 +495,16 @@ function editObservation(event, obsId) {
 
 		populateDatalists();
 		displaySection('.edit.observation');
-	})
+}
+
+function editObservation(event, obsId) {
+	const header = "<h2>Edit Observation</h2>"
+	const footer = `<button onclick="saveObservation(event)">Save Observation</button>
+		<button onclick="getAndDisplayObservations()">Cancel</button>`
+	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
+	getObservation(obsId, populateFields);
+	populateDatalists();
+	displaySection('.edit.observation');
 }
 
 function renderObservation(obs, address) {
@@ -508,7 +527,7 @@ function renderObservation(obs, address) {
 }
 
 function getObservations(callback) {
-	fetch(LOCAL_URL_ENDPOINT, {method: 'GET'})
+	fetch(URL, {method: 'GET'})
 	.then((res) => res.json())
 	.then((res) => {
 		console.log(res);

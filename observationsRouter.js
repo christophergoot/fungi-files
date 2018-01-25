@@ -36,35 +36,18 @@ router.get('/:id', (req, res) => {
 	  });
   });
 
-router.post('/drafts/', upload.array('photos', 24), (req, res) => {
-	// req will be a draft post
-	// console.log(req);
-	// console.log
-	// throw 'look at log'
-
+router.post('/', upload.array('photos'), (req, res) => {
+	const fields = [nickname, commonName, genus, species, confidence, lat, lng, address, mushroomNotes, habitatNotes, locationNotes, speciminNotes, obsDate, obsTime, pubDate];
+	let newPost = "";
+	for (let field in fields) if (`req.body.${field}`) newPost =+ `'${field}': req.body.${field},`;
+console.log(`{${newPost}}`);
 	Observation
-	.create({
-		'nickname': req.body.nickname,
-		// 'commonName': req.body.commonName,
-		// 'genus': req.body.genus,
-		// 'species': req.body.species,
-		// 'confidence': req.body.confidence,
-		'lat': req.body.lat,
-		'lng': req.body.lng,
-		'address': req.body.address,
-		// 'mushroomNotes': req.body.mushroomNotes,
-		// 'habitatNotes': req.body.habitatNotes,
-		// 'locationNotes': req.body.locationNotes,
-		// 'speciminNotes': req.body.speciminNotes,
-		// 'obsDate': new Date(req.body.obsDate + 'T' + req.body.obsTime),
-		// 'pubDate': req.body.pubDate
-	})
-	.then(obs => res.status(201).json(obs.serialize()))
+	.create(`{${newPost}}`)
 	.catch(err => {
 		console.error(err);
-		res.status(500).json({ error: 'Something went wrong' });
-	});
-
+		res.status(500).json({ error: 'Something went wrong posting a new observation' })
+	.then(obs => res.status(201).json(obs.serialize()))
+	;});
 })
 
 

@@ -134,6 +134,11 @@ textarea {
 	overflow: auto;
 }
 
+.static-map {
+	max-width: 200px;
+	max-height: 200px;
+	float:right;
+}
 
 .img-preview {
 	display: flex;

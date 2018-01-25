@@ -8,13 +8,12 @@ app.use(express.static('public'));
 const { DATABASE_URL, PORT } = require('./config');
 const mongoose = require('mongoose');
 
-
 const observationsRouter = require('./observationsRouter');
 app.use('/observations', observationsRouter);
 
 app.use('*', function (req, res) {
 	res.status(404).json({ message: 'Not Found' });
-  });
+});
 
 let server;
 
