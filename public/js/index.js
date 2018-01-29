@@ -315,29 +315,25 @@ function annimateObservation(event) {
 	});
 }
 
- function getObservation(targetId, callback) {
-	fetch(URL + targetId, {method: 'GET'})
-	.then((res) => res.json())
-	.then((res) => {
-		console.log(typeof res.obsDate);
-		callback(res);
-	});
+ function getObservation(targetId) {
+	return fetch(URL + targetId, {method: 'GET'})
+		.then((res) => res.json());
 }
 
 function displayObservation(obs) {
 	const imageTag = `<img src="${staticMapUrl(obs.location)}" class="static-map">`;
 	document.querySelector('#observation-detail').innerHTML += imageTag;
-	console.log('observation is ' + obs);
+
+
 }
 
 function staticMapUrl(latlng) {
 	let url = "https://maps.googleapis.com/maps/api/staticmap?";
 	url += "size=200x200";
-	url += "&zoom=10";
+	url += "&zoom=14";
 	url += "&maptype=terrain";
 	url += `&markers=${latlng.lat},${latlng.lng}`;
 	url += `&key=${GOOGLEMAPS_API_KEY}`;
-
 	return url;
 }
 
@@ -347,7 +343,9 @@ function viewObservation(event) {
 	// const observation = getObservation(id);
 	// observation.then((obs) => {
 	// })	
-	getObservation(id, displayObservation);
+
+	getObservation(id)
+		.then(res => displayObservation(res));
 }
 
 function getAddress (obs, callback) {
@@ -372,37 +370,6 @@ function newObservation () {
 	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
 	populateDatalists();
 	displaySection('.new.observation');
-}
-
-function saveDraft(event) {
-	event.preventDefault();
-	const form = document.querySelector('#new-observation');
-	const formData = new FormData(form); 
-	const entries = formData.entries();
-	const formObj = objFromIterator(entries);	
-	document.querySelector('section.edit.observation').innerHTML = "";
-	// const bodyObj = mockSerialize (formObj);
-
-	if (formData.id) {
-		fetch(URL + "/drafts", {'method':'PUT', 'body': formData})
-		.then((res) => {
-			console.log(res);
-			res.json();
-		})
-		.then((res) => savedDraftRes(res));
-	} else { 
-		fetch(URL + "drafts", {'method':'POST', 'body': formData})
-		.then((res) => {
-			console.log(res);
-			res.json();
-		})
-		.then((res) => savedDraftRes(res));
-	};
-}
-
-function savedDraftRes (res) {
-	console.log(res);
-
 }
 
 const objFromIterator = (iterator) => {
@@ -438,6 +405,7 @@ function submitNewObservation (event) {
 function updateObservation (formData) {
 	alert('this has not been implemented with mongo yet');
 
+	console.log('wants to make a put request');
 
 	getAndDisplayObservations();
 }
@@ -475,11 +443,9 @@ function getDate(date) {
 	})
 }
 
-function deleteObservation(obsId) {
-	event.preventDefault();
-	console.log(obsId);
+function deleteObservation(event, obsId) {
 	document.querySelector('section.edit.observation').innerHTML = "";
-	fetch((URL + obsId), {method: 'DEL'})
+	fetch((URL + obsId), {method: 'delete'})
 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
@@ -489,11 +455,6 @@ function deleteObservation(obsId) {
 }
 
 async function populateFields(obs) {
-	// let fields = Object.keys(obs);
-	// for (let field in fields) fields.push(Object.keys(obs[fields[field]]));
-	// for (let key of fields) if (document.querySelector(`[name="${key}"]`)) updateValue(key, obs[key]);
-
-
 		const {id, fungi, location, notes, photos} = obs;
 		const {commonName, genus, species, nickname, confidence} = fungi;
 		const {lat, lng, address} = location;
@@ -504,9 +465,7 @@ async function populateFields(obs) {
 		// };
 		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address};
 		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
-
 		if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
-
 		populateDatalists();
 		displaySection('.edit.observation');
 }
@@ -514,10 +473,10 @@ async function populateFields(obs) {
 function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>"
 	const footer = `<button onclick="saveObservation(event)">Save Observation</button>
-		<button onclick="deleteObservation("${obsId}")">Delete Observation</button>
+		<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
 		<button onclick="getAndDisplayObservations()">Cancel</button>`
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
-	getObservation(obsId, populateFields);
+	getObservation(obsId).then(res => populateFields(res));
 	populateDatalists();
 	displaySection('.edit.observation');
 }
@@ -545,7 +504,6 @@ function getObservations(callback) {
 	fetch(URL, {method: 'GET'})
 	.then((res) => res.json())
 	.then((res) => {
-		console.log(res);
 		callback(res);
 	})
 }
@@ -554,7 +512,7 @@ function displayObservations(res) {
 	// const observations = res.observations;
 	const observations = res;	
 	for(let obs of observations) {
-		if ((obs.location.lat) && (obs.location.lng)) setTimeout(getAddress(obs, renderObservation), 2000);
+		if ((obs.location.lat) && (obs.location.lng)) setTimeout(getAddress(obs, renderObservation), 200);
 		else renderObservation(obs, "Unknown Location");
 	};
 	displaySection('.observations');

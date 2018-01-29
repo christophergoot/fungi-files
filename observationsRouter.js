@@ -63,15 +63,12 @@ function processImage(buffer) {
 }
 
 async function uploadFile(file) {
-	console.log(file);
-	const buffer = file.buffer; // if memory storage
+	const buffer = file.buffer;
 	const resizedBuffer = await processImage(buffer);
 	let fileKey = Date.now() + file.originalname;
-	return new Promise((resolve, reject) => {		
+	return new Promise((resolve, reject) => {
 		S3.upload({Body: resizedBuffer, Key: fileKey}, (err, data) => {
 			if (err) reject (err)
-			console.log(err);
-			console.log(data.Location);
 			resolve(data.Location);
 		});
 	});

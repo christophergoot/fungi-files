@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const {Observation} = require('../models');
 const {runServer, app, closeServer} = require('../server');
 const {DATABASE_URL, TEST_DATABASE_URL} = require('../config');
-// const TEST_DATABASE_URL = DATABASE_URL;
+const SEED_OBSERVATION_COUNT = 20;
 
 const faker = require('faker');
 
@@ -20,7 +20,7 @@ function tearDownDb() {
 
 function seedObservations() {
 	const seedData = [];
-	for(let i=0; i<10; i++) seedData.push(fakeObservation());
+	for(let i=0; i<SEED_OBSERVATION_COUNT; i++) seedData.push(fakeObservation());
 	return Observation.insertMany(seedData);
 }
 
@@ -54,13 +54,52 @@ describe('API Endpoint tests', () => {
 	afterEach(() => tearDownDb());
 	it('should get all observations on GET', () => {
 		// strategy
-		// 	seed a test database
 		// 	make a get request
+		//  compare count of seeded data against GET
 		// 	compare values against the DB directly
-		// tear down DB
 		return chai.request(app)
-			.get('/observations').then(res => {
-				
+			.get('/observations')
+				.then(res => res.body.length)
+				.then(getCount => {
+					SEED_OBSERVATION_COUNT.should.equal(getCount);
+			})
+	});
+	it('should get a single observation on GET:id', () => {
+		// strategy
+		// 	call mongo for an example id
+		// 	place GET call using that id
+		// 	varify some that id
+		return Observation.find().limit(1)
+			.then(res => {
+				const knownId = res[0]._id.toString();
+				const knownFungi = res[0].fungi;
+				return chai.request(app)
+				.get('/observations/' + knownId)
+					.then(res => {
+						res.body.id.should.equal(knownId);
+						res.body.fungi.commonName.should.equal(knownFungi.commonName);
+					})
+			})
+	})
+	it('should delete a single observation on DEL:id', () => {
+		// strategy
+		// 	call mongo for an example id
+		// 	make DEL call using that id
+			// verify status code
+		// 	attempt to GET:id
+		// 		verify error Code
+		// 	make GET call
+		// 		verify count = initial seed count -1
+		return Observation.find().limit(1)
+			.then(res => {
+				const knownId = res[0]._id.toString();
+				return chai.request(app)
+				.delete(`/observations/${knownId}`)
+					.then(res => {
+						res.should.have.status(204)
+						return Observation.find().count();
+					})
+					.then(endCount => endCount.should.equal(SEED_OBSERVATION_COUNT - 1))
 			})
 	})
 })
