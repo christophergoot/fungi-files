@@ -9,13 +9,13 @@ const URL = "http://localhost:8080/observations/";
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation">
-<input type="hidden" name="id"> 
-<input type="hidden" name="photos"> 
+<input type="hidden" name="id">
+<input type="hidden" name="photos">
 	<div  class="area">
 		<div>
 			<h3>Images</h3>
-			<button onclick="uploadFile(event)">Select Images</button>
-			<input onchange="receiveFiles(event)" id="file-input" name="file-input" type="file" accept="image/*" style="display:none;" multiple>
+			<button onclick="selectFiles(event)">Select Images</button>
+			<input onchange="receiveFiles(event)" id="file-input" name="photos" type="file"  style="display:none;" multiple>
 			<div class="img-preview">
 			</div>
 		</div>
@@ -159,11 +159,6 @@ function geolocate(event) {
 	});
 }
 
-function submitImage(file) {
-	console.log('submitting image');
-	console.log(file);
-}
-
 function toDecimal (number) {
 	return number[0].numerator + number[1].numerator /
 		(60 * number[1].denominator) + number[2].numerator / (3600 * number[2].denominator);
@@ -191,7 +186,7 @@ function populateNames (event) {
 	};
 }
 
-function uploadFile (event) {
+function selectFiles (event) {
 	event.preventDefault();
 	document.querySelector("#file-input").click();
 }
@@ -338,8 +333,8 @@ function displayObservation(obs) {
 function staticMapUrl(latlng) {
 	let url = "https://maps.googleapis.com/maps/api/staticmap?";
 	url += "size=200x200";
-	url += "&zoom=13";
-	url += "&maptype=roadmap";
+	url += "&zoom=10";
+	url += "&maptype=terrain";
 	url += `&markers=${latlng.lat},${latlng.lng}`;
 	url += `&key=${GOOGLEMAPS_API_KEY}`;
 
@@ -360,9 +355,13 @@ function getAddress (obs, callback) {
 	const geocoder = new google.maps.Geocoder;
 	geocoder.geocode({'location': coords}, function(results, status) {
 		let addressString;
-		if (results) { addressString = results[1].formatted_address; }
-		else { addressString = ""; }
-		callback(obs, addressString);	});
+		if (status === "ZERO_RESULTS") {addressString = "";
+		} else if (results) { 
+			if (results[1]) {addressString = results[1].formatted_address;}
+			else addressString = results[0].formatted_address;
+		} else { addressString = ""; }
+		callback(obs, addressString);	
+	});
 }
 
 function newObservation () {
@@ -438,45 +437,58 @@ function submitNewObservation (event) {
 
 function updateObservation (formData) {
 	alert('this has not been implemented with mongo yet');
-	// const arr = MOCK_OBSERVATIONS.observations;
-	// const obs = mockSerialize(formObj);
-	// console.log('obs after edit', obs);
-	// for (let i in arr) {
-	// 	if (arr[i].id === obs.id) arr[i] = obs;
-	// };
+
+
 	getAndDisplayObservations();
 }
 function publishNewObservation (formData) {
-	// alert('this has not been implemented with mongo yet');
-
-	fetch(URL, {method: 'POST', body: formData})
-	// .then((res) => res.json())
-	.catch(error => console.error('Error:', error))
+	fetch(URL, {
+		method: 'POST', 
+		body: formData,
+	})
+	.then((res) => res.json())
 	.then((res) => {
-		console.log(res);
-	})	// const obs = mockSerialize(formObj);
-	// MOCK_OBSERVATIONS.observations.push(obs);
-	getAndDisplayObservations();
+		getAndDisplayObservations();
+		console.log(`server response is ${res}`);
+	})
+	.catch(error => console.error('Error:', error))
 }
 
 function getTime(date) {
-	// const hour = date.getHours();
-	// const minute = date.getMinutes();
-	// return `${hour}:${minute}`;
-
-
+	return new Promise(resolve => {
+		let hour = date.getHours(),
+		minute = date.getMinutes();
+		if (hour.toString().length < 2) hour = `0${hour}`;
+		if (minute.toString().length < 2) minute = `0${minute}`;
+		resolve (`${hour}:${minute}`);
+	})
 }
 
 function getDate(date) {
-	// const year = date.getFullYear();
-	// const month = date.getMonth();
-	// const day = date.getDate();
-	// return `${year}-${month}-${day}`;
-
-
+	return new Promise(resolve => {
+		let year = date.getFullYear(),
+			month = '' + (date.getMonth() + 1),
+			day = '' + date.getDate();
+		if (month.length < 2) month = '0' + month;
+		if (day.length < 2) day = '0' + day;
+		resolve ([year, month, day].join('-'));
+	})
 }
 
-function populateFields(obs) {
+function deleteObservation(obsId) {
+	event.preventDefault();
+	console.log(obsId);
+	document.querySelector('section.edit.observation').innerHTML = "";
+	fetch((URL + obsId), {method: 'DEL'})
+		.then((res) => res.json())
+		.then((res) => {
+			getAndDisplayObservations();
+			console.log(res);
+		})
+		.catch(error => console.error('Error:', error))
+}
+
+async function populateFields(obs) {
 	// let fields = Object.keys(obs);
 	// for (let field in fields) fields.push(Object.keys(obs[fields[field]]));
 	// for (let key of fields) if (document.querySelector(`[name="${key}"]`)) updateValue(key, obs[key]);
@@ -486,9 +498,11 @@ function populateFields(obs) {
 		const {commonName, genus, species, nickname, confidence} = fungi;
 		const {lat, lng, address} = location;
 		const {mushroomNotes, habitatNotes, locationNotes, speciminNotes} = notes;
-		// const obsTime = getTime(obs.obsDate);
-		// const obsDate = getDate(obs.obsDate);
-		const possibleNames = {id, obsDate, obsTime, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address};
+		// if (obs.obsDate) {
+			const obsTime = await getTime(new Date(obs.obsDate));
+			const obsDate = await getDate(new Date(obs.obsDate));	
+		// };
+		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address};
 		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 
 		if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
@@ -500,6 +514,7 @@ function populateFields(obs) {
 function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>"
 	const footer = `<button onclick="saveObservation(event)">Save Observation</button>
+		<button onclick="deleteObservation("${obsId}")">Delete Observation</button>
 		<button onclick="getAndDisplayObservations()">Cancel</button>`
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
 	getObservation(obsId, populateFields);
@@ -510,8 +525,8 @@ function editObservation(event, obsId) {
 function renderObservation(obs, address) {
 	// const obsDate = new Date(obs.obsDate);
 	let obsRender = `<a class="edit-button" onclick="editObservation(event, '${obs.id}')">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
-		if (obs.photos) obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`;
-		else obsRender += `<img class="obs-thumb" src="media/mushroom.png">`;
+		if (obs.photos[0]) obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`;
+		else obsRender += `<img class="obs-thumb" src="media/mushroom.jpg">`;
 		if (obs.fungi.nickname) obsRender += 
 			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
 		if (obs.fungi.commonName) obsRender += 
@@ -539,7 +554,7 @@ function displayObservations(res) {
 	// const observations = res.observations;
 	const observations = res;	
 	for(let obs of observations) {
-		if ((obs.location.lat) && (obs.location.lng)) getAddress(obs, renderObservation);
+		if ((obs.location.lat) && (obs.location.lng)) setTimeout(getAddress(obs, renderObservation), 2000);
 		else renderObservation(obs, "Unknown Location");
 	};
 	displaySection('.observations');

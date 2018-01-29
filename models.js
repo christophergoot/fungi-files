@@ -23,7 +23,7 @@ const observationSchema = mongoose.Schema({
 		locationNotes: String,
 		speciminNotes: String
 	},
-	obsDate: {type: Date},
+	obsDate: {type: Date, default: Date.now},
 	pubDate: {type: Date, default: Date.now}
 })
 

@@ -131,7 +131,7 @@ textarea {
 	padding: 15px;
 	position: fixed;
 	background: white;
-	overflow: auto;
+	overflow: scroll;
 }
 
 .static-map {

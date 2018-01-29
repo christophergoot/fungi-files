@@ -5,19 +5,23 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const multer = require('multer');
-const upload = multer();
-const {Observation} = require('./models');
+const storage = multer.memoryStorage(); //need to start with memoryStorage. Fix buffer
+const upload = multer({ storage: storage });
+const { Observation } = require('./models');
+const AWS = require('aws-sdk');
+const S3 = new AWS.S3({apiVersion: '2006-03-01', 
+	params: {
+		Bucket: 'fungi-files-observation-images'
+}});
+const sharp = require('sharp');
 
-// const {MOCK_OBSERVATIONS} = require('./mock-data');
 
 router.get('/', (req, res) => {
 	Observation
 	.find()
 	.then(obs => {
-		// console.log(obs);
 		res.json(
 			obs.map(obs => obs.serialize())
-			// obs
 		);
 	})
 	.catch(err => {
@@ -34,23 +38,80 @@ router.get('/:id', (req, res) => {
 		console.error(err);
 		res.status(500).json({ error: 'something went wrong getting single observation' });
 	  });
-  });
+});
 
-router.post('/', upload.array('photos'), (req, res) => {
-	const fields = [nickname, commonName, genus, species, confidence, lat, lng, address, mushroomNotes, habitatNotes, locationNotes, speciminNotes, obsDate, obsTime, pubDate];
-	let newPost = "";
-	for (let field in fields) if (`req.body.${field}`) newPost =+ `'${field}': req.body.${field},`;
-console.log(`{${newPost}}`);
+
+function nestFields(req) {
+	const fields = ['nickname', 'commonName', 'genus', 'species', 'confidence', 'lat', 'lng', 'address', 'mushroomNotes', 'habitatNotes', 'locationNotes', 'speciminNotes', 'obsDate', 'obsTime', 'pubDate'];
+	const fungiFields = ['commonName', 'species', 'genus', 'confidence', 'nickname'];
+	const notesFields = ['mushroomNotes', 'locationNotes', 'habitatNotes', 'speciminNotes'];
+	const locationFields = ['lat', 'lng', 'address'];
+	const observation = {'fungi':{},'notes':{},'location':{}};
+	for (let field of fields) if (req.body[field]) {
+		if (fungiFields.includes(field)) observation.fungi[field] = req.body[field];
+		if (notesFields.includes(field)) observation.notes[field] = req.body[field];
+		if (locationFields.includes(field)) observation.location[field] = req.body[field];
+	};
+	return observation;
+}
+
+function processImage(buffer) {
+	return sharp(buffer)
+		.resize(1000)
+		.toBuffer() //returns a promise
+		.catch( err => console.error(err));
+}
+
+async function uploadFile(file) {
+	console.log(file);
+	const buffer = file.buffer; // if memory storage
+	const resizedBuffer = await processImage(buffer);
+	let fileKey = Date.now() + file.originalname;
+	return new Promise((resolve, reject) => {		
+		S3.upload({Body: resizedBuffer, Key: fileKey}, (err, data) => {
+			if (err) reject (err)
+			console.log(err);
+			console.log(data.Location);
+			resolve(data.Location);
+		});
+	});
+}
+
+router.post('/', upload.array('photos'), async (req, res) => {
+	// upload photos and then pass urls onto Observation
+	const observation = nestFields(req);
+	const files = req.files;
+	if (files.length > 0)  {
+		let fileUrls = [];
+		for (let i=0; i<files.length; i++) {
+			try { fileUrls.push( await uploadFile(files[i])) } 
+			catch(err) { console.error(err) }
+		};
+
+		observation.photos =  fileUrls;
+		console.log(fileUrls);
+	};
 	Observation
-	.create(`{${newPost}}`)
+	.create(observation)
+	.then(obs => res.status(201).json(obs.serialize()))
 	.catch(err => {
 		console.error(err);
 		res.status(500).json({ error: 'Something went wrong posting a new observation' })
-	.then(obs => res.status(201).json(obs.serialize()))
-	;});
+	});
 })
 
-
+router.delete('/:id', (req, res) => {
+	Observation
+	  .findByIdAndRemove(req.params.id)
+	  .then(() => {
+		res.status(204).json({ message: 'success' });
+	  })
+	  .catch(err => {
+		console.error(err);
+		res.status(500).json({ error: 'something went wrong deleting an observation' });
+	  });
+  });
+  
 
 
 
