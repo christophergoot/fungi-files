@@ -23,6 +23,7 @@ const observationSchema = mongoose.Schema({
 		locationNotes: String,
 		speciminNotes: String
 	},
+	published: {type: Boolean, default: false},
 	obsDate: {type: Date, default: Date.now},
 	pubDate: {type: Date, default: Date.now}
 })
@@ -37,7 +38,8 @@ observationSchema.methods.serialize = function() {
 		notes: this.notes,
 		photos: this.photos,
 		obsDate: obsDateObj,
-		pubDate: pubDateObj
+		pubDate: pubDateObj,
+		published: this.published
 	};
 }
 

@@ -102,4 +102,7 @@ describe('API Endpoint tests', () => {
 					.then(endCount => endCount.should.equal(SEED_OBSERVATION_COUNT - 1))
 			})
 	})
+	it('should update an observation on PUT', () => {
+		
+	})
 })

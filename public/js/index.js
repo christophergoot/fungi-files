@@ -15,7 +15,7 @@ const OBSERVATION_FORM = `
 		<div>
 			<h3>Images</h3>
 			<button onclick="selectFiles(event)">Select Images</button>
-			<input onchange="receiveFiles(event)" id="file-input" name="photos" type="file"  style="display:none;" multiple>
+			<input onchange="receiveFiles(event)" id="file-input" name="newPhotos" type="file"  style="display:none;" multiple>
 			<div class="img-preview">
 			</div>
 		</div>
@@ -204,8 +204,8 @@ function receiveFiles (event) {
 function locationFromThumbnail(event) {
 	console.log(event);
 
-	const obs = {'location': {'lat': event.dataset.lat, 'lng': event.dataset.lng}}
-throw "look at obs"
+	const obs = { 'location': { 'lat': event.dataset.lat, 'lng': event.dataset.lng } }
+	throw "look at obs"
 	getAddress(obs, function (obs, addressString) {
 		// const gpsBtn = document.getElementById(`${file.name}-gps-action`);
 		// gpsBtn.setAttribute('data-lat', coords.lat);
@@ -218,8 +218,6 @@ throw "look at obs"
 		updateExif("Location extracted from '" + file.name + "'.", "no error");
 		updateValue('address', addressString);
 	});
-
-
 }
 
 function deleteFile(event) {
@@ -230,23 +228,24 @@ function deleteFile(event) {
 	console.log('need to delete AWS.S3 file');
 }
 
-function previewFile(file) {
-	const fileName = file.name;
-	const reader  = new FileReader();
+function insertThumbnailStructure(fileName) {
 	const newImg = `
 	<div id="${fileName}-div" class="thumb-div">
 		<a class="img-action delete" onclick="deleteFile(event)" data-filename="${fileName}" title="Remove Image" alt="Remove Image">
 			X
 		</a>
-<!--		<a class="img-action location" onclick="locationFromThumbnail(event)" id="${file.name}-gps-action" title="Use photo's location" alt="Use photo's location">
-			GPS
-		</a>
---!>		<img src="media/loading.gif" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
+		<img src="media/loading.gif" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
 		<p class="label">${fileName}</p>
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
 	thumbDiv.innerHTML += newImg;
+}
+
+function previewFile(file) {
+	const fileName = file.name;
+	const reader  = new FileReader();
+	insertThumbnailStructure(fileName);
 	reader.onloadend = function (event) {
 		const previewImg = document.getElementById(`${fileName}-thumb`);
 		previewImg.src = event.target.result;
@@ -379,14 +378,12 @@ const objFromIterator = (iterator) => {
     return obj;
 }
 
-function saveObservation (event) {
+function saveObservation (event, id) {
 	event.preventDefault();
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form); 
-	const entries = formData.entries();
-	let formObj = objFromIterator(entries);	
 	document.querySelector('section.edit.observation').innerHTML = "";
-	updateObservation (formObj);
+	updateObservation (id, formData);
 }
 
 function dateFromDateTime(date, time) {
@@ -402,13 +399,19 @@ function submitNewObservation (event) {
 	publishNewObservation (formData);
 }
 
-function updateObservation (formData) {
-	alert('this has not been implemented with mongo yet');
-
-	console.log('wants to make a put request');
-
-	getAndDisplayObservations();
+function updateObservation (id, formData) {
+	fetch(URL + id, {
+		method: 'PUT', 
+		body: formData,
+	})
+// 	.then((res) => res.json())
+	.then((res) => {
+		getAndDisplayObservations();
+		console.log(`server response is ${res}`);
+	})
+	.catch(error => console.error('Error:', error))
 }
+
 function publishNewObservation (formData) {
 	fetch(URL, {
 		method: 'POST', 
@@ -417,7 +420,6 @@ function publishNewObservation (formData) {
 	.then((res) => res.json())
 	.then((res) => {
 		getAndDisplayObservations();
-		console.log(`server response is ${res}`);
 	})
 	.catch(error => console.error('Error:', error))
 }
@@ -446,12 +448,21 @@ function getDate(date) {
 function deleteObservation(event, obsId) {
 	document.querySelector('section.edit.observation').innerHTML = "";
 	fetch((URL + obsId), {method: 'delete'})
-		.then((res) => res.json())
+// 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
 			console.log(res);
 		})
 		.catch(error => console.error('Error:', error))
+}
+
+function populateThumbnails(photos) {
+	for (let url of photos) { 
+		const filename = url.substring(url.lastIndexOf('/')+1);
+		insertThumbnailStructure(filename);
+		const previewImg = document.getElementById(`${filename}-thumb`);
+		previewImg.src = url;
+	};
 }
 
 async function populateFields(obs) {
@@ -463,7 +474,7 @@ async function populateFields(obs) {
 			const obsTime = await getTime(new Date(obs.obsDate));
 			const obsDate = await getDate(new Date(obs.obsDate));	
 		// };
-		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address};
+		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address, photos};
 		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 		if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
 		populateDatalists();
@@ -472,11 +483,14 @@ async function populateFields(obs) {
 
 function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>"
-	const footer = `<button onclick="saveObservation(event)">Save Observation</button>
+	const footer = `<button onclick="saveObservation(event, '${obsId}')">Save Observation</button>
 		<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
 		<button onclick="getAndDisplayObservations()">Cancel</button>`
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
-	getObservation(obsId).then(res => populateFields(res));
+	getObservation(obsId).then(res => {
+		populateFields(res);
+		populateThumbnails(res.photos);
+	});	
 	populateDatalists();
 	displaySection('.edit.observation');
 }
