@@ -1,5 +1,3 @@
-// import { read } from 'fs';
-
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -52,71 +50,85 @@ function nestFields(req) {
 	return observation;
 }
 
-function processImage(buffer) {
+function processImage(buffer,size) {
 	return sharp(buffer)
-		.resize(1200)
+		.resize(size)
 		.toBuffer() //returns a promise
 		.catch( err => console.error(err));
 }
 
-async function uploadFile(file,obsId) {
+async function uploadFile(file,obsId,size) {
 	const buffer = file.buffer;
-	const resizedBuffer = await processImage(buffer);
+	const resizedBuffer = await processImage(buffer,size);
 	const folder = obsId + '/';
 	const extention = file.originalname.substring(file.originalname.lastIndexOf('.'))
 	const fileKey = folder + Date.now() + extention;
 	return new Promise((resolve, reject) => {
 		S3.upload({Body: resizedBuffer, Key: fileKey}, (err, data) => {
-			if (err) reject (err)
+			if (err) reject (err);
 			resolve(data.Location);
 		});
 	});
 }
 
 async function updateObservation (req, res, id) {
-	if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-		res.status(400).json({
-			error: 'Request path id and request body id values must match'
-		});
-	};
+	// if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+	// 	res.status(400).json({
+	// 		error: 'Request path id and request body id values must match'
+	// 	});
+	// };
 	const observation = nestFields(req);
 	observation.id = id;
 	const files = req.files;
 	if (files.length > 0)  {
 		// construct observation.photos.files[{filename,url}];
-		let fileUrls = [];
-		if (req.body.photos) fileUrls = req.body.photos.urls.split(',');
+// function needs to 
+	// upload files
+	// attach new file references to observation
+
+		// strategy
+
+		let newFiles = [];
+		// if (req.body.photos) fileUrls = req.body.photos.urls.split(',');
 		for (let i=0; i<files.length; i++) {
-			try { fileUrls.push( await uploadFile(files[i], id)) }
-			catch(err) { console.error(err) }
+			const url = await uploadFile(files[i], id, 1200);
+			const thumbnail = await uploadFile(files[i], id, 200);
+			const filename = url.substring(url.lastIndexOf('/') + 1);
+			// const exif = [];
+			// observation.photos.files.push
+			newFiles.push({
+				url,thumbnail,filename,exif
+			});
+			// try { fileUrls.push( await uploadFile(files[i], id)) }
+			// catch(err) { console.error(err) }
 		};
-		observation.photos = {};
-		observation.photos.files = [];
-		observation.photos.
+
+		observation.photos = {'files': newFiles};
+		// observation.photos.
 		
-		fileUrls;
+		// fileUrls;
 	};
 	Observation
 	.findByIdAndUpdate(id, { $set: observation }, { new: true })
 	.then(obs => res.status(201).json(obs.serialize()))
 	.catch(err => {
 		console.error(err);
-		return status(500).json({ error: 'Something went wrong posting a new observation' })
+		res.status(500).json({ error: 'Something went wrong posting a new observation' })
 	});
 }
 
-router.post('/', upload.array('newPhotos'), async (req, res) => {
+router.post('/', upload.array('newPhotos'), (req, res) => {
 	// upload photos and then pass urls onto Observation
 	Observation.create({"published": true})
-	.then(async (obs) => {
+	.then((obs) => {
 		const id = obs.id.toString();
-		await updateObservation(req, res, id);
+		updateObservation(req, res, id);
 	});
 })
 
-router.put('/:id', upload.array('newPhotos'), async (req, res) => {
+router.put('/:id', upload.array('newPhotos'), (req, res) => {
 	const id = req.params.id;
-	await updateObservation(req, res, id);
+	updateObservation(req, res, id);
 })
 
 router.delete('/:id', (req, res) => {

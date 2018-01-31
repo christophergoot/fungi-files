@@ -478,18 +478,6 @@ function deleteObservation(event, obsId) {
 		.catch(error => console.error('Error:', error))
 }
 
-function populateThumbnails(photos) {
-	for (let file of photos) {
-		const {url, thumbnail} = file;
-		const filename = url.substring(url.lastIndexOf('/')+1);
-		insertThumbnailStructure(filename);
-		const previewImg = document.getElementById(`${filename}-thumb`);
-		if (thumbnail) previewImg.src = thumbnail;
-		else previewImg.src = url;
-
-		exifFromFile(url, filename);
-	};
-}
 
 async function populateFields(obs) {
 		const {id, fungi, location, notes, photos} = obs;
@@ -508,6 +496,16 @@ async function populateFields(obs) {
 		displaySection('.edit.observation');
 }
 
+function populateThumbnail(file) {
+	const {url, thumbnail, filename} = file;
+	insertThumbnailStructure(filename);
+	const previewImg = document.getElementById(`${filename}-thumb`);
+	if (thumbnail) previewImg.src = thumbnail;
+	else previewImg.src = url;
+
+	exifFromFile(url, filename);
+}
+
 function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>"
 	const footer = `<button onclick="saveObservation(event, '${obsId}')">Save Observation</button>
@@ -516,20 +514,26 @@ function editObservation(event, obsId) {
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
 	getObservation(obsId).then(res => {
 		populateFields(res);
-		populateThumbnails(res.photos.urls);
+		res.photos.files.forEach(file => populateThumbnail(file));
+// 		populateThumbnails(res.photos.urls);
 	});	
 	populateDatalists();
 	displaySection('.edit.observation');
 }
 
 function renderObservation(obs, address) {
-	// const obsDate = new Date(obs.obsDate);
-// 	throw 'wait';
+
+	// define thumbnail
+	let thumbnail = "";
+	if (obs.photos.featured) {
+		const filename = obs.photos.featured;
+		for(let i of photos.files) if (photos.files[i].filename === filename) thumbnail = photos.files[i].thumbnail;
+	} else if (obs.photos.files[0]) {
+		if (obs.photos.files[0].thumbnail) thumbnail = obs.photos.files[0].thumbnail;
+		else thumbnail = obs.photos.files[0].url;
+	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `<a class="edit-button" onclick="editObservation(event, '${obs.id}')">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
-		if (obs.photos.featured) obsRender += `<img class="obs-thumb" src="${obs.photos.featured.thumbnail}">`;
-		else if (obs.photos[0].thumbnail) obsRender += `<img class="obs-thumb" src="${obs.photos[0].thumbnail}">`;
-		else if (obs.photos[0].url) obsRender += `<img class="obs-thumb" src="${obs.photos[0].url}">`;
-		else obsRender += `<img class="obs-thumb" src="media/mushroom.jpg">`;
+		obsRender += `<img class="obs-thumb" src="${thumbnail}">`;
 		if (obs.fungi.nickname) obsRender += 
 			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
 		if (obs.fungi.commonName) obsRender += 
