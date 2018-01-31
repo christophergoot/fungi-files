@@ -226,10 +226,17 @@ function locationFromThumbnail(event) {
 
 function deleteFile(event) {
 	event.preventDefault();
-	const fileName = event.currentTarget.dataset.filename;
-	const target = document.getElementById(`${fileName}-div`);
-	target.parentNode.removeChild(target);
+	const filename = event.currentTarget.dataset.filename;
+	const target = document.getElementById(`${filename}-div`);
+	// if newfile
+	for(let i in globalFileHolder) {
+		console.log(globalFileHolder[i].name);
+		if (globalFileHolder[i].name === filename) globalFileHolder.splice(i,1);
+	} 
+	// if oldfile
 	console.log('need to delete AWS.S3 file');
+
+	target.parentNode.removeChild(target);
 }
 
 function insertThumbnailStructure(fileName) {
