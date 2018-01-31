@@ -11,7 +11,17 @@ const observationSchema = mongoose.Schema({
 		species: String,
 		confidence: Number
 	},
-	photos: [],
+	photos: {
+		featured: String,
+		files: [
+			{
+				filename: String,
+				url: String,
+				thumbnail: String,
+				exif: []
+			}
+		],
+	},
 	location: {
 		lat: Number,
 		lng: Number,

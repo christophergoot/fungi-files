@@ -2,10 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
 const multer = require('multer');
-const storage = multer.memoryStorage(); //need to start with memoryStorage. Fix buffer
+const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 const { Observation } = require('./models');
 const AWS = require('aws-sdk');
@@ -26,7 +24,7 @@ router.get('/', (req, res) => {
 	})
 	.catch(err => {
 		console.error(err);
-	res.status(500).json({ error: 'something went wrong getting all observations' });
+		res.status(500).json({ error: 'something went wrong getting all observations' });
 	});
 });
 
@@ -39,7 +37,6 @@ router.get('/:id', (req, res) => {
 		res.status(500).json({ error: 'something went wrong getting single observation' });
 	  });
 });
-
 
 function nestFields(req) {
 	const fields = ['nickname', 'commonName', 'genus', 'species', 'confidence', 'lat', 'lng', 'address', 'mushroomNotes', 'habitatNotes', 'locationNotes', 'speciminNotes', 'obsDate', 'obsTime', 'pubDate'];
@@ -86,13 +83,18 @@ async function updateObservation (req, res, id) {
 	observation.id = id;
 	const files = req.files;
 	if (files.length > 0)  {
+		// construct observation.photos.files[{filename,url}];
 		let fileUrls = [];
-		if (req.body.photos) fileUrls = req.body.photos.split(',');
+		if (req.body.photos) fileUrls = req.body.photos.urls.split(',');
 		for (let i=0; i<files.length; i++) {
 			try { fileUrls.push( await uploadFile(files[i], id)) }
 			catch(err) { console.error(err) }
 		};
-		observation.photos =  fileUrls;
+		observation.photos = {};
+		observation.photos.files = [];
+		observation.photos.
+		
+		fileUrls;
 	};
 	Observation
 	.findByIdAndUpdate(id, { $set: observation }, { new: true })
@@ -128,8 +130,22 @@ router.delete('/:id', (req, res) => {
 		res.status(500).json({ error: 'something went wrong deleting an observation' });
 	  });
   });
-  
 
+router.delete('/:id/:filename', (req, res) => {
+	const {id, filename} = req.params;
+	const photos = req.body;
+	Observation  //remove the url reference . . . maybe by using $pull
+		.findByIdAndUpdate(id, { $set: {'photos.urls': photos} }, { new: true })
+		.then(() => {
+			res.status(200).json({message: 'success'});
+		})
+
+// is working		
+	S3.deleteObject({Key: id + "/" + filename}, (err, res) => {
+		if (err) console.error(err);
+		else console.log(res);
+	})
+})
 
 
 
