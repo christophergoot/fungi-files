@@ -77,11 +77,10 @@ async function uploadFile(file,obsId) {
 }
 
 async function updateObservation (req, res, id) {
-	if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-		res.status(400).json({
-			error: 'Request path id and request body id values must match'
-		});
-	};
+	// if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+	// 	res.status(400).json({ error: 'Request path id and request body id values must match' });
+	// 	return;
+	// };
 	const observation = nestFields(req);
 	observation.id = id;
 	const files = req.files;
@@ -96,25 +95,26 @@ async function updateObservation (req, res, id) {
 	};
 	Observation
 	.findByIdAndUpdate(id, { $set: observation }, { new: true })
-	.then(obs => res.status(201).json(obs.serialize()))
-	.catch(err => {
-		console.error(err);
-		return status(500).json({ error: 'Something went wrong posting a new observation' })
-	});
+	.then(obs => res.status(201).json(obs.serialize()), )
+	.catch(err => res.status(500).json({ error: 'Something went wrong posting a new observation' }));
 }
 
-router.post('/', upload.array('newPhotos'), async (req, res) => {
+router.post('/', upload.array('newFiles'), (req, res) => {
 	// upload photos and then pass urls onto Observation
 	Observation.create({"published": true})
-	.then(async (obs) => {
+	.then((obs) => {
 		const id = obs.id.toString();
-		await updateObservation(req, res, id);
-	});
+		updateObservation(req, res, id);
+	})
+	.catch(err => {
+		console.log(err);
+		res.json(err);
+	})
 })
 
-router.put('/:id', upload.array('newPhotos'), async (req, res) => {
+router.put('/:id', upload.array('newFiles'), (req, res) => {
 	const id = req.params.id;
-	await updateObservation(req, res, id);
+	updateObservation(req, res, id);
 })
 
 router.delete('/:id', (req, res) => {

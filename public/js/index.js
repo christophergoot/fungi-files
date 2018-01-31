@@ -4,18 +4,20 @@ const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'spe
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 
-
 const URL = "http://localhost:8080/observations/";
+
+let globalFileHolder = [];
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation">
 <input type="hidden" name="id">
 <input type="hidden" name="photos">
+<input id="new-files" name="newFiles" type="file"  style="display:none;" multiple>
 	<div  class="area">
 		<div>
 			<h3>Images</h3>
-			<button onclick="selectFiles(event)">Select Images</button>
-			<input onchange="receiveFiles(event)" id="file-input" name="newPhotos" type="file"  style="display:none;" multiple>
+			<button onclick="selectFiles(event)">Add Images</button>
+			<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
 			<div class="img-preview">
 			</div>
 		</div>
@@ -197,8 +199,10 @@ function receiveFiles (event) {
 	const file = files[0];
 	for(let i=0; i<files.length; i++) {
 		previewFile(files[i]);
+		globalFileHolder.push(files[i]);
 	};
 	exifFromFile(file);
+	
 }
 
 function locationFromThumbnail(event) {
@@ -367,6 +371,7 @@ function newObservation () {
 	const footer = `<button onclick="submitNewObservation(event)">Submit New Observation</button>
 		<button onclick="getAndDisplayObservations()">Cancel</button>`;
 	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
+	globalFileHolder = [];
 	populateDatalists();
 	displaySection('.new.observation');
 }
@@ -382,6 +387,11 @@ function saveObservation (event, id) {
 	event.preventDefault();
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form); 
+	formData.delete('fileInput');
+
+	globalFileHolder.forEach(file => formData.append('newFiles', file));
+	globalFileHolder = [];
+
 	document.querySelector('section.edit.observation').innerHTML = "";
 	updateObservation (id, formData);
 }
@@ -395,6 +405,11 @@ function submitNewObservation (event) {
 	event.preventDefault();
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
+	formData.delete('fileInput');
+	
+	globalFileHolder.forEach(file => formData.append('newFiles', file));
+	globalFileHolder = [];
+
 	document.querySelector('section.new.observation').innerHTML = "";
 	publishNewObservation (formData);
 }
@@ -417,7 +432,7 @@ function publishNewObservation (formData) {
 		method: 'POST', 
 		body: formData,
 	})
-	.then((res) => res.json())
+// 	.then((res) => res.json())
 	.then((res) => {
 		getAndDisplayObservations();
 	})
@@ -491,6 +506,7 @@ function editObservation(event, obsId) {
 		populateFields(res);
 		populateThumbnails(res.photos);
 	});	
+	globalFileHolder = [];
 	populateDatalists();
 	displaySection('.edit.observation');
 }
