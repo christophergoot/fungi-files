@@ -1,6 +1,6 @@
 'use strict'
 
-const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'species': 'Abortivum'},	{ 'commonName': 'Admirable Bolete', 'genus': 'Boletus', 'species': 'Mirabilis'},	{ 'commonName': 'Alcohol Inky Cap', 'genus': 'Coprinus', 'species': 'Atramentarius'},	{ 'commonName': 'American Matsutake', 'genus': 'Tricholoma', 'species': 'Magnivelare'},	{ 'commonName': 'Angels\' Wings', 'genus': 'Pleurocybella', 'species': 'Porrigens'},	{ 'commonName': 'Anise-Scented', 'genus': 'Clitocybe', 'species': 'Odora'},	{ 'commonName': 'Apricot Jelly Mushroom', 'genus': 'Phlogiotis', 'species': 'Helvelloides'},	{ 'commonName': 'Aspen Scaber Stalk', 'genus': 'Leccinum', 'species': 'Insigne'},	{ 'commonName': 'Bare-Toothed Russula', 'genus': 'Russula', 'species': 'Vesca'},	{ 'commonName': 'Barrow\'s Bolete', 'genus': 'Boletus', 'species': 'Barrowsii'},	{ 'commonName': 'Bay Bolete', 'genus': 'Boletus', 'species': 'Badius'},	{ 'commonName': 'Bear\'s Head', 'genus': 'Hericium', 'species': 'Erinaceus'},	{ 'commonName': 'Belly-Button Mushroom', 'genus': 'Hydnum', 'species': 'Umbilicatum'},	{ 'commonName': 'Black Chanterelle', 'genus': 'Craterellus', 'species': 'Cornucopioides'},	{ 'commonName': 'Black Forest Mushroom', 'genus': 'Lentinus', 'species': 'Edodes'},	{ 'commonName': 'Black Fungus', 'genus': 'Auricularia', 'species': 'Polytricha'},	{ 'commonName': 'Black Kame', 'genus': 'Terfezia', 'species': 'Bouderi'},	{ 'commonName': 'Black Saddle Mushroom', 'genus': 'Helvella', 'species': 'Lacunosa'},	{ 'commonName': 'Blackening Russula', 'genus': 'Russula', 'species': 'Nigricans'},	{ 'commonName': 'Bleeding Agaricus', 'genus': 'Agaricus', 'species': 'Fuscofibrillosus Haemorrhoidarius'},	{ 'commonName': 'Bleeding Milky Cap', 'genus': 'Lactarius', 'species': 'Rubrilacteus'},	{ 'commonName': 'Blewit', 'genus': 'Lepista', 'species': 'Nuda'},	{ 'commonName': 'Blue Milky Cap', 'genus': 'Lactarius', 'species': 'Indigo'},	{ 'commonName': 'Bracelet Cortinarius', 'genus': 'Cortinarius', 'species': 'Armillatus'},	{ 'commonName': 'Brown Kame', 'genus': 'Terfezia', 'species': 'Claveryi'},	{ 'commonName': 'Butter Bolete', 'genus': 'Boletus', 'species': 'Appendiculatus'},	{ 'commonName': 'Butter Mushroom', 'genus': 'Pholiota', 'species': 'Aurivella'},	{ 'commonName': 'Button Mushroom', 'genus': 'Agaricus', 'species': 'Brunnescens'},	{ 'commonName': 'Candy Cap', 'genus': 'Lactarius', 'species': 'Fragilis'},	{ 'commonName': 'Cauliflower Mushroom', 'genus': 'Sparassis', 'species': 'Crispa'},	{ 'commonName': 'Cèpe', 'genus': 'Boletus', 'species': 'Edulis'},	{ 'commonName': 'Charcoal Burner', 'genus': 'Russula', 'species': 'Cyanoxantha'},	{ 'commonName': 'Chicken Of The Woods', 'genus': 'Rozites', 'species': 'Caperata'},	{ 'commonName': 'Cinnabar-Red Chanterelle', 'genus': 'Cantharellus', 'species': 'Cinnabarinus'},	{ 'commonName': 'Cloud Ear Mushroom', 'genus': 'Auricularia', 'species': 'Auricula'},	{ 'commonName': 'Clustered Blue Chanterelle', 'genus': 'Polyozellus', 'species': 'Multiplex'},	{ 'commonName': 'Comb Tooth Mushroom', 'genus': 'Hericium', 'species': 'Ramosum'},	{ 'commonName': 'Commercial Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus'},	{ 'commonName': 'Common Store Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus'},	{ 'commonName': 'Coral Hericium', 'genus': 'Hericium', 'species': 'Coralloides'},	{ 'commonName': 'Crocodile Agaricus', 'genus': 'Agaricus', 'species': 'Crocodilinus'},	{ 'commonName': 'Death Cap', 'genus': 'Amanita', 'species': 'Phalloides'},	{ 'commonName': 'Delicious Milky Cap', 'genus': 'Lactarius', 'species': 'Deliciosus'},	{ 'commonName': 'Dotted-Stalk Suillus', 'genus': 'Suillus', 'species': 'Granulatus'},	{ 'commonName': 'Drumstick Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes'},	{ 'commonName': 'Egg Mushroom', 'genus': 'Cantharellus', 'species': 'Cibarius'},	{ 'commonName': 'Enoki', 'genus': 'Flammulina', 'species': 'Velutipes'},	{ 'commonName': 'Fairy-Ring Mushroom', 'genus': 'Marasmius', 'species': 'Oreades'},	{ 'commonName': 'Fawn Mushroom', 'genus': 'Pluteus', 'species': 'Cervinus'},	{ 'commonName': 'Field Or Meadow Mushroom', 'genus': 'Agaricus', 'species': 'Campestris'},	{ 'commonName': 'Fragrant Clitocybe', 'genus': 'Clitocybe', 'species': 'Fragrans'},	{ 'commonName': 'French Black Truffle', 'genus': 'Tuber', 'species': 'Melanosporum'},	{ 'commonName': 'Garlic Marasmius', 'genus': 'Marasmius', 'species': 'Scorodonius'},	{ 'commonName': 'Golden Chanterelle', 'genus': 'Cantharellus', 'species': 'Cibarius'},	{ 'commonName': 'Golden Needle', 'genus': 'Flammulina', 'species': 'Velutipes'},	{ 'commonName': 'Green-Spored Parasol', 'genus': 'Lepiota', 'species': 'Molybdites'},	{ 'commonName': 'Green-Spored Parasol Mushroom', 'genus': 'Chlorophyllum', 'species': 'Molybdites'},	{ 'commonName': 'Gypsy Mushroom', 'genus': 'Rozites', 'species': 'Caperata'},	{ 'commonName': 'Hedgehog Mushroom', 'genus': 'Hydnum', 'species': 'Repandum'},	{ 'commonName': 'Hen Of The Woods', 'genus': 'Polypilus', 'species': 'Frondosa'},	{ 'commonName': 'Honey Or Oak Mushroom', 'genus': 'Armillaria', 'species': 'Mellea'},	{ 'commonName': 'Horn Of Plenty', 'genus': 'Craterellus', 'species': 'Cornucopioides'},	{ 'commonName': 'Horse Mushroom', 'genus': 'Agaricus', 'species': 'Arvensis'},	{ 'commonName': 'Inky Cap', 'genus': 'Coprinus', 'species': 'Comatus'},	{ 'commonName': 'Italian White Truffle', 'genus': 'Tuber', 'species': 'Magnatum'},	{ 'commonName': 'Judas\' Ear', 'genus': 'Auricularia', 'species': 'Auricula'},	{ 'commonName': 'King Bolete', 'genus': 'Boletus', 'species': 'Edulis'},	{ 'commonName': 'Lawyer\'S Wig', 'genus': 'Coprinus', 'species': 'Comatus'},	{ 'commonName': 'Man On Horseback', 'genus': 'Tricholoma', 'species': 'Flavovirens Equestre'},	{ 'commonName': 'Manzanita Scaber Stalk', 'genus': 'Leccinum', 'species': 'Manzanitae'},	{ 'commonName': 'Matsutake', 'genus': 'Armillaria', 'species': 'Matsutake'},	{ 'commonName': 'Mica Cap', 'genus': 'Coprinus', 'species': 'Micaceus'},	{ 'commonName': 'Monkey Head', 'genus': 'Hericium', 'species': 'Erinaceus'},	{ 'commonName': 'Morel', 'genus': 'Morchella', 'species': 'Esculenta'},	{ 'commonName': 'Nameko', 'genus': 'Pholiota', 'species': 'Nameko'},	{ 'commonName': 'Old Man Of The Woods', 'genus': 'Strobilomyces', 'species': 'Confusus'},	{ 'commonName': 'Orange-Capped Scaber Stalk', 'genus': 'Leccinum', 'species': 'Aurantiacum'},	{ 'commonName': 'Oregon White Truffle', 'genus': 'Tuber', 'species': 'Gibbosum'},	{ 'commonName': 'Oyster Mushroom', 'genus': 'Pleurotus', 'species': 'Ostreatus'},	{ 'commonName': 'Paddy Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea'},	{ 'commonName': 'Painted Suillus', 'genus': 'Suillus', 'species': 'Pictus'},	{ 'commonName': 'Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Procera'},	{ 'commonName': 'Peck', 'genus': 'Agaricus', 'species': 'Rodmanii'},	{ 'commonName': 'Pig\'s Ear', 'genus': 'Gomphus', 'species': 'Clavatus'},	{ 'commonName': 'Pine Mushroom', 'genus': 'Tricholoma', 'species': 'Magnivelare'},	{ 'commonName': 'Pom-Pom', 'genus': 'Hericium', 'species': 'Erinaceus'},	{ 'commonName': 'Porcini', 'genus': 'Boletus', 'species': 'Edulis'},	{ 'commonName': 'Puffball', 'genus': 'Calvatia', 'species': 'Gigantea'},	{ 'commonName': 'Red-Tipped Coral Mushroom', 'genus': 'Ramaria', 'species': 'Botrytis'},	{ 'commonName': 'Regal Bolete', 'genus': 'Boletus', 'species': 'Regius'},	{ 'commonName': 'Russula Like Waxy Cap', 'genus': 'Hygrophorus', 'species': 'Russula'},	{ 'commonName': 'Salt-Loving Mushroom', 'genus': 'Agaricus', 'species': 'Bernardii'},	{ 'commonName': 'Scaber Stalk', 'genus': 'Leccinum', 'species': 'Scaber'},	{ 'commonName': 'Shaggy Mane', 'genus': 'Coprinus', 'species': 'Comatus'},	{ 'commonName': 'Shaggy Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes'},	{ 'commonName': 'Shellfish-Scented Russula', 'genus': 'Russula', 'species': 'Xerampelina'},	{ 'commonName': 'Shiitake', 'genus': 'Lentinus', 'species': 'Edodes'},	{ 'commonName': 'Short-Stalked Slippery Cap', 'genus': 'Suillus', 'species': 'Brevipes'},	{ 'commonName': 'Short-Stem Russula', 'genus': 'Russula', 'species': 'Delica'},	{ 'commonName': 'Silver Ear Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis'},	{ 'commonName': 'Smooth Chanterelle', 'genus': 'Cantharellus', 'species': 'Lateritius'},	{ 'commonName': 'Snow Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis'},	{ 'commonName': 'Snowbank False Morel', 'genus': 'Gyromitra', 'species': 'Gigas'},	{ 'commonName': 'Sponge', 'genus': 'Morchella', 'species': 'Esculenta'},	{ 'commonName': 'Spring Agaricus', 'genus': 'Agaricus', 'species': 'Bitorquis'},	{ 'commonName': 'Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea'},	{ 'commonName': 'Summer Truffle', 'genus': 'Tuber', 'species': 'Aestivum'},	{ 'commonName': 'Sweet Tooth', 'genus': 'Hydnum', 'species': 'Repandum'},	{ 'commonName': 'Sweetbread Mushroom', 'genus': 'Clitopilus', 'species': 'Prunulus'},	{ 'commonName': 'Tacky Green Russula', 'genus': 'Russula', 'species': 'Aeruginea'},	{ 'commonName': 'Texas White Truffle', 'genus': 'Tuber', 'species': 'Texensis'},	{ 'commonName': 'The Prince', 'genus': 'Agaricus', 'species': 'Augustus'},	{ 'commonName': 'Tree Ear', 'genus': 'Auricularia', 'species': 'Polytricha'},	{ 'commonName': 'Tricholoma Magnivelare', 'genus': 'Armillaria', 'species': 'Ponderosa'},	{ 'commonName': 'Trumpet Chanterelle', 'genus': 'Cantharellus', 'species': 'Tubaeformis'},	{ 'commonName': 'Trumpet Of Death', 'genus': 'Craterellus', 'species': 'Cornucopioides'},	{ 'commonName': 'Two-Colored Bolete', 'genus': 'Boletus', 'species': 'Bicolor'},	{ 'commonName': 'Umbrella Polypore', 'genus': 'Polyporus', 'species': 'Umbellatus'},	{ 'commonName': 'Variant Of B. Edulis', 'genus': 'Boletus', 'species': 'Pinicola'},	{ 'commonName': 'Velvet Foot', 'genus': 'Flammulina', 'species': 'Velutipes'},	{ 'commonName': 'White Chanterelle', 'genus': 'Cantharellus', 'species': 'Subalbidus'},	{ 'commonName': 'White Jelly Fungus', 'genus': 'Tremella', 'species': 'Fuciformis'},	{ 'commonName': 'Wine-Cap Stropharia', 'genus': 'Stropharia', 'species': 'Rugosoannulata'},	{ 'commonName': 'Winter Mushroom', 'genus': 'Flammulina', 'species': 'Velutipes'},	{ 'commonName': 'Wood Ear Mushroom', 'genus': 'Auricularia', 'species': 'Polytricha'},	{ 'commonName': 'Zeller\'s Bolete', 'genus': 'Boletus', 'species': 'Zelleri'}];
+const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'species': 'Abortivum' }, { 'commonName': 'Admirable Bolete', 'genus': 'Boletus', 'species': 'Mirabilis' }, { 'commonName': 'Alcohol Inky Cap', 'genus': 'Coprinus', 'species': 'Atramentarius' }, { 'commonName': 'American Matsutake', 'genus': 'Tricholoma', 'species': 'Magnivelare' }, { 'commonName': 'Angels\' Wings', 'genus': 'Pleurocybella', 'species': 'Porrigens' }, { 'commonName': 'Anise-Scented', 'genus': 'Clitocybe', 'species': 'Odora' }, { 'commonName': 'Apricot Jelly Mushroom', 'genus': 'Phlogiotis', 'species': 'Helvelloides' }, { 'commonName': 'Aspen Scaber Stalk', 'genus': 'Leccinum', 'species': 'Insigne' }, { 'commonName': 'Bare-Toothed Russula', 'genus': 'Russula', 'species': 'Vesca' }, { 'commonName': 'Barrow\'s Bolete', 'genus': 'Boletus', 'species': 'Barrowsii' }, { 'commonName': 'Bay Bolete', 'genus': 'Boletus', 'species': 'Badius' }, { 'commonName': 'Bear\'s Head', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Belly-Button Mushroom', 'genus': 'Hydnum', 'species': 'Umbilicatum' }, { 'commonName': 'Black Chanterelle', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Black Forest Mushroom', 'genus': 'Lentinus', 'species': 'Edodes' }, { 'commonName': 'Black Fungus', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Black Kame', 'genus': 'Terfezia', 'species': 'Bouderi' }, { 'commonName': 'Black Saddle Mushroom', 'genus': 'Helvella', 'species': 'Lacunosa' }, { 'commonName': 'Blackening Russula', 'genus': 'Russula', 'species': 'Nigricans' }, { 'commonName': 'Bleeding Agaricus', 'genus': 'Agaricus', 'species': 'Fuscofibrillosus Haemorrhoidarius' }, { 'commonName': 'Bleeding Milky Cap', 'genus': 'Lactarius', 'species': 'Rubrilacteus' }, { 'commonName': 'Blewit', 'genus': 'Lepista', 'species': 'Nuda' }, { 'commonName': 'Blue Milky Cap', 'genus': 'Lactarius', 'species': 'Indigo' }, { 'commonName': 'Bracelet Cortinarius', 'genus': 'Cortinarius', 'species': 'Armillatus' }, { 'commonName': 'Brown Kame', 'genus': 'Terfezia', 'species': 'Claveryi' }, { 'commonName': 'Butter Bolete', 'genus': 'Boletus', 'species': 'Appendiculatus' }, { 'commonName': 'Butter Mushroom', 'genus': 'Pholiota', 'species': 'Aurivella' }, { 'commonName': 'Button Mushroom', 'genus': 'Agaricus', 'species': 'Brunnescens' }, { 'commonName': 'Candy Cap', 'genus': 'Lactarius', 'species': 'Fragilis' }, { 'commonName': 'Cauliflower Mushroom', 'genus': 'Sparassis', 'species': 'Crispa' }, { 'commonName': 'Cèpe', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Charcoal Burner', 'genus': 'Russula', 'species': 'Cyanoxantha' }, { 'commonName': 'Chicken Of The Woods', 'genus': 'Rozites', 'species': 'Caperata' }, { 'commonName': 'Cinnabar-Red Chanterelle', 'genus': 'Cantharellus', 'species': 'Cinnabarinus' }, { 'commonName': 'Cloud Ear Mushroom', 'genus': 'Auricularia', 'species': 'Auricula' }, { 'commonName': 'Clustered Blue Chanterelle', 'genus': 'Polyozellus', 'species': 'Multiplex' }, { 'commonName': 'Comb Tooth Mushroom', 'genus': 'Hericium', 'species': 'Ramosum' }, { 'commonName': 'Commercial Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus' }, { 'commonName': 'Common Store Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus' }, { 'commonName': 'Coral Hericium', 'genus': 'Hericium', 'species': 'Coralloides' }, { 'commonName': 'Crocodile Agaricus', 'genus': 'Agaricus', 'species': 'Crocodilinus' }, { 'commonName': 'Death Cap', 'genus': 'Amanita', 'species': 'Phalloides' }, { 'commonName': 'Delicious Milky Cap', 'genus': 'Lactarius', 'species': 'Deliciosus' }, { 'commonName': 'Dotted-Stalk Suillus', 'genus': 'Suillus', 'species': 'Granulatus' }, { 'commonName': 'Drumstick Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes' }, { 'commonName': 'Egg Mushroom', 'genus': 'Cantharellus', 'species': 'Cibarius' }, { 'commonName': 'Enoki', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Fairy-Ring Mushroom', 'genus': 'Marasmius', 'species': 'Oreades' }, { 'commonName': 'Fawn Mushroom', 'genus': 'Pluteus', 'species': 'Cervinus' }, { 'commonName': 'Field Or Meadow Mushroom', 'genus': 'Agaricus', 'species': 'Campestris' }, { 'commonName': 'Fragrant Clitocybe', 'genus': 'Clitocybe', 'species': 'Fragrans' }, { 'commonName': 'French Black Truffle', 'genus': 'Tuber', 'species': 'Melanosporum' }, { 'commonName': 'Garlic Marasmius', 'genus': 'Marasmius', 'species': 'Scorodonius' }, { 'commonName': 'Golden Chanterelle', 'genus': 'Cantharellus', 'species': 'Cibarius' }, { 'commonName': 'Golden Needle', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Green-Spored Parasol', 'genus': 'Lepiota', 'species': 'Molybdites' }, { 'commonName': 'Green-Spored Parasol Mushroom', 'genus': 'Chlorophyllum', 'species': 'Molybdites' }, { 'commonName': 'Gypsy Mushroom', 'genus': 'Rozites', 'species': 'Caperata' }, { 'commonName': 'Hedgehog Mushroom', 'genus': 'Hydnum', 'species': 'Repandum' }, { 'commonName': 'Hen Of The Woods', 'genus': 'Polypilus', 'species': 'Frondosa' }, { 'commonName': 'Honey Or Oak Mushroom', 'genus': 'Armillaria', 'species': 'Mellea' }, { 'commonName': 'Horn Of Plenty', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Horse Mushroom', 'genus': 'Agaricus', 'species': 'Arvensis' }, { 'commonName': 'Inky Cap', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Italian White Truffle', 'genus': 'Tuber', 'species': 'Magnatum' }, { 'commonName': 'Judas\' Ear', 'genus': 'Auricularia', 'species': 'Auricula' }, { 'commonName': 'King Bolete', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Lawyer\'S Wig', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Man On Horseback', 'genus': 'Tricholoma', 'species': 'Flavovirens Equestre' }, { 'commonName': 'Manzanita Scaber Stalk', 'genus': 'Leccinum', 'species': 'Manzanitae' }, { 'commonName': 'Matsutake', 'genus': 'Armillaria', 'species': 'Matsutake' }, { 'commonName': 'Mica Cap', 'genus': 'Coprinus', 'species': 'Micaceus' }, { 'commonName': 'Monkey Head', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Morel', 'genus': 'Morchella', 'species': 'Esculenta' }, { 'commonName': 'Nameko', 'genus': 'Pholiota', 'species': 'Nameko' }, { 'commonName': 'Old Man Of The Woods', 'genus': 'Strobilomyces', 'species': 'Confusus' }, { 'commonName': 'Orange-Capped Scaber Stalk', 'genus': 'Leccinum', 'species': 'Aurantiacum' }, { 'commonName': 'Oregon White Truffle', 'genus': 'Tuber', 'species': 'Gibbosum' }, { 'commonName': 'Oyster Mushroom', 'genus': 'Pleurotus', 'species': 'Ostreatus' }, { 'commonName': 'Paddy Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea' }, { 'commonName': 'Painted Suillus', 'genus': 'Suillus', 'species': 'Pictus' }, { 'commonName': 'Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Procera' }, { 'commonName': 'Peck', 'genus': 'Agaricus', 'species': 'Rodmanii' }, { 'commonName': 'Pig\'s Ear', 'genus': 'Gomphus', 'species': 'Clavatus' }, { 'commonName': 'Pine Mushroom', 'genus': 'Tricholoma', 'species': 'Magnivelare' }, { 'commonName': 'Pom-Pom', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Porcini', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Puffball', 'genus': 'Calvatia', 'species': 'Gigantea' }, { 'commonName': 'Red-Tipped Coral Mushroom', 'genus': 'Ramaria', 'species': 'Botrytis' }, { 'commonName': 'Regal Bolete', 'genus': 'Boletus', 'species': 'Regius' }, { 'commonName': 'Russula Like Waxy Cap', 'genus': 'Hygrophorus', 'species': 'Russula' }, { 'commonName': 'Salt-Loving Mushroom', 'genus': 'Agaricus', 'species': 'Bernardii' }, { 'commonName': 'Scaber Stalk', 'genus': 'Leccinum', 'species': 'Scaber' }, { 'commonName': 'Shaggy Mane', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Shaggy Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes' }, { 'commonName': 'Shellfish-Scented Russula', 'genus': 'Russula', 'species': 'Xerampelina' }, { 'commonName': 'Shiitake', 'genus': 'Lentinus', 'species': 'Edodes' }, { 'commonName': 'Short-Stalked Slippery Cap', 'genus': 'Suillus', 'species': 'Brevipes' }, { 'commonName': 'Short-Stem Russula', 'genus': 'Russula', 'species': 'Delica' }, { 'commonName': 'Silver Ear Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Smooth Chanterelle', 'genus': 'Cantharellus', 'species': 'Lateritius' }, { 'commonName': 'Snow Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Snowbank False Morel', 'genus': 'Gyromitra', 'species': 'Gigas' }, { 'commonName': 'Sponge', 'genus': 'Morchella', 'species': 'Esculenta' }, { 'commonName': 'Spring Agaricus', 'genus': 'Agaricus', 'species': 'Bitorquis' }, { 'commonName': 'Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea' }, { 'commonName': 'Summer Truffle', 'genus': 'Tuber', 'species': 'Aestivum' }, { 'commonName': 'Sweet Tooth', 'genus': 'Hydnum', 'species': 'Repandum' }, { 'commonName': 'Sweetbread Mushroom', 'genus': 'Clitopilus', 'species': 'Prunulus' }, { 'commonName': 'Tacky Green Russula', 'genus': 'Russula', 'species': 'Aeruginea' }, { 'commonName': 'Texas White Truffle', 'genus': 'Tuber', 'species': 'Texensis' }, { 'commonName': 'The Prince', 'genus': 'Agaricus', 'species': 'Augustus' }, { 'commonName': 'Tree Ear', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Tricholoma Magnivelare', 'genus': 'Armillaria', 'species': 'Ponderosa' }, { 'commonName': 'Trumpet Chanterelle', 'genus': 'Cantharellus', 'species': 'Tubaeformis' }, { 'commonName': 'Trumpet Of Death', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Two-Colored Bolete', 'genus': 'Boletus', 'species': 'Bicolor' }, { 'commonName': 'Umbrella Polypore', 'genus': 'Polyporus', 'species': 'Umbellatus' }, { 'commonName': 'Variant Of B. Edulis', 'genus': 'Boletus', 'species': 'Pinicola' }, { 'commonName': 'Velvet Foot', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'White Chanterelle', 'genus': 'Cantharellus', 'species': 'Subalbidus' }, { 'commonName': 'White Jelly Fungus', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Wine-Cap Stropharia', 'genus': 'Stropharia', 'species': 'Rugosoannulata' }, { 'commonName': 'Winter Mushroom', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Wood Ear Mushroom', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Zeller\'s Bolete', 'genus': 'Boletus', 'species': 'Zelleri' }];
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 
@@ -133,7 +133,7 @@ const OBSERVATION_FORM = `
 `;
 
 
-function displaySection (sec) {
+function displaySection(sec) {
 	const secs = document.querySelectorAll('section');
 	for (let el of secs) el.classList.add('hidden');
 	document.querySelector(sec).classList.remove('hidden');
@@ -141,32 +141,32 @@ function displaySection (sec) {
 
 function reveal(selector, event) {
 	document.querySelector(selector).classList.toggle('reveal');
-	event.currentTarget.classList.toggle('visible'); 
+	event.currentTarget.classList.toggle('visible');
 }
 
-function updateAddress (addressString) {
+function updateAddress(addressString) {
 	document.querySelector('#address-input').setAttribute('value', addressString);
 }
 
 function geolocate(event) {
 	navigator.geolocation.getCurrentPosition((position) => {
-		const coords = {'lat': position.coords.latitude, 'lng': position.coords.longitude};
-		const obs = {'location': coords};
-		getAddress(obs, function(obs, addressString) {
+		const coords = { 'lat': position.coords.latitude, 'lng': position.coords.longitude };
+		const obs = { 'location': coords };
+		getAddress(obs, function (obs, addressString) {
 			updateValue('lat', position.coords.latitude);
-			updateValue('lng', position.coords.longitude);			
+			updateValue('lng', position.coords.longitude);
 			updateValue('address', addressString);
 			updateExif('Location taken from current location');
 		});
 	});
 }
 
-function toDecimal (number) {
+function toDecimal(number) {
 	return number[0].numerator + number[1].numerator /
 		(60 * number[1].denominator) + number[2].numerator / (3600 * number[2].denominator);
 };
 
-function updateExif (string, status) {
+function updateExif(string, status) {
 	const locText = document.querySelector('#location-text');
 	locText.innerHTML = string;
 	if (status) {
@@ -175,7 +175,7 @@ function updateExif (string, status) {
 	};
 }
 
-function populateNames (event) {
+function populateNames(event) {
 	const inputName = event.target.attributes.name.value;
 	const inputValue = event.target.value;
 	for (let i = 0; i < MUSHROOMS.length; i++) {
@@ -188,15 +188,15 @@ function populateNames (event) {
 	};
 }
 
-function selectFiles (event) {
+function selectFiles(event) {
 	event.preventDefault();
 	document.querySelector("#file-input").click();
 }
 
-function receiveFiles (event) {
+function receiveFiles(event) {
 	event.preventDefault();
 	const files = event.target.files;
-	for(let i=0; i<files.length; i++) {
+	for (let i = 0; i < files.length; i++) {
 		previewFile(files[i]);
 		globalFileHolder.push(files[i]);
 		exifFromFile(files[i]);
@@ -223,20 +223,20 @@ function locationFromThumbnail(event) {
 	});
 }
 
-function deleteFileUponSave (id,filename) {
-// look in input - files to be deleted
+function deleteFileUponSave(id, filename) {
+	// look in input - files to be deleted
 	// delete from AWS and mongo
 	fetch(`${URL}${id}/${filename}`, {
 		method: 'DELETE',
-		headers: {'Content-Type': 'application/json'}
-	}).then((res) => console.log(res) );
+		headers: { 'Content-Type': 'application/json' }
+	}).then((res) => console.log(res));
 }
 
 function deleteFile(event) {
 	event.preventDefault();
-	const {filename} = event.currentTarget.dataset;
+	const { filename } = event.currentTarget.dataset;
 	const target = document.getElementById(`${filename}-div`);
-	const {src} = target.firstElementChild;
+	const { src } = target.firstElementChild;
 	// logic to deterine if new file or existing by looking at url
 	if (src.substring(0, 4) === 'http') {
 		// existing file, mark for later deletion
@@ -245,8 +245,8 @@ function deleteFile(event) {
 	}
 	else {
 		// new file, remove from globalFileHolder
-		for(let i in globalFileHolder) {
-			if (globalFileHolder[i].name === filename) globalFileHolder.splice(i,1);
+		for (let i in globalFileHolder) {
+			if (globalFileHolder[i].name === filename) globalFileHolder.splice(i, 1);
 		}
 	}
 	// delete thumbnail
@@ -272,21 +272,24 @@ function makeFeatured(event) {
 }
 
 function previewFile(file) {
-	const fileName = file.name;
-	insertThumbnailStructure(fileName);
-	const reader  = new FileReader();
+	const filename = file.name;
+	insertThumbnailStructure(filename);
+	const reader = new FileReader();
 	const featured = document.getElementsByName('featured')[0];
 	reader.onloadend = function (event) {
-		const previewImg = document.getElementById(`${fileName}-thumb`);
+		const previewImg = document.getElementById(`${filename}-thumb`);
 		previewImg.src = event.target.result;
 		if (featured) {
-			if (!featured.value) featured.value = event.target.result;
-			if (featured.value === previewImg.src) previewImg.classList.add('featured-image');
+			// if no currently featured image, make current image featured
+			if (!featured.value) featured.value = filename;
+			// if current image is featured, add CSS tag
+// BROKEN
+			// if (featured.value === previewImg.src) previewImg.classList.add('featured-image');
 		}
 	};
 	reader.readAsDataURL(file);
 
-  }
+}
 
 function exifFromFile(file, filename) {
 	if (!filename) filename = file.name;
@@ -349,8 +352,8 @@ function annimateObservation(event) {
 	});
 }
 
- function getObservation(targetId) {
-	return fetch(URL + targetId, {method: 'GET'})
+function getObservation(targetId) {
+	return fetch(URL + targetId, { method: 'GET' })
 		.then((res) => res.json());
 }
 
@@ -382,21 +385,22 @@ function viewObservation(event) {
 		.then(res => displayObservation(res));
 }
 
-function getAddress (obs, callback) {
-	const coords = {'lat': obs.location.lat, 'lng': obs.location.lng};
+function getAddress(obs, callback) {
+	const coords = { 'lat': obs.location.lat, 'lng': obs.location.lng };
 	const geocoder = new google.maps.Geocoder;
-	geocoder.geocode({'location': coords}, function(results, status) {
+	geocoder.geocode({ 'location': coords }, function (results, status) {
 		let addressString;
-		if (status === "ZERO_RESULTS") {addressString = "";
-		} else if (results) { 
-			if (results[1]) {addressString = results[1].formatted_address;}
+		if (status === "ZERO_RESULTS") {
+			addressString = "";
+		} else if (results) {
+			if (results[1]) { addressString = results[1].formatted_address; }
 			else addressString = results[0].formatted_address;
 		} else { addressString = ""; }
-		callback(obs, addressString);	
+		callback(obs, addressString);
 	});
 }
 
-function newObservation () {
+function newObservation() {
 	const header = "<h2>Add New Observation</h2>";
 	const newObs = 'section.new.observation';
 	const footer = `<button onclick="submitNewObservation(event)">Submit New Observation</button>
@@ -408,21 +412,21 @@ function newObservation () {
 }
 
 const objFromIterator = (iterator) => {
-    const obj = {};
-    for(let [key, val] of iterator)
-        obj[key] = val;
-    return obj;
+	const obj = {};
+	for (let [key, val] of iterator)
+		obj[key] = val;
+	return obj;
 }
 
 function dateFromDateTime(date, time) {
-    const combined = new Date(date + 'T' + time);
-    return combined;
+	const combined = new Date(date + 'T' + time);
+	return combined;
 };
 
 
-function loading(state: boolean, text: String) {
-	if (state) {
-		console.log('Loading . . . . .');
+function loading(state, text) {
+		if (state) {
+		console.log('Loading . . . . .   ', text);
 		// body = new Element('img');
 		// body.src = "media/loading.gif"
 		// // body.style = 
@@ -434,7 +438,7 @@ function loading(state: boolean, text: String) {
 }
 
 //directly from HTML onclick event
-function saveObservation (event, id) { 
+function saveObservation(event, id) {
 	event.preventDefault();
 	loading(true, 'Uploading Photos and Saving Observation');
 	let form = document.querySelector('#new-observation');
@@ -445,64 +449,67 @@ function saveObservation (event, id) {
 	const fileStr = document.getElementsByName("filesToBeDeleted")[0].value;
 	if (fileStr) {
 		arr = fileStr.split(',');
-		arr.forEach(filename => deleteFileUponSave(id,filename));
+		arr.forEach(filename => deleteFileUponSave(id, filename));
 	}
 	document.querySelector('section.edit.observation').innerHTML = "";
 	return new Promise(res => {
-		updateObservation (id, formData);
+		updateObservation(id, formData);
 	})
-	.then(loading(false));
+		.then(loading(false));
 }
 
-function submitNewObservation (event) {
+function submitNewObservation(event) {
 	event.preventDefault();
 	loading(true, 'Uploading Photos and Saving New Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
-	
-	globalFileHolder.forEach(file => formData.append('newFiles', file));
+
+
+	globalFileHolder.forEach(file => formData.append('newFiles', file, file.name));
+	// globalFileHolder.forEach(file => formData.append('newFiles[]', file, file.name));
+	// formData.append('newFiles', globalFileHolder);
 	globalFileHolder = [];
 
 	document.querySelector('section.new.observation').innerHTML = "";
 	return new Promise(res => {
-		publishNewObservation (formData)
+		publishNewObservation(formData)
 	})
-	.then(loading(false));
+		.then(loading(false));
 }
 
-function updateObservation (id, formData) {
+function updateObservation(id, formData) {
 	fetch(URL + id, {
-		method: 'PUT', 
+		method: 'PUT',
 		body: formData,
 	})
-// 	.then((res) => res.json())
-	.then((res) => {
-		getAndDisplayObservations();
-		// console.log(`server response is ${res}`);
-	})
-	.catch(error => console.error('Error:', error))
+		// 	.then((res) => res.json())
+		.then((res) => {
+			getAndDisplayObservations();
+			// console.log(`server response is ${res}`);
+		})
+		.catch(error => console.error('Error:', error))
 }
 
-function publishNewObservation (formData) {
+function publishNewObservation(formData) {
 	fetch(URL, {
-		method: 'POST', 
+		method: 'POST',
 		body: formData,
 	})
-	.then((res) => res.json())
-	.then((res) => {
-		getAndDisplayObservations();
-	})
-	.catch(error => console.error('Error:', error))
+		.then((res) => res.json())
+		.then((res) => {
+			getAndDisplayObservations();
+		})
+		.catch(error => console.error('Error:', error))
 }
 
 function getTime(date) {
 	return new Promise(resolve => {
 		let hour = date.getHours(),
-		minute = date.getMinutes();
+			minute = date.getMinutes();
 		if (hour.toString().length < 2) hour = `0${hour}`;
 		if (minute.toString().length < 2) minute = `0${minute}`;
-		resolve (`${hour}:${minute}`);
+		resolve(`${hour}:${minute}`);
 	})
 }
 
@@ -513,14 +520,14 @@ function getDate(date) {
 			day = '' + date.getDate();
 		if (month.length < 2) month = '0' + month;
 		if (day.length < 2) day = '0' + day;
-		resolve ([year, month, day].join('-'));
+		resolve([year, month, day].join('-'));
 	})
 }
 
 function deleteObservation(event, obsId) {
 	document.querySelector('section.edit.observation').innerHTML = "";
-	fetch((URL + obsId), {method: 'DELETE'})
-// 		.then((res) => res.json())
+	fetch((URL + obsId), { method: 'DELETE' })
+		// 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
 			console.log(res);
@@ -530,24 +537,24 @@ function deleteObservation(event, obsId) {
 
 
 async function populateFields(obs) {
-		const {id, fungi, location, notes, photos} = obs;
-		const {commonName, genus, species, nickname, confidence} = fungi;
-		const {lat, lng, address} = location;
-		const {mushroomNotes, habitatNotes, locationNotes, speciminNotes} = notes;
-		const {featured} = photos;
-		// if (obs.obsDate) {
-			const obsTime = await getTime(new Date(obs.obsDate));
-			const obsDate = await getDate(new Date(obs.obsDate));	
-		// };
-		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address, featured};
-		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
-		if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
-		populateDatalists();
-		displaySection('.edit.observation');
+	const { id, fungi, location, notes, photos } = obs;
+	const { commonName, genus, species, nickname, confidence } = fungi;
+	const { lat, lng, address } = location;
+	const { mushroomNotes, habitatNotes, locationNotes, speciminNotes } = notes;
+	const { featured } = photos;
+	// if (obs.obsDate) {
+	const obsTime = await getTime(new Date(obs.obsDate));
+	const obsDate = await getDate(new Date(obs.obsDate));
+	// };
+	const possibleNames = { obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address, featured };
+	for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
+	if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
+	populateDatalists();
+	displaySection('.edit.observation');
 }
 
 function populateThumbnail(file) {
-	const {url, thumbnail, filename} = file;
+	const { url, thumbnail, filename } = file;
 	insertThumbnailStructure(filename);
 	const previewImg = document.getElementById(`${filename}-thumb`);
 	if (thumbnail) previewImg.src = thumbnail;
@@ -565,51 +572,50 @@ function editObservation(event, obsId) {
 	getObservation(obsId).then(res => {
 		populateFields(res);
 		res.photos.files.forEach(file => populateThumbnail(file));
-// 		populateThumbnails(res.photos.urls);
-	});	
+		// 		populateThumbnails(res.photos.urls);
+	});
 	globalFileHolder = [];
 	populateDatalists();
 	displaySection('.edit.observation');
 }
 
 function renderObservation(obs, address) {
-
 	// define thumbnail
 	let thumbnail = "";
 	if (obs.photos.featured) {
 		const filename = obs.photos.featured;
-		for(let i of photos.files) if (photos.files[i].filename === filename) thumbnail = photos.files[i].thumbnail;
+		for (let i of photos.files) if (photos.files[i].filename === filename) thumbnail = photos.files[i].thumbnail;
 	} else if (obs.photos.files[0]) {
 		if (obs.photos.files[0].thumbnail) thumbnail = obs.photos.files[0].thumbnail;
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `<a class="edit-button" onclick="editObservation(event, '${obs.id}')">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
-		obsRender += `<img class="obs-thumb" src="${thumbnail}">`;
-		if (obs.fungi.nickname) obsRender += 
-			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
-		if (obs.fungi.commonName) obsRender += 
-			`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`;
-		if (obs.fungi.genus) obsRender += 
-			`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
+	obsRender += `<img class="obs-thumb" src="${thumbnail}">`;
+	if (obs.fungi.nickname) obsRender +=
+		`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
+	if (obs.fungi.commonName) obsRender +=
+		`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`;
+	if (obs.fungi.genus) obsRender +=
+		`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
 			<span class="label">species: </span>${obs.fungi.species}</span><span>`;
-		if (obs.obsDate) obsRender += 
-			`<span class="fungi"><span class="label">observed </span>${obs.obsDate} 
+	if (obs.obsDate) obsRender +=
+		`<span class="fungi"><span class="label">observed </span>${obs.obsDate} 
 			<span class="label">around </span><span id="list-address">${address}</span></span>`;
-		obsRender += `</div>`
-		document.querySelector('#obs-list').innerHTML += obsRender;
+	obsRender += `</div>`
+	document.querySelector('#obs-list').innerHTML += obsRender;
 }
 
 function getObservations(callback) {
-	fetch(URL, {method: 'GET'})
-	.then((res) => res.json())
-	.then((res) => {
-		callback(res);
-	})
+	fetch(URL, { method: 'GET' })
+		.then((res) => res.json())
+		.then((res) => {
+			callback(res);
+		})
 }
 
 function displayObservations(res) {
-	const observations = res;	
-	for(let obs of observations) {
+	const observations = res;
+	for (let obs of observations) {
 		if ((obs.location.lat) && (obs.location.lng)) setTimeout(getAddress(obs, renderObservation), 200);
 		else renderObservation(obs, "Unknown Location");
 	};
@@ -619,7 +625,7 @@ function displayObservations(res) {
 function getAndDisplayObservations() {
 	// clear out old observations
 	document.querySelector('#obs-list').innerHTML = "";
-    getObservations(displayObservations);
+	getObservations(displayObservations);
 }
 
 function updateValue(name, value) {
@@ -633,9 +639,9 @@ function update(target, content) {
 
 function populateDatalists() {
 	const datalists = ['commonName',
-						// 'genus',
-						// 'species'
-					];
+		// 'genus',
+		// 'species'
+	];
 	for (let datalist of datalists) {
 		let options = "";
 		for (let mush of MUSHROOMS) {
@@ -646,6 +652,6 @@ function populateDatalists() {
 	};
 }
 
-window.onload = function() {
+window.onload = function () {
 	getAndDisplayObservations();
 }

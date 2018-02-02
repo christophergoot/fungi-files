@@ -110,7 +110,7 @@ textarea {
 	padding-right: 10px;
 	display: block;
 }
-.obs-img {border: 2px black solid;transition: all .75s ease-out;/* max-width: 100%; *//max-height: 1;*float: left; */padding-right: 10px;/* height: 100%; */padding-right:  0;display: block;/* max-width:230px; *//* max-height:95px; */width: auto;height: auto;}
+.obs-img {border: 2px black solid;transition: all .75s ease-out;max-width: 100%;/max-height: 1;*float: left; */padding-right: 10px;max-height: 75%;height: 500px;padding-right:  0;display: block;/* max-width:230px; *//* max-height:95px; */width: auto;/* height: auto; */}
 /* 
 #view-observation {
 	position: fixed;
