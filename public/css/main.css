@@ -110,7 +110,7 @@ textarea {
 	padding-right: 10px;
 	display: block;
 }
-.obs-img {border: 2px black solid;transition: all .75s ease-out;max-width: 100%;/max-height: 1;*float: left; */padding-right: 10px;/* max-height: 50%; */padding-right:  0;}
+.obs-img {border: 2px black solid;transition: all .75s ease-out;/* max-width: 100%; *//max-height: 1;*float: left; */padding-right: 10px;/* height: 100%; */padding-right:  0;display: block;/* max-width:230px; *//* max-height:95px; */width: auto;height: auto;}
 /* 
 #view-observation {
 	position: fixed;
@@ -148,27 +148,47 @@ textarea {
 
 .thumb-div {
 	max-width: 100px;
+	position:  relative;
 	text-align: center;
-	margin: 5px;
+	margin: 10px 25px 5px 0;
 	overflow-wrap: break-word;
 }
 
 .thumb-img {
 	height: 75px;
 	/* max-width: 100px; */
+	/* position:  relative; */
 }
 
 .img-action {
 	position: absolute;
-	display: block;
-	text-align: right;
-	size: .25em;
-	color: rgb(255, 255, 255);
-	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-	margin: 3px;
-	/* top: 40px; */
-	/* right: 0; */
+	height: 20px;
+	right: -10px;
+	margin: 2px;
+	filter: drop-shadow(1px 1px 0 white) 
+	   drop-shadow(-1px 1px 0 white)  
+	     invert(100%);
 }
+
+.img-action:hover {
+	filter: invert(0);
+}
+
+.img-action.delete {
+	position: absolute;
+	top: -10px;
+}
+
+.img-action.featured {
+	position: absolute;
+	top: 12px;
+}
+
+.img-action.location {
+	position: absolute;
+	top: 38px;
+}
+
 
 #observation-detail {
 	display:  flex;
@@ -181,6 +201,9 @@ textarea {
 	opacity: .5;
 }
 
+.featured-image {
+	border: 3px solid black;
+}
 .popup {
 	position: fixed;
 	/* display:flex; */
@@ -233,4 +256,4 @@ textarea {
 	width: 32%;
 	margin: 2px;
 	/* background-color: pink; */
-	/* flex-grow:  1; */
+	/* flex-gr

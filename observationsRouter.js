@@ -1,11 +1,7 @@
-// import { read } from 'fs';
-
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
 const multer = require('multer');
-const storage = multer.memoryStorage(); //need to start with memoryStorage. Fix buffer
+const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 const { Observation } = require('./models');
 const AWS = require('aws-sdk');
@@ -14,7 +10,6 @@ const S3 = new AWS.S3({apiVersion: '2006-03-01',
 		Bucket: 'fungi-files-observation-images'
 }});
 const sharp = require('sharp');
-
 
 router.get('/', (req, res) => {
 	Observation
@@ -26,7 +21,7 @@ router.get('/', (req, res) => {
 	})
 	.catch(err => {
 		console.error(err);
-	res.status(500).json({ error: 'something went wrong getting all observations' });
+		res.status(500).json({ error: 'something went wrong getting all observations' });
 	});
 });
 
@@ -40,9 +35,8 @@ router.get('/:id', (req, res) => {
 	  });
 });
 
-
 function nestFields(req) {
-	const fields = ['nickname', 'commonName', 'genus', 'species', 'confidence', 'lat', 'lng', 'address', 'mushroomNotes', 'habitatNotes', 'locationNotes', 'speciminNotes', 'obsDate', 'obsTime', 'pubDate'];
+	const fields = ['nickname', 'commonName', 'genus', 'species', 'confidence', 'lat', 'lng', 'address', 'mushroomNotes', 'habitatNotes', 'locationNotes', 'speciminNotes', 'obsDate', 'obsTime', 'pubDate', 'featured'];
 	const fungiFields = ['commonName', 'species', 'genus', 'confidence', 'nickname'];
 	const notesFields = ['mushroomNotes', 'locationNotes', 'habitatNotes', 'speciminNotes'];
 	const locationFields = ['lat', 'lng', 'address'];
@@ -55,22 +49,22 @@ function nestFields(req) {
 	return observation;
 }
 
-function processImage(buffer) {
+function processImage(buffer,size) {
 	return sharp(buffer)
-		.resize(1200)
+		.resize(size)
 		.toBuffer() //returns a promise
 		.catch( err => console.error(err));
 }
 
-async function uploadFile(file,obsId) {
+async function uploadFile(file,obsId,size) {
 	const buffer = file.buffer;
-	const resizedBuffer = await processImage(buffer);
+	const resizedBuffer = await processImage(buffer,size);
 	const folder = obsId + '/';
 	const extention = file.originalname.substring(file.originalname.lastIndexOf('.'))
 	const fileKey = folder + Date.now() + extention;
 	return new Promise((resolve, reject) => {
 		S3.upload({Body: resizedBuffer, Key: fileKey}, (err, data) => {
-			if (err) reject (err)
+			if (err) reject (err);
 			resolve(data.Location);
 		});
 	});
@@ -85,22 +79,34 @@ async function updateObservation (req, res, id) {
 	observation.id = id;
 	const files = req.files;
 	if (files.length > 0)  {
-		let fileUrls = [];
-		if (req.body.photos) fileUrls = req.body.photos.split(',');
+	// upload files
+		let newFiles = [];
 		for (let i=0; i<files.length; i++) {
-			try { fileUrls.push( await uploadFile(files[i], id)) }
-			catch(err) { console.error(err) }
+			const url = await uploadFile(files[i], id, 1200);
+			const thumbnail = await uploadFile(files[i], id, 200);
+			const filename = url.substring(url.lastIndexOf('/') + 1);
+			// if (!observation.photos) observation.photos = {};
+			// if (!observation.photos.files) observation.photos.files = [];
+			newFiles.push({url,thumbnail,filename});
 		};
-		observation.photos =  fileUrls;
+		Observation
+		.findById(id, function (err, obs) {
+			if (!obs.photos) obs.photos = {};
+			if (!obs.photos.files) obs.photos.files = [];
+			for (let file of newFiles) obs.photos.files.push(file);
+			obs.save(function (err, updatedObs) {
+				if (err) return handleError(err);
+				Observation
+				.findByIdAndUpdate(id, { $set: observation }, { new: true })
+				.then(obs => res.status(201).json(obs.serialize()), )
+				.catch(err => res.status(500).json({ error: 'Something went wrong posting a new observation' }));
+			});
+		})
 	};
-	Observation
-	.findByIdAndUpdate(id, { $set: observation }, { new: true })
-	.then(obs => res.status(201).json(obs.serialize()), )
-	.catch(err => res.status(500).json({ error: 'Something went wrong posting a new observation' }));
 }
 
 router.post('/', upload.array('newFiles'), (req, res) => {
-	// upload photos and then pass urls onto Observation
+	// create a new document, and pass on id
 	Observation.create({"published": true})
 	.then((obs) => {
 		const id = obs.id.toString();
@@ -118,18 +124,58 @@ router.put('/:id', upload.array('newFiles'), (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
+	const {id} = req.params;
+	// removes document from mongo, passes on deleted document
 	Observation
-	  .findByIdAndRemove(req.params.id)
-	  .then(() => {
-		res.status(204).json({ message: 'success' });
-	  })
-	  .catch(err => {
-		console.error(err);
-		res.status(500).json({ error: 'something went wrong deleting an observation' });
-	  });
-  });
-  
+		.findByIdAndRemove(id)
+		.then((obs) => {
+			// S3.listObjects({'Prefix': id}, function (err, data) {
+			// 	if (err) console.log(err, err.stack);
+			// 	else console.log(data);
+			// })
+			const arr = obs.photos.files;
+			for (let i=0; i<arr.length; i++) {
+				S3.deleteObject({Key: arr[i].url});
+				S3.deleteObject({Key: arr[i].thumbnail})
+			};
 
+			// S3.deleteObject({Key: id + "/" + filename}, (err, res) => {
+			// 	if (err) console.error(err);
+			// 	else console.log(res);
+			// })
+			
+	// 	res.status(204).json({ message: 'success' });
+	//   })
+	//   .catch(err => {
+	// 	console.error(err);
+	// 	res.status(500).json({ error: 'something went wrong deleting an observation' });
+	//   });
+  });
+})
+
+
+router.delete('/:id/:filename', (req, res) => {
+	const {id, filename} = req.params;
+	Observation  
+		//remove the url reference . . . maybe by using $pull
+
+
+	.findByIdAndUpdate(id, { $pullAll: {'filename': filename} })
+		.then((data) => {
+			console.log(data);
+		})
+
+	// remove all associated files from S3
+	// currently url and thumbnail	
+	S3.deleteObject({Key: id + "/" + filename}, (err, res) => {
+		if (err) console.error(err);
+		else console.log(res);
+	})
+	.then(() => {
+		res.status(200).json({message: 'success'});
+	})
+
+})
 
 
 

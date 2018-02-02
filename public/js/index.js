@@ -11,8 +11,8 @@ let globalFileHolder = [];
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation">
 <input type="hidden" name="id">
-<input type="hidden" name="photos">
-<input id="new-files" name="newFiles" type="file"  style="display:none;" multiple>
+<input type="hidden" name="featured">
+<input type="hidden" name="filesToBeDeleted">
 	<div  class="area">
 		<div>
 			<h3>Images</h3>
@@ -196,13 +196,12 @@ function selectFiles (event) {
 function receiveFiles (event) {
 	event.preventDefault();
 	const files = event.target.files;
-	const file = files[0];
 	for(let i=0; i<files.length; i++) {
 		previewFile(files[i]);
 		globalFileHolder.push(files[i]);
+		exifFromFile(files[i]);
 	};
-	exifFromFile(file);
-	
+
 }
 
 function locationFromThumbnail(event) {
@@ -224,48 +223,74 @@ function locationFromThumbnail(event) {
 	});
 }
 
+function deleteFileUponSave (id,filename) {
+// look in input - files to be deleted
+	// delete from AWS and mongo
+	fetch(`${URL}${id}/${filename}`, {
+		method: 'DELETE',
+		headers: {'Content-Type': 'application/json'}
+	}).then((res) => console.log(res) );
+}
+
 function deleteFile(event) {
 	event.preventDefault();
-	const filename = event.currentTarget.dataset.filename;
+	const {filename} = event.currentTarget.dataset;
 	const target = document.getElementById(`${filename}-div`);
-	// if newfile
-	for(let i in globalFileHolder) {
-		console.log(globalFileHolder[i].name);
-		if (globalFileHolder[i].name === filename) globalFileHolder.splice(i,1);
-	} 
-	// if oldfile
-	console.log('need to delete AWS.S3 file');
-
+	const {src} = target.firstElementChild;
+	// logic to deterine if new file or existing by looking at url
+	if (src.substring(0, 4) === 'http') {
+		// existing file, mark for later deletion
+		const target = document.getElementsByName("filesToBeDeleted")[0];
+		target.setAttribute.value += ',' + filename;
+	}
+	else {
+		// new file, remove from globalFileHolder
+		for(let i in globalFileHolder) {
+			if (globalFileHolder[i].name === filename) globalFileHolder.splice(i,1);
+		}
+	}
+	// delete thumbnail
 	target.parentNode.removeChild(target);
 }
 
-function insertThumbnailStructure(fileName) {
+function insertThumbnailStructure(filename) {
 	const newImg = `
-	<div id="${fileName}-div" class="thumb-div">
-		<a class="img-action delete" onclick="deleteFile(event)" data-filename="${fileName}" title="Remove Image" alt="Remove Image">
-			X
-		</a>
-		<img src="media/loading.gif" id="${fileName}-thumb" class="thumb-img" alt="Thumbnail for ${fileName}" title="Thumbnail for ${fileName}">
-		<p class="label">${fileName}</p>
+	<div id="${filename}-div" class="thumb-div">
+		<img src="media/loading.gif" id="${filename}-thumb" class="thumb-img" alt="Thumbnail for ${filename}" title="Thumbnail for ${filename}">
+		<input type="image" src="/media/delete.png" onclick="deleteFile(event)" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
+		<input type="image" src="/media/featured.png" onclick="makeFeatured(event)" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
+		<p class="label">${filename}</p>
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
 	thumbDiv.innerHTML += newImg;
 }
 
+function makeFeatured(event) {
+	const filename = event.currentTarget.dataset.filename;
+	updateValue('featured', filename);
+}
+
 function previewFile(file) {
 	const fileName = file.name;
-	const reader  = new FileReader();
 	insertThumbnailStructure(fileName);
+	const reader  = new FileReader();
+	const featured = document.getElementsByName('featured')[0];
 	reader.onloadend = function (event) {
 		const previewImg = document.getElementById(`${fileName}-thumb`);
 		previewImg.src = event.target.result;
+		if (featured) {
+			if (!featured.value) featured.value = event.target.result;
+			if (featured.value === previewImg.src) previewImg.classList.add('featured-image');
+		}
 	};
 	reader.readAsDataURL(file);
+
   }
 
-function exifFromFile (file) {
-	if (file && file.name) {
+function exifFromFile(file, filename) {
+	if (!filename) filename = file.name;
+	if (file && filename) {
 		EXIF.getData(file, function () {
 			if (this.exifdata.GPSLatitude) {
 				let latRef = 1, lngRef = 1;
@@ -278,23 +303,22 @@ function exifFromFile (file) {
 				const str = this.exifdata.DateTime.split(" ");
 				const obsDate = str[0].replace(/:/g, "-");
 				const obsTime = str[1];
-				const obs = {'location': coords};
-
-				getAddress(obs, function (obs, addressString) {
-// 					const gpsBtn = document.getElementById(`${file.name}-gps-action`);
-// 					gpsBtn.setAttribute('data-lat', coords.lat);
-// 					gpsBtn.setAttribute('data-lng', coords.lng);
-
-					updateValue('obsDate', obsDate);
-					updateValue('obsTime', obsTime);
-					updateValue('lat', coords.lat);
-					updateValue('lng', coords.lng);
-					updateExif("Location extracted from '" + file.name + "'.", "no error");
-					updateValue('address', addressString);
-				});
-			} else {
-				updateExif("No EXIF data found in '" + file.name + "'.", "error");
-			};
+				const obs = { 'location': coords };
+				const target = document.getElementById(`${file.name}-div`);
+				const button = `<input type="image" src="/media/uselocation.png" onclick="locationFromThumbnail(event)" data-filename="${file.name}" alt="Use Image Time & Location" title="Use Image Time & Location" class="img-action location">`
+				target.innerHTML += button
+				// add button to thumbnail
+				if (!document.getElementsByName('lat')[0].value) {
+					getAddress(obs, function (obs, addressString) {
+						updateValue('obsDate', obsDate);
+						updateValue('obsTime', obsTime);
+						updateValue('lat', coords.lat);
+						updateValue('lng', coords.lng);
+						updateExif("Location extracted from '" + file.name + "'.", "no error");
+						updateValue('address', addressString);
+					});
+				}
+			}
 		});
 	};
 }
@@ -393,12 +417,15 @@ const objFromIterator = (iterator) => {
 function saveObservation (event, id) {
 	event.preventDefault();
 	let form = document.querySelector('#new-observation');
-	let formData = new FormData(form); 
+	let formData = new FormData(form);
 	formData.delete('fileInput');
-
 	globalFileHolder.forEach(file => formData.append('newFiles', file));
 	globalFileHolder = [];
-
+	const fileStr = document.getElementsByName("filesToBeDeleted")[0].value;
+	if (fileStr) {
+		arr = fileStr.split(',');
+		arr.forEach(filename => deleteFileUponSave(id,filename));
+	}
 	document.querySelector('section.edit.observation').innerHTML = "";
 	updateObservation (id, formData);
 }
@@ -408,7 +435,23 @@ function dateFromDateTime(date, time) {
     return combined;
 };
 
+
+function loading(state: boolean, text: String) {
+	if (state) {
+		console.log('Loading . . . . .');
+		// body = new Element('img');
+		// body.src = "media/loading.gif"
+		// // body.style = 
+	}
+	else if (!state) {
+		console.log('Loading Complete.')
+	}
+	else console.error('State is boolean, must be either true or false');
+}
+
+
 function submitNewObservation (event) {
+	loading('on');
 	event.preventDefault();
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
@@ -418,7 +461,10 @@ function submitNewObservation (event) {
 	globalFileHolder = [];
 
 	document.querySelector('section.new.observation').innerHTML = "";
-	publishNewObservation (formData);
+	return new Promise(res => {
+		publishNewObservation (formData)
+	})
+	.then(loading('off'));
 }
 
 function updateObservation (id, formData) {
@@ -429,7 +475,7 @@ function updateObservation (id, formData) {
 // 	.then((res) => res.json())
 	.then((res) => {
 		getAndDisplayObservations();
-		console.log(`server response is ${res}`);
+		// console.log(`server response is ${res}`);
 	})
 	.catch(error => console.error('Error:', error))
 }
@@ -439,7 +485,7 @@ function publishNewObservation (formData) {
 		method: 'POST', 
 		body: formData,
 	})
-// 	.then((res) => res.json())
+	.then((res) => res.json())
 	.then((res) => {
 		getAndDisplayObservations();
 	})
@@ -469,7 +515,7 @@ function getDate(date) {
 
 function deleteObservation(event, obsId) {
 	document.querySelector('section.edit.observation').innerHTML = "";
-	fetch((URL + obsId), {method: 'delete'})
+	fetch((URL + obsId), {method: 'DELETE'})
 // 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
@@ -478,29 +524,32 @@ function deleteObservation(event, obsId) {
 		.catch(error => console.error('Error:', error))
 }
 
-function populateThumbnails(photos) {
-	for (let url of photos) { 
-		const filename = url.substring(url.lastIndexOf('/')+1);
-		insertThumbnailStructure(filename);
-		const previewImg = document.getElementById(`${filename}-thumb`);
-		previewImg.src = url;
-	};
-}
 
 async function populateFields(obs) {
 		const {id, fungi, location, notes, photos} = obs;
 		const {commonName, genus, species, nickname, confidence} = fungi;
 		const {lat, lng, address} = location;
 		const {mushroomNotes, habitatNotes, locationNotes, speciminNotes} = notes;
+		const {featured} = photos;
 		// if (obs.obsDate) {
 			const obsTime = await getTime(new Date(obs.obsDate));
 			const obsDate = await getDate(new Date(obs.obsDate));	
 		// };
-		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address, photos};
+		const possibleNames = {obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address, featured};
 		for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 		if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
 		populateDatalists();
 		displaySection('.edit.observation');
+}
+
+function populateThumbnail(file) {
+	const {url, thumbnail, filename} = file;
+	insertThumbnailStructure(filename);
+	const previewImg = document.getElementById(`${filename}-thumb`);
+	if (thumbnail) previewImg.src = thumbnail;
+	else previewImg.src = url;
+
+	exifFromFile(url, filename);
 }
 
 function editObservation(event, obsId) {
@@ -511,7 +560,8 @@ function editObservation(event, obsId) {
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
 	getObservation(obsId).then(res => {
 		populateFields(res);
-		populateThumbnails(res.photos);
+		res.photos.files.forEach(file => populateThumbnail(file));
+// 		populateThumbnails(res.photos.urls);
 	});	
 	globalFileHolder = [];
 	populateDatalists();
@@ -519,10 +569,18 @@ function editObservation(event, obsId) {
 }
 
 function renderObservation(obs, address) {
-	// const obsDate = new Date(obs.obsDate);
+
+	// define thumbnail
+	let thumbnail = "";
+	if (obs.photos.featured) {
+		const filename = obs.photos.featured;
+		for(let i of photos.files) if (photos.files[i].filename === filename) thumbnail = photos.files[i].thumbnail;
+	} else if (obs.photos.files[0]) {
+		if (obs.photos.files[0].thumbnail) thumbnail = obs.photos.files[0].thumbnail;
+		else thumbnail = obs.photos.files[0].url;
+	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `<a class="edit-button" onclick="editObservation(event, '${obs.id}')">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
-		if (obs.photos[0]) obsRender += `<img class="obs-thumb" src="${obs.photos[0]}">`;
-		else obsRender += `<img class="obs-thumb" src="media/mushroom.jpg">`;
+		obsRender += `<img class="obs-thumb" src="${thumbnail}">`;
 		if (obs.fungi.nickname) obsRender += 
 			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
 		if (obs.fungi.commonName) obsRender += 

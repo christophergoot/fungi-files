@@ -3,17 +3,22 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const morgan = require('morgan');
-app.use(morgan('common'));
-app.use(express.static('public'));
 const { DATABASE_URL, PORT } = require('./config');
 const mongoose = require('mongoose');
-
+const bodyParser = require('body-parser');
 const observationsRouter = require('./observationsRouter');
-app.use('/observations', observationsRouter);
 
+// app.use(bodyParser.json());
+app.use(morgan('common'));
+app.use(express.static('public'));
+app.use('/observations', observationsRouter);
 app.use('*', function (req, res) {
 	res.status(404).json({ message: 'Not Found' });
 });
+app.use(function (err, req, res, next) {
+	console.error(err.stack)
+	res.status(500).send('Something broke!')
+  })
 
 let server;
 
