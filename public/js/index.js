@@ -414,22 +414,6 @@ const objFromIterator = (iterator) => {
     return obj;
 }
 
-function saveObservation (event, id) {
-	event.preventDefault();
-	let form = document.querySelector('#new-observation');
-	let formData = new FormData(form);
-	formData.delete('fileInput');
-	globalFileHolder.forEach(file => formData.append('newFiles', file));
-	globalFileHolder = [];
-	const fileStr = document.getElementsByName("filesToBeDeleted")[0].value;
-	if (fileStr) {
-		arr = fileStr.split(',');
-		arr.forEach(filename => deleteFileUponSave(id,filename));
-	}
-	document.querySelector('section.edit.observation').innerHTML = "";
-	updateObservation (id, formData);
-}
-
 function dateFromDateTime(date, time) {
     const combined = new Date(date + 'T' + time);
     return combined;
@@ -449,10 +433,30 @@ function loading(state: boolean, text: String) {
 	else console.error('State is boolean, must be either true or false');
 }
 
+//directly from HTML onclick event
+function saveObservation (event, id) { 
+	event.preventDefault();
+	loading(true, 'Uploading Photos and Saving Observation');
+	let form = document.querySelector('#new-observation');
+	let formData = new FormData(form);
+	formData.delete('fileInput');
+	globalFileHolder.forEach(file => formData.append('newFiles', file));
+	globalFileHolder = [];
+	const fileStr = document.getElementsByName("filesToBeDeleted")[0].value;
+	if (fileStr) {
+		arr = fileStr.split(',');
+		arr.forEach(filename => deleteFileUponSave(id,filename));
+	}
+	document.querySelector('section.edit.observation').innerHTML = "";
+	return new Promise(res => {
+		updateObservation (id, formData);
+	})
+	.then(loading(false));
+}
 
 function submitNewObservation (event) {
-	loading('on');
 	event.preventDefault();
+	loading(true, 'Uploading Photos and Saving New Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
@@ -464,7 +468,7 @@ function submitNewObservation (event) {
 	return new Promise(res => {
 		publishNewObservation (formData)
 	})
-	.then(loading('off'));
+	.then(loading(false));
 }
 
 function updateObservation (id, formData) {
@@ -604,7 +608,6 @@ function getObservations(callback) {
 }
 
 function displayObservations(res) {
-	// const observations = res.observations;
 	const observations = res;	
 	for(let obs of observations) {
 		if ((obs.location.lat) && (obs.location.lng)) setTimeout(getAddress(obs, renderObservation), 200);
@@ -642,10 +645,6 @@ function populateDatalists() {
 		update(`#${datalist}-datalist`, options);
 	};
 }
-
-// document.querySelectorAll("button").onclick = function(event) {
-// 	event.preventDefault();
-//   }
 
 window.onload = function() {
 	getAndDisplayObservations();
