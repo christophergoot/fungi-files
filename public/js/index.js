@@ -224,12 +224,10 @@ function locationFromThumbnail(event) {
 }
 
 function deleteFileUponSave(id, filename) {
-	// look in input - files to be deleted
-	// delete from AWS and mongo
-	fetch(`${URL}${id}/${filename}`, {
+	fetch(`${URL}delete/${id}/${filename}`, {
 		method: 'DELETE',
 		headers: { 'Content-Type': 'application/json' }
-	}).then((res) => console.log(res));
+	})
 }
 
 function deleteFile(event) {
@@ -241,7 +239,8 @@ function deleteFile(event) {
 	if (src.substring(0, 4) === 'http') {
 		// existing file, mark for later deletion
 		const target = document.getElementsByName("filesToBeDeleted")[0];
-		target.setAttribute.value += ',' + filename;
+		target.value += filename + ','
+		// target.setAttribute('value',  += filename + ',';
 	}
 	else {
 		// new file, remove from globalFileHolder
@@ -288,7 +287,6 @@ function previewFile(file) {
 		}
 	};
 	reader.readAsDataURL(file);
-
 }
 
 function exifFromFile(file, filename) {
@@ -438,7 +436,7 @@ function loading(state, text) {
 }
 
 //directly from HTML onclick event
-function saveObservation(event, id) {
+async function saveObservation(event, id) {
 	event.preventDefault();
 	loading(true, 'Uploading Photos and Saving Observation');
 	let form = document.querySelector('#new-observation');
@@ -446,16 +444,16 @@ function saveObservation(event, id) {
 	formData.delete('fileInput');
 	globalFileHolder.forEach(file => formData.append('newFiles', file));
 	globalFileHolder = [];
-	const fileStr = document.getElementsByName("filesToBeDeleted")[0].value;
-	if (fileStr) {
-		arr = fileStr.split(',');
+	const filesToBeDeleted = document.getElementsByName("filesToBeDeleted")[0].value;
+	
+	if (filesToBeDeleted) {
+		let arr = filesToBeDeleted.split(',');
 		arr.forEach(filename => deleteFileUponSave(id, filename));
-	}
+	};
 	document.querySelector('section.edit.observation').innerHTML = "";
-	return new Promise(res => {
-		updateObservation(id, formData);
-	})
-		.then(loading(false));
+
+	await updateObservation(id, formData);
+	loading(false);
 }
 
 function submitNewObservation(event) {
@@ -483,10 +481,10 @@ function updateObservation(id, formData) {
 		method: 'PUT',
 		body: formData,
 	})
-		// 	.then((res) => res.json())
+		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
-			// console.log(`server response is ${res}`);
+			console.log(`server response is ${res}`);
 		})
 		.catch(error => console.error('Error:', error))
 }
