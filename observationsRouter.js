@@ -42,7 +42,7 @@ function nestFields(req) {
 	const fungiFields = ['commonName', 'species', 'genus', 'confidence', 'nickname'];
 	const notesFields = ['mushroomNotes', 'locationNotes', 'habitatNotes', 'speciminNotes'];
 	const locationFields = ['lat', 'lng', 'address'];
-	const observation = { 'fungi': {}, 'notes': {}, 'location': {} };
+	const observation = { 'fungi': {}, 'notes': {}, 'location': {}, 'featured': req.body.featured };
 	for (let field of fields) if (req.body[field]) {
 		if (fungiFields.includes(field)) observation.fungi[field] = req.body[field];
 		if (notesFields.includes(field)) observation.notes[field] = req.body[field];
@@ -79,13 +79,20 @@ async function updateObservation(req, res, id) {
 	if (files.length > 0) {
 		// upload files
 		let newFiles = [];
+		// let newFeatured = "";
 		for (let i = 0; i < files.length; i++) {
-			const url = await uploadFile(files[i], id, 1200);
+			const origName = files[i].originalname;
+			const url = await uploadFile(files[i], id, 1200);	
 			const thumbnail = await uploadFile(files[i], id, 200);
 			const filename = url.substring(url.lastIndexOf('/') + 1);
 			// if (!observation.photos) observation.photos = {};
 			// if (!observation.photos.files) observation.photos.files = [];
 			newFiles.push({ url, thumbnail, filename });
+			if (observation.featured === origName ) observation.featured = filename;
+			// 	newFeatured = filename;
+			// }
+			// if (observation.photos.featured === origName ) newFeatured = filename;
+
 		};
 		// update photo.files directly in mongo
 		Observation
@@ -93,11 +100,13 @@ async function updateObservation(req, res, id) {
 			if (!obs.photos) obs.photos = {};
 			if (!obs.photos.files) obs.photos.files = [];
 			for (let file of newFiles) obs.photos.files.push(file);
+			// if (newFeatured) obs.featured = newFeatured;
+			// if (newFeatured) obs.photos.featured = newFeatured;
 			obs.save();
 		});
 	};
 	Observation
-		.findByIdAndUpdate(id, { $set: observation }, { new: true })
+		.findByIdAndUpdate(id, { $set: observation })
 		.then(obs => res.status(201).json(obs.serialize()), )
 		.catch(err => res.status(500).json({ error: 'Something went wrong posting a new observation' }));
 }

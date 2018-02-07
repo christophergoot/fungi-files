@@ -11,14 +11,17 @@ const observationSchema = mongoose.Schema({
 		species: String,
 		confidence: Number
 	},
+	featured: String,
 	photos: {
-		featured: String,
 		files: [
 			{
 				filename: String,
 				url: String,
 				thumbnail: String,
-				exif: []
+				latlng: {
+					lat: Number,
+					lng: Number
+				}
 			}
 		],
 	},
@@ -47,6 +50,7 @@ observationSchema.methods.serialize = function() {
 		location: this.location,
 		notes: this.notes,
 		photos: this.photos,
+		featured: this.featured,
 		obsDate: obsDateObj,
 		pubDate: pubDateObj,
 		published: this.published
