@@ -209,12 +209,7 @@ function receiveFiles(event) {
 
 function locationFromThumbnail(event) {
 	const obs = { 'location': { 'lat': event.currentTarget.dataset.lat, 'lng': event.currentTarget.dataset.lng } }
-
 	getAddress(obs, function (obs, addressString) {
-		// const gpsBtn = document.getElementById(`${file.name}-gps-action`);
-		// gpsBtn.setAttribute('data-lat', coords.lat);
-		// gpsBtn.setAttribute('data-lng', coords.lng);
-
 		updateValue('obsDate', obsDate);
 		updateValue('obsTime', obsTime);
 		updateValue('lat', coords.lat);
@@ -459,6 +454,7 @@ async function saveObservation(event, id) {
 		let arr = filesToBeDeleted.split(',');
 		arr.forEach(filename => deleteFileUponSave(id, filename));
 	};
+
 	document.querySelector('section.edit.observation').innerHTML = "";
 
 	await updateObservation(id, formData);
@@ -472,13 +468,10 @@ function submitNewObservation(event) {
 	let formData = new FormData(form);
 	formData.delete('fileInput');
 
-
-	globalFileHolder.forEach(file => formData.append('newFiles', file, file.name));
-	// globalFileHolder.forEach(file => formData.append('newFiles[]', file, file.name));
-	// formData.append('newFiles', globalFileHolder);
+	globalFileHolder.forEach(file => formData.append('newFiles', file));
 	globalFileHolder = [];
 
-	document.querySelector('section.new.observation').innerHTML = "";
+	document.querySelector('section.new.observation').innerHTML = "";	
 	return new Promise(res => {
 		publishNewObservation(formData)
 	})
@@ -493,7 +486,6 @@ function updateObservation(id, formData) {
 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
-			console.log(`server response is ${res}`);
 		})
 		.catch(error => console.error('Error:', error))
 }
@@ -568,7 +560,7 @@ function populateThumbnail(file) {
 	else previewImg.src = url;
 	const featured = document.getElementById('featured-input').value;
 	if (featured === filename) previewImg.classList.add('featured-image');
-	exifFromFile(previewImg, filename);
+	if (latlng) 
 }
 
 function editObservation(event, obsId) {

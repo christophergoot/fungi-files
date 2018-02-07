@@ -53,6 +53,7 @@ function nestFields(req) {
 
 function processImage(buffer, size) {
 	return sharp(buffer)
+		.rotate()
 		.resize(size)
 		.toBuffer() //returns a promise
 		.catch(err => console.error(err));
@@ -79,20 +80,13 @@ async function updateObservation(req, res, id) {
 	if (files.length > 0) {
 		// upload files
 		let newFiles = [];
-		// let newFeatured = "";
 		for (let i = 0; i < files.length; i++) {
 			const origName = files[i].originalname;
 			const url = await uploadFile(files[i], id, 1200);	
 			const thumbnail = await uploadFile(files[i], id, 200);
 			const filename = url.substring(url.lastIndexOf('/') + 1);
-			// if (!observation.photos) observation.photos = {};
-			// if (!observation.photos.files) observation.photos.files = [];
 			newFiles.push({ url, thumbnail, filename });
 			if (observation.featured === origName ) observation.featured = filename;
-			// 	newFeatured = filename;
-			// }
-			// if (observation.photos.featured === origName ) newFeatured = filename;
-
 		};
 		// update photo.files directly in mongo
 		Observation
@@ -100,11 +94,10 @@ async function updateObservation(req, res, id) {
 			if (!obs.photos) obs.photos = {};
 			if (!obs.photos.files) obs.photos.files = [];
 			for (let file of newFiles) obs.photos.files.push(file);
-			// if (newFeatured) obs.featured = newFeatured;
-			// if (newFeatured) obs.photos.featured = newFeatured;
 			obs.save();
 		});
 	};
+	// update the other input fields
 	Observation
 		.findByIdAndUpdate(id, { $set: observation })
 		.then(obs => res.status(201).json(obs.serialize()), )
@@ -148,7 +141,6 @@ router.delete('/:id', (req, res) => {
 				await deleteS3File(keyFromUrl(arr[i].url));
 				await deleteS3File(keyFromUrl(arr[i].thumbnail));
 			};
-
 			//   .catch(err => {
 			// 	console.error(err);
 			// 	res.status(500).json({ error: 'something went wrong deleting an observation' });
