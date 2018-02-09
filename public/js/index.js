@@ -10,12 +10,9 @@ let globalFileHolder = [];
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation">
-id
-<input type="text" name="id">
-<br>featured
-<input type="text" name="featured" id="featured-input">
-<br>files to be deleted
-<input type="text" name="filesToBeDeleted">
+<input type="hidden" name="id">
+<input type="hidden" name="featured" id="featured-input">
+<input type="hidden" name="filesToBeDeleted">
 	<div  class="area">
 		<div>
 			<h3>Images</h3>
@@ -155,12 +152,7 @@ function geolocate(event) {
 	navigator.geolocation.getCurrentPosition((position) => {
 		const coords = { 'lat': position.coords.latitude, 'lng': position.coords.longitude };
 		const obs = { 'location': coords };
-		getAddress(obs, function (obs, addressString) {
-			updateValue('lat', position.coords.latitude);
-			updateValue('lng', position.coords.longitude);
-			updateValue('address', addressString);
-			updateExif('Location taken from current location');
-		});
+		updateLocation(obs, 'Current Location');
 	});
 }
 
@@ -207,19 +199,35 @@ function receiveFiles(event) {
 
 }
 
+function updateLocation(obs, locationSource) {
+	getAddress(obs, function (obs, addressString) {
+		updateValue('lat', obs.location.lat);
+		updateValue('lng', obs.location.lng);
+		updateExif("Location extracted from '" + locationSource + "'.", "no error");
+		updateValue('address', addressString);
+	});
+	if(obs.date) {
+		const date = new Date(obs.date);
+		const year = date.getFullYear(),
+			month = ("0" + (date.getMonth() + 1)).slice(-2),
+			day = ("0" + date.getDate()).slice(-2);
+		const obsDate = `${year}-${month}-${day}`
+		const obsTime = date.toTimeString().substring(0,8) ;
+		updateValue('obsDate', obsDate);
+		updateValue('obsTime', obsTime);
+
+	}
+}
+
 function locationFromThumbnail(event) {
 	event.preventDefault();
 	const obs = { 
 		'filename': event.currentTarget.dataset.filename,
+		'date': event.currentTarget.dataset.date,
 		'location': { 
 			'lat': Number(event.currentTarget.dataset.lat),
 			'lng': Number(event.currentTarget.dataset.lng) } };
-	getAddress(obs, function (obs, addressString) {
-		updateValue('lat', obs.location.lat);
-		updateValue('lng', obs.location.lng);
-		updateExif("Location extracted from '" + obs.filename + "'.", "no error");
-		updateValue('address', addressString);
-	});
+	updateLocation(obs, obs.filename);
 }
 
 function deleteFileUponSave(id, filename) {
@@ -299,9 +307,18 @@ function previewFile(file) {
 	reader.readAsDataURL(file);
 }
 
-function addGpsAction (lat, lng, filename) {
+function addGpsAction (lat, lng, filename, date) {
 	const target = document.getElementById(`${filename}-div`);
-	const button = `<input type="image" src="/media/uselocation.png" onclick="locationFromThumbnail(event)" data-filename="${filename}" data-lat="${lat}" data-lng="${lng}" alt="Use Image Location" title="Use Image Location" class="img-action location">`;
+	const button = `<input type="image"
+					src="/media/uselocation.png" 
+					onclick="locationFromThumbnail(event)" 
+					data-filename="${filename}" 
+					data-lat="${lat}" 
+					data-lng="${lng}" 
+					data-date="${date}" 
+					alt="Use Image Location" 
+					title="Use Image Location" 
+					class="img-action location">`;
 	target.innerHTML += button;
 
 }
@@ -319,22 +336,14 @@ function exifFromFile(file, filename) {
 					'lng': toDecimal(this.exifdata.GPSLongitude) * lngRef
 				};
 				const str = this.exifdata.DateTime.split(" ");
-				const obsDate = str[0].replace(/:/g, "-");
-				const obsTime = str[1];
-				const obs = { 'location': coords };
-
-				addGpsAction(coords.lat, coords.lng, filename);
-
+				// const obsDate = str[0].replace(/:/g, "-");
+				// const obsTime = str[1];
+				const obs = { 'location': coords,
+								'date': this.exifdata.DateTime };
 				// add button to thumbnail
+				addGpsAction(coords.lat, coords.lng, filename, this.exifdata.DateTime);
 				if (!document.getElementsByName('lat')[0].value) {
-					getAddress(obs, function (obs, addressString) {
-						updateValue('obsDate', obsDate);
-						updateValue('obsTime', obsTime);
-						updateValue('lat', coords.lat);
-						updateValue('lng', coords.lng);
-						updateExif("Location extracted from '" + file.name + "'.", "no error");
-						updateValue('address', addressString);
-					});
+					updateLocation(obs, filename);
 				}
 			}
 		});
@@ -578,10 +587,9 @@ function populateThumbnail(file) {
 	const featured = document.getElementById('featured-input').value;
 	if (featured === filename) previewImg.classList.add('featured-image');
 
-
 	if (exif) {
-		if (exif.lat && exif.lng) {
-			addGpsAction(exif.lat, exif.lng, filename);
+		if (exif.lat && exif.lng && exif.date) {
+			addGpsAction(exif.lat, exif.lng, filename, exif.date);
 		}
 	}
 }

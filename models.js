@@ -20,7 +20,8 @@ const observationSchema = mongoose.Schema({
 				thumbnail: String,
 				exif: {
 					lat: Number,
-					lng: Number
+					lng: Number,
+					date: Date
 				}
 			}
 		],

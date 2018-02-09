@@ -76,31 +76,32 @@ async function uploadFile(file, obsId, size) {
 }
 
 function toDecimal(number) {
-	// return number[0].numerator + number[1].numerator /
-	// 	(60 * number[1].denominator) + number[2].numerator / (3600 * number[2].denominator);
-
 	return number[0] + (number[1] / 60) + (number[2] / 3600);
 };
 
-function getExif(file) { // returns Buffer containing raw EXIF data, if present
+function getExif(file) {
 	return sharp(file.buffer)
 		.metadata()
 		.then(async data => {
 			if (data.exif) {
 				const exifdata = await exifReader(data.exif);
-
-				let latRef = 1, lngRef = 1;
-				if (exifdata.gps.GPSLatitudeRef === "S") latRef = -1
-				if (exifdata.gps.GPSLongitudeRef === "W") lngRef = -1
-				const exif = await {
-					'lat': Number(toDecimal(exifdata.gps.GPSLatitude) * latRef),
-					'lng': Number(toDecimal(exifdata.gps.GPSLongitude) * lngRef),
-					// 'date': exifdata.gps.DateTime
-				};
-				return exif;
+				if (exifdata.gps) {
+					let latRef = 1, lngRef = 1;
+					if (exifdata.gps.GPSLatitudeRef === "S") latRef = -1
+					if (exifdata.gps.GPSLongitudeRef === "W") lngRef = -1
+					const time = exifdata.gps.GPSTimeStamp.join(':');
+					const date = exifdata.gps.GPSDateStamp.replace(/:/g, "-");
+					const exif = await {
+						'lat': Number(toDecimal(exifdata.gps.GPSLatitude) * latRef),
+						'lng': Number(toDecimal(exifdata.gps.GPSLongitude) * lngRef),
+						'date': new Date(`${date} ${time}Z`)
+					};
+					return exif;
+				}
 			}
 		});
 }
+
 
 
 
@@ -111,22 +112,25 @@ async function updateObservation(req, res, id) {
 	if (files.length > 0) {
 		// upload files
 		let newFiles = [];
-		for (let i = 0; i < files.length; i++) {
-			const origName = files[i].originalname;
-			const url = await uploadFile(files[i], id, 1200);	
-			const thumbnail = await uploadFile(files[i], id, 200);
-			const filename = url.substring(url.lastIndexOf('/') + 1);
 
-			const exif = await getExif(files[i]);
+		const allResolved = await Promise.all(
+			files.map(async file => {
+				const origName = file.originalname;
+				const url = await uploadFile(file, id, 1200);
+				const thumbnail = await uploadFile(file, id, 200);
+				const filename = url.substring(url.lastIndexOf('/') + 1);
 
-			if (exif) {
-				newFiles.push({ url, thumbnail, filename, exif });
-				console.log('exif found', exif)
-			}
-			else newFiles.push({ url, thumbnail, filename });
-			if (observation.featured === origName ) observation.featured = filename;
-		};
-		// update photo.files directly in mongo
+				const exif = await getExif(file);
+
+				if (exif) {
+					newFiles.push({ url, thumbnail, filename, exif });
+					console.log('exif found', exif)
+				}
+				else newFiles.push({ url, thumbnail, filename });
+				if (observation.featured === origName) observation.featured = filename;
+			})
+		)
+
 		Observation
 		.findById(id, function (err, obs) {
 			if (!obs.photos) obs.photos = {};
