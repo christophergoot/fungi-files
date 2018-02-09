@@ -18,7 +18,7 @@ const observationSchema = mongoose.Schema({
 				filename: String,
 				url: String,
 				thumbnail: String,
-				latlng: {
+				exif: {
 					lat: Number,
 					lng: Number
 				}

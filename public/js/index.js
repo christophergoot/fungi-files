@@ -4,7 +4,7 @@ const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'spe
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 
-const URL = "http://localhost:8080/observations/";
+const URL = "/observations/";
 
 let globalFileHolder = [];
 
@@ -208,22 +208,25 @@ function receiveFiles(event) {
 }
 
 function locationFromThumbnail(event) {
-	const obs = { 'location': { 'lat': event.currentTarget.dataset.lat, 'lng': event.currentTarget.dataset.lng } }
+	event.preventDefault();
+	const obs = { 
+		'filename': event.currentTarget.dataset.filename,
+		'location': { 
+			'lat': Number(event.currentTarget.dataset.lat),
+			'lng': Number(event.currentTarget.dataset.lng) } };
 	getAddress(obs, function (obs, addressString) {
-		updateValue('obsDate', obsDate);
-		updateValue('obsTime', obsTime);
-		updateValue('lat', coords.lat);
-		updateValue('lng', coords.lng);
-		updateExif("Location extracted from '" + file.name + "'.", "no error");
+		updateValue('lat', obs.location.lat);
+		updateValue('lng', obs.location.lng);
+		updateExif("Location extracted from '" + obs.filename + "'.", "no error");
 		updateValue('address', addressString);
 	});
 }
 
 function deleteFileUponSave(id, filename) {
-	fetch(`${URL}delete/${id}/${filename}`, {
+	return fetch(`${URL}${id}/${filename}`, {
 		method: 'DELETE',
 		headers: { 'Content-Type': 'application/json' }
-	})
+	});
 }
 
 function deleteFile(event) {
@@ -246,6 +249,11 @@ function deleteFile(event) {
 	}
 	// delete thumbnail
 	target.parentNode.removeChild(target);
+	// remove featured if removed image was featured
+	const featured = document.getElementById('featured-input').value;
+	if (filename === featured) {
+		document.getElementById('featured-input').value = '';
+	}
 }
 
 function insertThumbnailStructure(filename) {
@@ -282,15 +290,20 @@ function previewFile(file) {
 	reader.onloadend = function (event) {
 		const previewImg = document.getElementById(`${filename}-thumb`);
 		previewImg.src = event.target.result;
-
-		// if (featured) {
-			// if no currently featured image, make current image featured
-			if (!featured.value) {
-				featured.value = filename;
-				previewImg.classList.add('featured-image');
-			}
+		// if no currently featured image, make current image featured
+		if (!featured.value) {
+			featured.value = filename;
+			previewImg.classList.add('featured-image');
+		}
 	};
 	reader.readAsDataURL(file);
+}
+
+function addGpsAction (lat, lng, filename) {
+	const target = document.getElementById(`${filename}-div`);
+	const button = `<input type="image" src="/media/uselocation.png" onclick="locationFromThumbnail(event)" data-filename="${filename}" data-lat="${lat}" data-lng="${lng}" alt="Use Image Location" title="Use Image Location" class="img-action location">`;
+	target.innerHTML += button;
+
 }
 
 function exifFromFile(file, filename) {
@@ -309,9 +322,9 @@ function exifFromFile(file, filename) {
 				const obsDate = str[0].replace(/:/g, "-");
 				const obsTime = str[1];
 				const obs = { 'location': coords };
-				const target = document.getElementById(`${file.name}-div`);
-				const button = `<input type="image" src="/media/uselocation.png" onclick="locationFromThumbnail(event)" data-filename="${file.name}" data-lat="${coords.lat}" data-lng="${coords.lng}" alt="Use Image Time & Location" title="Use Image Time & Location" class="img-action location">`
-				target.innerHTML += button
+
+				addGpsAction(coords.lat, coords.lng, filename);
+
 				// add button to thumbnail
 				if (!document.getElementsByName('lat')[0].value) {
 					getAddress(obs, function (obs, addressString) {
@@ -451,10 +464,14 @@ async function saveObservation(event, id) {
 	const filesToBeDeleted = document.getElementsByName("filesToBeDeleted")[0].value;
 	
 	if (filesToBeDeleted) {
-		let arr = filesToBeDeleted.split(',');
-		arr.forEach(filename => deleteFileUponSave(id, filename));
-	};
-
+		let arr = filesToBeDeleted.split(',')
+			.filter((val) => {
+				if (val === "") return false
+				else return true
+			});
+		// arr.forEach(filename => deleteFileUponSave(id, filename));
+		for (let filename of arr) await deleteFileUponSave(id, filename);
+		};
 	document.querySelector('section.edit.observation').innerHTML = "";
 
 	await updateObservation(id, formData);
@@ -553,14 +570,20 @@ async function populateFields(obs) {
 }
 
 function populateThumbnail(file) {
-	const { url, thumbnail, filename, latlng } = file;
+	const { url, thumbnail, filename, exif } = file;
 	insertThumbnailStructure(filename);
 	const previewImg = document.getElementById(`${filename}-thumb`);
 	if (thumbnail) previewImg.src = thumbnail;
 	else previewImg.src = url;
 	const featured = document.getElementById('featured-input').value;
 	if (featured === filename) previewImg.classList.add('featured-image');
-	if (latlng) 
+
+
+	if (exif) {
+		if (exif.lat && exif.lng) {
+			addGpsAction(exif.lat, exif.lng, filename);
+		}
+	}
 }
 
 function editObservation(event, obsId) {

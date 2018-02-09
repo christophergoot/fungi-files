@@ -4,6 +4,8 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const { Observation } = require('./models');
+// const ExifImage = require('exif').ExifImage;
+const exifReader = require('exif-reader');
 const AWS = require('aws-sdk');
 const S3 = new AWS.S3({
 	apiVersion: '2006-03-01',
@@ -73,6 +75,35 @@ async function uploadFile(file, obsId, size) {
 	});
 }
 
+function toDecimal(number) {
+	// return number[0].numerator + number[1].numerator /
+	// 	(60 * number[1].denominator) + number[2].numerator / (3600 * number[2].denominator);
+
+	return number[0] + (number[1] / 60) + (number[2] / 3600);
+};
+
+function getExif(file) { // returns Buffer containing raw EXIF data, if present
+	return sharp(file.buffer)
+		.metadata()
+		.then(async data => {
+			if (data.exif) {
+				const exifdata = await exifReader(data.exif);
+
+				let latRef = 1, lngRef = 1;
+				if (exifdata.gps.GPSLatitudeRef === "S") latRef = -1
+				if (exifdata.gps.GPSLongitudeRef === "W") lngRef = -1
+				const exif = await {
+					'lat': Number(toDecimal(exifdata.gps.GPSLatitude) * latRef),
+					'lng': Number(toDecimal(exifdata.gps.GPSLongitude) * lngRef),
+					// 'date': exifdata.gps.DateTime
+				};
+				return exif;
+			}
+		});
+}
+
+
+
 async function updateObservation(req, res, id) {
 	const observation = nestFields(req);
 	observation.id = id;
@@ -85,7 +116,14 @@ async function updateObservation(req, res, id) {
 			const url = await uploadFile(files[i], id, 1200);	
 			const thumbnail = await uploadFile(files[i], id, 200);
 			const filename = url.substring(url.lastIndexOf('/') + 1);
-			newFiles.push({ url, thumbnail, filename });
+
+			const exif = await getExif(files[i]);
+
+			if (exif) {
+				newFiles.push({ url, thumbnail, filename, exif });
+				console.log('exif found', exif)
+			}
+			else newFiles.push({ url, thumbnail, filename });
 			if (observation.featured === origName ) observation.featured = filename;
 		};
 		// update photo.files directly in mongo
@@ -130,6 +168,16 @@ function keyFromUrl(url) {
 	return key;
 }
 
+function deleteS3File(key) {
+	return new Promise((res, rej) => {
+		S3.deleteObject({ Key: key }, (err, data) => {
+			if (err) rej(err);
+			else res(data);
+		});
+	})
+}
+
+// delete entire observation
 router.delete('/:id', (req, res) => {
 	const { id } = req.params;
 	// removes document from mongo, passes on deleted document
@@ -151,20 +199,14 @@ router.delete('/:id', (req, res) => {
 	})
 })
 
-function deleteS3File(key) {
-	return new Promise((res, rej) => {
-		S3.deleteObject({ Key: key }, (err, data) => {
-			if (err) rej(err);
-			else res(data);
-		});
-	})
-}
-
-
-router.delete('/delete/:id/:filename', async (req, res) => {
+// delete single file
+router.delete('/:id/:filename', async (req, res) => {
 	const { id, filename } = req.params;
 	const obs = await Observation.findById(id);
 	let { files } = obs.photos;
+
+	if (filename === obs.featured) obs.featured = null;
+
 	for (let i = 0; i < files.length; i++) {
 		if (files[i].filename === filename) {
 			await deleteS3File(keyFromUrl(files[i].url));
