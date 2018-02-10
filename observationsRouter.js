@@ -108,11 +108,13 @@ function getExif(file) {
 async function updateObservation(req, res, id) {
 	const observation = nestFields(req);
 	observation.id = id;
+	console.log(observation.obsDate, observation.ObsTime);
+	observation.obsDate = new Date(req.body.obsDate + " " + req.body.obsTime);
+
 	const files = req.files;
 	if (files.length > 0) {
 		// upload files
 		let newFiles = [];
-
 		const allResolved = await Promise.all(
 			files.map(async file => {
 				const origName = file.originalname;

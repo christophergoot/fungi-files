@@ -211,7 +211,7 @@ function updateLocation(obs, locationSource) {
 		const year = date.getFullYear(),
 			month = ("0" + (date.getMonth() + 1)).slice(-2),
 			day = ("0" + date.getDate()).slice(-2);
-		const obsDate = `${year}-${month}-${day}`
+		const obsDate = `${year}-${month}-${day}`;
 		const obsTime = date.toTimeString().substring(0,8) ;
 		updateValue('obsDate', obsDate);
 		updateValue('obsTime', obsTime);
@@ -223,7 +223,7 @@ function locationFromThumbnail(event) {
 	event.preventDefault();
 	const obs = { 
 		'filename': event.currentTarget.dataset.filename,
-		'date': event.currentTarget.dataset.date,
+		'date': new Date(event.currentTarget.dataset.date),
 		'location': { 
 			'lat': Number(event.currentTarget.dataset.lat),
 			'lng': Number(event.currentTarget.dataset.lng) } };
@@ -336,12 +336,12 @@ function exifFromFile(file, filename) {
 					'lng': toDecimal(this.exifdata.GPSLongitude) * lngRef
 				};
 				const str = this.exifdata.DateTime.split(" ");
-				// const obsDate = str[0].replace(/:/g, "-");
-				// const obsTime = str[1];
+				const obsDate = str[0].replace(/:/g, "-");
+				const obsTime = str[1];
 				const obs = { 'location': coords,
-								'date': this.exifdata.DateTime };
+								'date': new Date(obsDate + ' ' + obsTime) };
 				// add button to thumbnail
-				addGpsAction(coords.lat, coords.lng, filename, this.exifdata.DateTime);
+				addGpsAction(coords.lat, coords.lng, filename, obs.date);
 				if (!document.getElementsByName('lat')[0].value) {
 					updateLocation(obs, filename);
 				}
@@ -589,7 +589,7 @@ function populateThumbnail(file) {
 
 	if (exif) {
 		if (exif.lat && exif.lng && exif.date) {
-			addGpsAction(exif.lat, exif.lng, filename, exif.date);
+			addGpsAction(exif.lat, exif.lng, filename, new Date(exif.date));
 		}
 	}
 }
