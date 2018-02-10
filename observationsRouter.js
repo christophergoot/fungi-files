@@ -108,7 +108,6 @@ function getExif(file) {
 async function updateObservation(req, res, id) {
 	const observation = nestFields(req);
 	observation.id = id;
-	console.log(observation.obsDate, observation.ObsTime);
 	observation.obsDate = new Date(req.body.obsDate + " " + req.body.obsTime);
 
 	const files = req.files;
@@ -126,7 +125,6 @@ async function updateObservation(req, res, id) {
 
 				if (exif) {
 					newFiles.push({ url, thumbnail, filename, exif });
-					console.log('exif found', exif)
 				}
 				else newFiles.push({ url, thumbnail, filename });
 				if (observation.featured === origName) observation.featured = filename;
@@ -156,7 +154,7 @@ router.post('/', upload.array('newFiles'), (req, res) => {
 			updateObservation(req, res, id);
 		})
 		.catch(err => {
-			console.log(err);
+			console.error(err);
 			res.json(err);
 		})
 })
@@ -195,14 +193,15 @@ router.delete('/:id', (req, res) => {
 				await deleteS3File(keyFromUrl(arr[i].url));
 				await deleteS3File(keyFromUrl(arr[i].thumbnail));
 			};
-			//   .catch(err => {
-			// 	console.error(err);
-			// 	res.status(500).json({ error: 'something went wrong deleting an observation' });
-			//   });
 		})
-	.then(obs => {
-		res.status(204).json({ message: 'success' });
-	})
+		.then(obs => {
+			res.status(204).json({ message: 'success' });
+		})
+		.catch(err => {
+			console.error(err);
+			res.status(500).json({ error: 'something went wrong deleting an observation' });
+		});
+
 })
 
 // delete single file

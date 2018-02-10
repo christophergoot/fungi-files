@@ -49,6 +49,7 @@ const OBSERVATION_FORM = `
 			</label>
 			<label>
 				<span class="label">Identification Confidence</span>
+				<input name="confidence" type="radio" value="0">
 				<input name="confidence" type="radio" value="1">
 				<input name="confidence" type="radio" value="2">
 				<input name="confidence" type="radio" value="3">
@@ -365,10 +366,6 @@ function annimateObservation(event) {
 		viewSection.classList.add('popup');
 		observationDiv.classList.add('observationBox');
 		viewSection.classList.remove('hidden');
-		viewSection.addEventListener('click', () => {
-			viewSection.classList.remove('popup');
-			viewSection.classList.add('hidden');
-		});
 		requestAnimationFrame(() => {
 			observationDiv.removeAttribute("style");
 			observationDiv.querySelector('img').classList.add('obs-img');
@@ -381,9 +378,146 @@ function getObservation(targetId) {
 		.then((res) => res.json());
 }
 
+function makeHero(event){
+	event.preventDefault();
+	const {dataset} = event.currentTarget;
+	const {filename, url} = dataset;
+	const hero = document.querySelector('.obs-hero');
+	hero.src = url;
+	const buttons = document.querySelectorAll('.img-button');
+	for (let btn of buttons) btn.classList.remove('selected');
+	event.currentTarget.classList.add('selected');
+}
+
+function closeObservation (){
+	event.preventDefault();
+	const viewSection = document.querySelector('section#view-observation');
+		viewSection.classList.remove('popup');
+		viewSection.classList.add('hidden');
+}
+
+
 function displayObservation(obs) {
-	const imageTag = `<img src="${staticMapUrl(obs.location)}" class="static-map">`;
-	document.querySelector('#observation-detail').innerHTML += imageTag;
+	// wrapper and options
+	let obsRender = `
+		<a class="edit-button" onclick="editObservation(event, '${obs.id}')">
+			Edit
+		</a>
+		<a class="close-button" onclick="closeObservation()">
+			Close
+		</a>
+		<div class="obs-detail" value='${obs.id}'>`;
+	
+	// hero image
+	let hero = "media/mushroom.jpg";
+	if (obs.featured) {
+		const filename = obs.featured;
+		for (let file of obs.photos.files) if (file.filename === filename) hero = file.url;
+	} else if (obs.photos.files[0]) hero = obs.photos.files[0].url;
+	obsRender += `<img class="obs-hero" src="${hero}">`;
+
+	// image carousel
+	if (obs.photos.files.length>0) {
+		obsRender += `<div class="obs-carousel">`;
+		for (let file of obs.photos.files) obsRender += `<img 
+			class="img-button" 
+			src="${file.thumbnail}"
+			data-filename="${file.filename}"
+			data-url="${file.url}"
+			onclick="makeHero(event)"
+			>`;
+		obsRender += `</div>`;
+	}
+
+	// fungi classification
+	obsRender += `<div class="classification">`
+	if (obs.fungi.nickname) obsRender +=
+		`<span class="title">
+			<span class="label">
+				nickname: 
+			</span>
+			${obs.fungi.nickname}
+		</span>`;
+	if (obs.fungi.commonName) obsRender +=
+		`<span class="title">
+			<span class="label">
+				common name: 
+			</span>
+			${obs.fungi.commonName}
+		</span>`;
+	if (obs.fungi.genus) obsRender +=
+		`<span class="fungi">
+			<span class="label">
+				genus: 
+			</span>
+			${obs.fungi.genus} 
+			<span class="label">
+				species: 
+			</span>
+			${obs.fungi.species}
+		</span>`;
+	if (obs.fungi.confidence) obsRender += `
+		<span>
+			Classified with ${obs.fungi.confidence * 20}% Confidence
+		</span>`;
+	if (obs.notes.mushroomNotes) obsRender += `
+		<span class="label">
+			mushroom notes
+		</span>
+		<span class="notes">
+			${obs.notes.mushroomNotes}
+		</span>`;
+	obsRender += `</div>`; // .classification
+	obsRender += `<div class="location">`;
+
+	// date and time		
+	if (obs.obsDate) {
+		const date = new Date(obs.obsDate);
+		// const dateStr = date.toUTCString();
+		// Sun, Jan 07, 2018 at 
+
+		const daynames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		const months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December'];
+		const dayname = daynames[date.getDay()];
+		const month = months[date.getMonth()];
+		const day = date.getDate();
+		const year = date.getFullYear();
+		const time = date.toLocaleTimeString('en-US');
+
+		const dateStr = `${dayname} ${month} ${day}, ${year} at ${time}`;
+		obsRender += `
+		<span class="label">
+			observed 
+		</span>
+		${dateStr}`;
+	};
+
+	// location
+	if (obs.location) {
+		obsRender += `
+		<img src="${staticMapUrl(obs.location)}" class="static-map">
+
+		<div class="location">
+
+		<span class="label">
+				around 
+			</span>
+			${obs.location.address}`;
+		if (obs.notes.locationNotes) obsRender += `
+			<span class="label">
+				location notes
+			</span>
+			<span class="notes">
+				${obs.notes.locationNotes}
+			</span>`;
+		obsRender += `
+		</div>`; // .location
+	};
+		// obsRender += `</div>` // .location
+
+		// closing wrapper and sending html
+	obsRender += `</div>`;
+	document.querySelector('#observation-detail').innerHTML = obsRender;
 
 
 }
@@ -629,9 +763,13 @@ function renderObservation(obs, address) {
 	if (obs.fungi.genus) obsRender +=
 		`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
 			<span class="label">species: </span>${obs.fungi.species}</span><span>`;
-	if (obs.obsDate) obsRender +=
-		`<span class="fungi"><span class="label">observed </span>${obs.obsDate} 
+	if (obs.obsDate) {
+		const date = new Date(obs.obsDate);
+		const dateStr = date.toUTCString();
+		obsRender +=
+		`<span class="fungi"><span class="label">observed </span>${dateStr} 
 			<span class="label">around </span><span id="list-address">${address}</span></span>`;
+		}
 	obsRender += `</div>`
 	document.querySelector('#obs-list').innerHTML += obsRender;
 }

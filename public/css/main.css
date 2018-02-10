@@ -84,9 +84,6 @@ textarea {
 	margin-top: 10px;
 }
 
-.selected {
-	color: red;
-}
 
 #obs-list {
 	display:flex;
@@ -132,18 +129,22 @@ textarea {
 	padding: 15px;
 	position: fixed;
 	background: white;
-	overflow: scroll;
+	/* overflow: auto; */
 }
 
 .static-map {
 	max-width: 200px;
 	max-height: 200px;
-	float:right;
+	float: right;
+	/* top: 0; */
+	/* position: absolute; */
+	/* grid-column: 2; */
 }
 
 .img-preview {
 	display: flex;
 	flex-direction: row;
+	flex-wrap:  wrap;
 }
 
 .thumb-div {
@@ -191,6 +192,7 @@ textarea {
 
 
 #observation-detail {
+	position: absolute;
 	display:  flex;
 	flex-direction:  column;
 	text-align:  left;
@@ -204,8 +206,21 @@ textarea {
 .featured-image {
 	border: 3px solid black;
 }
+
+.obs-carousel {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.img-button {
+	height: 75px;
+	/* width: 18%; */
+	margin: 1%;
+}
+
 .popup {
-	position: fixed;
+	/* position: fixed; */
 	/* display:flex; */
 	text-align:  center;
 	top:0;
@@ -226,6 +241,30 @@ textarea {
 	/* position: relative; */
 	display: block;
 	/* bottom: -2px; */
+}
+
+.classification {
+	background-color: #f1f1f1;
+	padding: 7px;
+	border-radius: 5px;
+	position:  relative;
+	/* display:  grid; */
+	/* grid-template-columns: 1fr 200px; */
+}
+
+.selected {
+	/* color: red; */
+	/* border: 2px red solid; */
+	box-shadow: 3px 3px 4px grey;
+	/* filter: blur; */
+}
+
+.notes {
+	background-color: bisque;
+	color: rgb(78, 71, 61);
+	font-size: .85em;
+	font-style: italic;
+
 }
 
 .error {
