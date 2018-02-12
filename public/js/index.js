@@ -368,7 +368,7 @@ function annimateObservation(event) {
 		viewSection.classList.remove('hidden');
 		requestAnimationFrame(() => {
 			observationDiv.removeAttribute("style");
-			observationDiv.querySelector('img').classList.add('obs-img');
+// 			observationDiv.querySelector('img').classList.add('obs-img');
 		});
 	});
 }
@@ -396,6 +396,18 @@ function closeObservation (){
 		viewSection.classList.add('hidden');
 }
 
+function dateString (dateObj) {
+	const date = new Date(dateObj);
+	const daynames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	const months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December'];
+	const dayname = daynames[date.getDay()];
+	const month = months[date.getMonth()];
+	const day = date.getDate();
+	const year = date.getFullYear();
+	const time = date.toLocaleTimeString('en-US');
+	const dateStr = `${dayname} ${month} ${day}, ${year} at ${time}`;
+	return dateStr;
+}
 
 function displayObservation(obs) {
 	// wrapper and options
@@ -474,19 +486,7 @@ function displayObservation(obs) {
 
 	// date and time		
 	if (obs.obsDate) {
-		const date = new Date(obs.obsDate);
-		// const dateStr = date.toUTCString();
-		// Sun, Jan 07, 2018 at 
-
-		const daynames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		const months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December'];
-		const dayname = daynames[date.getDay()];
-		const month = months[date.getMonth()];
-		const day = date.getDate();
-		const year = date.getFullYear();
-		const time = date.toLocaleTimeString('en-US');
-
-		const dateStr = `${dayname} ${month} ${day}, ${year} at ${time}`;
+		const dateStr = dateString(obs.obsDate);
 		obsRender += `
 		<span class="label">
 			observed 
@@ -599,7 +599,7 @@ function loading(state, text) {
 			loadingText.innerHTML = text;
 			loadingText.classList.add('loading-text');
 		loadingScreen.insertAdjacentElement('beforeend', spinner);
-		loadingScreen.insertAdjacentElement('beforeend', loadingText);
+		// loadingScreen.insertAdjacentElement('beforeend', loadingText);
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
 	} 
 	else if (!state) {
@@ -774,26 +774,38 @@ function renderObservation(obs, address) {
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `
-	<a class="edit-button" onclick="editObservation(event, '${obs.id}')">
-		Edit
-	</a>
-	<div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
-	obsRender += `<img class="obs-thumb" src="${thumbnail}">`;
+	<div class="obs-list-item fade" value='${obs.id}' onclick="viewObservation(this)">
+		<input type="image" src="/media/edit.png" 
+		onclick="editObservation(event, '${obs.id}')" 
+		class="obs-action edit"
+		alt="Edit Observation" title="Edit Observation"> `;
+		obsRender += 
+		`<div class="obs-thumb"	style=background-image:url("${thumbnail}">`;
+	if (obs.photos.files.length>1) obsRender +=
+			`<span class="photo-count">
+				+ ${obs.photos.files.length-1} more photos
+			</span>`;
+	obsRender +=
+		`</div>
+		<div class="obs-details">`
 	if (obs.fungi.nickname) obsRender +=
-		`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
+			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
 	if (obs.fungi.commonName) obsRender +=
-		`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`;
+			`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`;
 	if (obs.fungi.genus) obsRender +=
-		`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
+			`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
 			<span class="label">species: </span>${obs.fungi.species}</span><span>`;
 	if (obs.obsDate) {
 		const date = new Date(obs.obsDate);
-		const dateStr = date.toUTCString();
+		const dateStr = dateString(date);
 		obsRender +=
-		`<span class="fungi"><span class="label">observed </span>${dateStr} 
-			<span class="label">around </span><span id="list-address">${address}</span></span>`;
-		}
-	obsRender += `</div>`
+			`<span class="fungi"><span class="label">observed </span>${dateStr}`
+		};
+	if (address) obsRender += 
+			`<span class="label">around </span><span id="list-address">${address}</span></span>`;
+	obsRender += 
+		`</div>
+	</div>`;
 	document.querySelector('#obs-list').innerHTML += obsRender;
 }
 
