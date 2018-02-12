@@ -5,7 +5,21 @@ padding-bottom: 50px;
 
 header {
 	background-color: #eeeeee;
+	padding: 1px;
+	top: 0;
+	position: relative;
+	width:  100%;
 }
+
+header>ul {
+	display: flex;
+}
+
+header>ul>li {
+	padding-right: 20px;
+	list-style: none;
+}
+
 
 main {
 	margin: 0 50px;
@@ -116,20 +130,20 @@ textarea {
 
 .observationBox {
 	transition: all .5s cubic-bezier(0, 0, 0.51, 1.51);
-	margin: 0 auto;
-	/* text-align:  center; */
+	margin: 0 5px;
+	text-align: left;
 	/* padding: 10px; */
 	/* margin: 2px; */
 	/* border: 5px black dashed; */
-	top: 40px;
-	left: 5px;
-	right: 5px;
+	top: 20px;
+	/* left: 5px; */
+	/* right: 5px; */
 	/* width: 85%; */
 	/* height: 75%; */
-	padding: 15px;
-	position: fixed;
+	padding: 10px;
+	position: relative;
 	background: white;
-	/* overflow: auto; */
+	overflow: auto;
 }
 
 .static-map {
@@ -190,14 +204,6 @@ textarea {
 	top: 38px;
 }
 
-
-#observation-detail {
-	position: absolute;
-	display:  flex;
-	flex-direction:  column;
-	text-align:  left;
-}
-
 .grayed {
 	/* background-color: gray; */
 	opacity: .5;
@@ -219,16 +225,31 @@ textarea {
 	margin: 1%;
 }
 
+.popup>img {
+	position: fixed;
+	top: 45%;
+}
+
+.loading-text {
+	position: fixed;
+	display: flex;
+	color: lightgray;
+	top: 56%;
+	left: 25%;
+	right: 25%;
+	font-size: 1.5em;
+}
+
 .popup {
-	/* position: fixed; */
-	/* display:flex; */
+	position: fixed;
 	text-align:  center;
 	top:0;
 	left:0;
 	width:100%;
-	height:100%;
+	height: 150%;
 	background:url(../media/overlay.png) repeat;
 }
+
 
 .title{
 	font-size: 1.5em;
@@ -257,6 +278,14 @@ textarea {
 	/* border: 2px red solid; */
 	box-shadow: 3px 3px 4px grey;
 	/* filter: blur; */
+}
+
+.observation-actions {
+	display: inline-flex;
+	/* padding:  2px; */
+}
+.observation-actions>a {
+	margin-right: 10px;
 }
 
 .notes {
@@ -295,4 +324,4 @@ textarea {
 	width: 32%;
 	margin: 2px;
 	/* background-color: pink; */
-	/* flex-gr
+	/* flex-grr

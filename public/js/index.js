@@ -400,12 +400,14 @@ function closeObservation (){
 function displayObservation(obs) {
 	// wrapper and options
 	let obsRender = `
-		<a class="edit-button" onclick="editObservation(event, '${obs.id}')">
-			Edit
-		</a>
-		<a class="close-button" onclick="closeObservation()">
-			Close
-		</a>
+		<div class="observation-actions">
+			<a class="edit-button" onclick="editObservation(event, '${obs.id}')">
+				Edit
+			</a>
+			<a class="close-button" onclick="closeObservation()">
+				Close
+			</a>
+		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
 	
 	// hero image
@@ -457,9 +459,9 @@ function displayObservation(obs) {
 			${obs.fungi.species}
 		</span>`;
 	if (obs.fungi.confidence) obsRender += `
-		<span>
+		<div>
 			Classified with ${obs.fungi.confidence * 20}% Confidence
-		</span>`;
+		</div>`;
 	if (obs.notes.mushroomNotes) obsRender += `
 		<span class="label">
 			mushroom notes
@@ -540,7 +542,8 @@ function viewObservation(event) {
 	// })	
 
 	getObservation(id)
-		.then(res => displayObservation(res));
+		.then(res => 
+			setTimeout(displayObservation(res), 20000));
 }
 
 function getAddress(obs, callback) {
@@ -583,14 +586,26 @@ function dateFromDateTime(date, time) {
 
 
 function loading(state, text) {
-		if (state) {
+	if (state) {
 		console.log('Loading . . . . .   ', text);
-		// body = new Element('img');
-		// body.src = "media/loading.gif"
-		// // body.style = 
-	}
+		const loadingScreen = document.createElement('div');
+			loadingScreen.classList.add('popup');
+			loadingScreen.id = 'loading-screen';
+		const spinner = document.createElement('img');
+			spinner.src = "media/loading-mushroom.gif";
+			// spinner.classList.add('popup');
+			// spinner.id = "loading-screen";
+		const loadingText = document.createElement('span');
+			loadingText.innerHTML = text;
+			loadingText.classList.add('loading-text');
+		loadingScreen.insertAdjacentElement('beforeend', spinner);
+		loadingScreen.insertAdjacentElement('beforeend', loadingText);
+		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
+	} 
 	else if (!state) {
 		console.log('Loading Complete.')
+		const loadingScreen = document.getElementById('loading-screen');
+		loadingScreen.parentNode.removeChild(loadingScreen);
 	}
 	else console.error('State is boolean, must be either true or false');
 }
@@ -623,7 +638,7 @@ async function saveObservation(event, id) {
 
 function submitNewObservation(event) {
 	event.preventDefault();
-	loading(true, 'Uploading Photos and Saving New Observation');
+	loading(true, 'Saving New Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
@@ -631,11 +646,14 @@ function submitNewObservation(event) {
 	globalFileHolder.forEach(file => formData.append('newFiles', file));
 	globalFileHolder = [];
 
-	document.querySelector('section.new.observation').innerHTML = "";	
 	return new Promise(res => {
 		publishNewObservation(formData)
 	})
-		.then(loading(false));
+
+	.then(res => {
+		document.querySelector('section.new.observation').innerHTML = "";	
+		loading(false);
+	});
 }
 
 function updateObservation(id, formData) {
@@ -658,6 +676,7 @@ function publishNewObservation(formData) {
 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
+			loading(false);
 		})
 		.catch(error => console.error('Error:', error))
 }
@@ -754,7 +773,11 @@ function renderObservation(obs, address) {
 		if (obs.photos.files[0].thumbnail) thumbnail = obs.photos.files[0].thumbnail;
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
-	let obsRender = `<a class="edit-button" onclick="editObservation(event, '${obs.id}')">Edit</a><div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
+	let obsRender = `
+	<a class="edit-button" onclick="editObservation(event, '${obs.id}')">
+		Edit
+	</a>
+	<div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">`;
 	obsRender += `<img class="obs-thumb" src="${thumbnail}">`;
 	if (obs.fungi.nickname) obsRender +=
 		`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
