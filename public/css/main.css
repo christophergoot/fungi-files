@@ -1,20 +1,38 @@
 body {
 	box-sizing: border-box;
-padding-bottom: 50px;
+	background-color: #3c003c;
+	/* padding-bottom: 50px; */
 }
 
 header {
-	background-color: #eeeeee;
+	background-color: #3c003c;
+	display: block;
+	/* justify-content: space-between; */
+	color:  whitesmoke;
 	padding: 1px;
 	top: 0;
-	position: relative;
-	width:  100%;
+	/* position: sticky; */
+	max-width:  800px;
+	margin: 0 auto;
+	z-index: 6;
 }
 
 header>ul {
-	display: flex;
+	/* background-color: white; */
+	width:  100%;
+	/* max-width: 100%; */
+	/* right: 0; */
+	position: relative;
+	margin: 0;
+	display: inline-flex;
 	padding: 0;
-	margin:  0;
+	align-items: flex-end;
+	flex-direction: row;
+	right: 0;
+	/* justify-content: space-between; */
+	align-items: flex-end;
+	/* display: flex; */
+	justify-content: flex-end;
 }
 
 header>ul>li {
@@ -24,7 +42,9 @@ header>ul>li {
 
 
 main {
-	margin: 0 5px;
+	margin: 0 auto;
+	background-color: #3c003c;
+	max-width: 800px;
 }
 
 a:hover {
@@ -34,6 +54,8 @@ a:hover {
 
 button {
 	margin: 5px 0;
+	border-radius:  5px;
+	/* width: 25%; */
 }
 
 .hidden {
@@ -58,9 +80,15 @@ button {
 }
 
 .area {
-	padding: 10px 10px 20px 10px;
-/* 	margin: 15px; */
+	padding: 10px 10px 10px 10px;
+	/* 	margin: 15px; */
 }
+
+.area.location {
+	/* display: flex; */
+}
+
+
 
 h3 {
 	margin-top: 5px;
@@ -100,17 +128,20 @@ textarea {
 	margin-top: 10px;
 }
 
-
+h2 {
+	margin: 10px;
+}
 #obs-list {
 	display:flex;
 	flex-direction: column;
 }
 
 .obs-list-item {
-	position:  static;
-	border: 1px #b1b1b1 dashed;
-	padding: 5px;
-	margin: 2px;
+	background-color:  white;
+	position: relative;
+	/* border: 1px #b1b1b1 dashed; */
+	padding: 4px;
+	margin: 2px 6px;
 	cursor: pointer;
 	height:  100px;
 	overflow:  hidden;
@@ -240,6 +271,15 @@ textarea {
 	top: 38px;
 }
 
+.form-buttons {
+	padding: 5px;
+	position:  sticky;
+	bottom:  0;
+	background-color:  white;
+	display: flex;
+	justify-content: space-around;
+}
+
 .photo-count {
 	position: absolute;
 	text-align: right;
@@ -307,16 +347,20 @@ textarea {
 
 
 .title{
-	font-size: 1.25em;
-	display: block;
+	font-size: 1.1em;
 }
 
 .label {
 	color: gray;
+	margin-top: 4px;
 	font-size: .5em;
 	/* position: relative; */
 	display: block;
 	/* bottom: -2px; */
+}
+
+.inline.label {
+	/* display: inline-flex; */
 }
 
 .classification {
@@ -347,6 +391,7 @@ textarea {
 	position: absolute;
 	height: 20px;
 	left: 0;
+	top: -2px;
 	margin: 2px;
 	filter: drop-shadow(1px 1px 0 white) 
 			drop-shadow(-1px 1px 0 white)  
@@ -364,7 +409,7 @@ textarea {
 	height:  100%;
 	overflow:  hidden;
 	padding-bottom:  4px;
-	font-size: .85em;
+	font-size: 1em;
 } 
 
 .obs-details:after {
@@ -382,18 +427,18 @@ textarea {
 	pointer-events: none; /* so the text is still selectable */
   }
   
-.fade {
-
-	/* z-index: 3; */
-	/* background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(204,204,204,0) 80%, rgba(255,255,255,1) 100%); */
-	/* background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(204,204,204,0) 80%,rgba(255,255,255,1) 100%); */
-	/* background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(204,204,204,0) 80%,rgba(255,255,255,1) 100%); */
-	/* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#ffffff',GradientType=0 ); */
-}
+.fade {/* background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(204,204,204,0) 80%, rgba(255,255,255,1) 100%); *//* filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#ffffff',GradientType=0 ); */}
 
 .obs-action.edit {
-	color: red;
+	/* color: red; */
 }
+
+.observation {
+	background-color: white;
+	max-width:  800px;
+	margin: 0 5px;
+}
+
 
 .notes {
 	background-color: bisque;
@@ -414,11 +459,53 @@ textarea {
 	/* grid-template-columns: 30px 100%; */
 }
 
-.coord {
-	width: 75px;
+.observation .label {/* padding: 0 10px; */}
+
+input[type=text] {
+	border: lightgray 1px solid;
+	padding: 4px;
+	margin: 0px 0;
 }
-.observation .label {
-/* 	padding: 0 10px; */
+
+#address-input, #nickname-input, #common-name-input {
+	width: 100%;
+	margin-right: 10px;
+	box-sizing: border-box;
+}
+
+input.coord, #obs-date-input, #obs-time-input {
+    width: 85%;
+    min-width: 120px;
+}
+
+div.fungi {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+span.fungi {
+    margin-left: 10px;
+    font-size: .9em;
+    font-style: italic;
+    color: dimgrey;
+}
+
+#latlng, #datetime {
+	display: inline-flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+#datetime {
+	/* display: inline-flex; */
+	/* width: 100%; */
+}
+
+.loc-method {
+    /* width: 250px; */
+    /* display: flex; */
+    /* justify-content: space-around; */
 }
 
 .habitat-details {
@@ -430,5 +517,8 @@ textarea {
 .habitat-details>label {
 	width: 32%;
 	margin: 2px;
-	/* background-color: pink; */
-	/* flex-grr
+}
+
+@media (min-width: 500px) {
+	position: sticky;
+	

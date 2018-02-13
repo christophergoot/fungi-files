@@ -15,38 +15,69 @@ const OBSERVATION_FORM = `
 <input type="hidden" name="filesToBeDeleted">
 	<div  class="area">
 		<div>
-			<h3>Images</h3>
 			<button onclick="selectFiles(event)">Add Images</button>
 			<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
 			<div class="img-preview">
 			</div>
 		</div>
+	</div>
+	<div class="location area">
 		<div>
-			<h3>Date Observed</h3>
-			<label>
-					<span class="label">Date</span>
-					<input name="obsDate" id="obs-date-input" type="date">
-			</label>
-			<label>
-					<span class="label">Time</span>
-					<input name="obsTime" id="obs-time-input" type="time">
-			</label>
+			<div id="location-options" class="loc-opts">
+				<div class="loc-method">
+					<label>
+						<span class="label">Address</span>
+						<input name="address" id="address-input" type="text" placeholder="Address">
+					</label>
+				</div>
+				<div id="latlng" class="loc-method">
+					<label>
+						<span class="label">Latitude</span>
+						<input readonly id="lat-input" name="lat" class="coord" type="number" placeholder="Lat">
+					</label>
+					<label>
+						<span class="label">Longitude</span>
+						<input readonly id="lng-input" name="lng" class="coord" type="number" placeholder="Long">
+					</label>
+					<button onclick="geolocate()">Use Current Location</button>
+				</div>
+				<div id="datetime">
+					<label>
+							<span class="label">Date</span>
+							<input name="obsDate" id="obs-date-input" type="date">
+					</label>
+					<label>
+							<span class="label">Time</span>
+							<input name="obsTime" id="obs-time-input" type="time">
+					</label>
+					<button onclick="useCurrentTime()">Use Current Time</button>
+			</div>
+				<div>
+					<span id="location-text"></span>
+				</div>
+				<a class="toggle-control" onclick="reveal('.location.notes', event)">Location Notes</a>
+				<div class="location notes reveal">
+					<textarea name="locationNotes" rows="5" placeholder="Location Notes"></textarea>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="area">
-		<h3>Classification</h3>
-		<p>
+		<div>
 			<label>
 				<span class="label">Nickname</span>
-				<input name="nickname" type="text" placeholder="Nickname">
+				<input name="nickname" id="nickname-input" type="text" placeholder="Nickname">
 			</label>
-		</p>
-		<p>
+		</div>
+		<div>
 			<label>
 				<span class="label">Common Name</span>
 				<datalist id="commonName-datalist"></datalist>
 				<input name="commonName" id="common-name-input" onchange="populateNames(event)" type="text" placeholder="Common Name" list="commonName-datalist">
 			</label>
+		</div>
+		<div class="fungi">
+		<div>
 			<label>
 				<span class="label">Identification Confidence</span>
 				<input name="confidence" type="radio" value="0">
@@ -56,53 +87,28 @@ const OBSERVATION_FORM = `
 				<input name="confidence" type="radio" value="4">
 				<input name="confidence" type="radio" value="5">
 			</label>
-		</p>
-		<label>
-			<span class="label">genus</span>
-			<datalist id="genus-datalist"></datalist>
-			<input name="genus" id="genus-input" type="text" list="genus-datalist">
-		</label>
-		<label>
-			<span class="label">species</span>
-			<datalist id="species-datalist"></datalist>
-			<input name="species" id="species-input" type="text" list="species-datalist">
-		</label>
+		</div>
+		<div>
+				<label>
+					<span class="label">genus</span>
+					<datalist id="genus-datalist"></datalist>
+					<input readonly name="genus" id="genus-input" type="text" list="genus-datalist">
+				</label>
+			</div>
+			<div>
+				<label>
+					<span class="label">species</span>
+					<datalist id="species-datalist"></datalist>
+					<input readonly name="species" id="species-input" type="text" list="species-datalist">
+				</label>
+			</div>
+		</div>
 		<a class="toggle-control" onclick="reveal('.mushroom.notes', event)">Mushroom Notes</a>
 		<div class="mushroom notes reveal">
 			<textarea name="mushroomNotes"  placeholder="Mushroom Notes"></textarea>
 		</div>
 	</div>
-	<div class="area">
-		<h3>Location:</h3>
-		<div id="location-options" class="loc-opts">
-			<div>
-				<span id="location-text"></span>
-			</div>
-			<div class="loc-method">
-				<label>
-					<span class="label">Address</span>
-					<input name="address" id="address-input" type="text" placeholder="Address">
-				</label>
-			</div>
-			<div id="latlng" class="loc-method">
-				<label>
-					<span class="label">Latitude</span>
-					<input id="lat-input" name="lat" class="coord" type="number" placeholder="Lat">
-				</label>
-				<label>
-					<span class="label">Longitude</span>
-					<input id="lng-input" name="lng" class="coord" type="number" placeholder="Long">
-				</label>
-			</div>
-			<div id="geolocation" class="loc-method">
-				<input type="button" onclick="geolocate(event)" value="Use Current Location"></input>
-			</div>
-			<a class="toggle-control" onclick="reveal('.location.notes', event)">Location Notes</a>
-			<div class="location notes reveal">
-				<textarea name="locationNotes" rows="5" placeholder="Location Notes"></textarea>
-			</div>
-		</div>
-	</div>
+
 <!--
 	<div class="area">
 		<h3>Habitat</h3>
@@ -149,9 +155,20 @@ function updateAddress(addressString) {
 	document.querySelector('#address-input').setAttribute('value', addressString);
 }
 
-function geolocate(event) {
+async function useCurrentTime() {
+	event.preventDefault();
+	const obsTime = await getTime(new Date());
+	const obsDate = await getDate(new Date());
+	updateValue('obsTime', obsTime);
+	updateValue('obsDate', obsDate);
+}
+
+function geolocate() {
+	event.preventDefault();
 	navigator.geolocation.getCurrentPosition((position) => {
-		const coords = { 'lat': position.coords.latitude, 'lng': position.coords.longitude };
+		const coords = { 
+			'lat': position.coords.latitude, 
+			'lng': position.coords.longitude };
 		const obs = { 'location': coords };
 		updateLocation(obs, 'Current Location');
 	});
@@ -204,7 +221,7 @@ function updateLocation(obs, locationSource) {
 	getAddress(obs, function (obs, addressString) {
 		updateValue('lat', obs.location.lat);
 		updateValue('lng', obs.location.lng);
-		updateExif("Location extracted from '" + locationSource + "'.", "no error");
+		updateExif("Location extracted from " + locationSource, "no error");
 		updateValue('address', addressString);
 	});
 	if(obs.date) {
@@ -216,6 +233,7 @@ function updateLocation(obs, locationSource) {
 		const obsTime = date.toTimeString().substring(0,8) ;
 		updateValue('obsDate', obsDate);
 		updateValue('obsTime', obsTime);
+		updateExif("Time, Date and Location extracted from photo", "no error");
 
 	}
 }
@@ -228,7 +246,7 @@ function locationFromThumbnail(event) {
 		'location': { 
 			'lat': Number(event.currentTarget.dataset.lat),
 			'lng': Number(event.currentTarget.dataset.lng) } };
-	updateLocation(obs, obs.filename);
+	updateLocation(obs, 'photo');
 }
 
 function deleteFileUponSave(id, filename) {
@@ -271,7 +289,6 @@ function insertThumbnailStructure(filename) {
 		<img src="media/loading.gif" id="${filename}-thumb" class="thumb-img" alt="Thumbnail for ${filename}" title="Thumbnail for ${filename}">
 		<input type="image" src="/media/delete.png" onclick="deleteFile(event)" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
 		<input type="image" src="/media/featured.png" onclick="makeFeatured(event)" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
-		<p class="label">${filename}</p>
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
@@ -344,7 +361,7 @@ function exifFromFile(file, filename) {
 				// add button to thumbnail
 				addGpsAction(coords.lat, coords.lng, filename, obs.date);
 				if (!document.getElementsByName('lat')[0].value) {
-					updateLocation(obs, filename);
+					updateLocation(obs, 'photo');
 				}
 			}
 		});
@@ -564,8 +581,11 @@ function getAddress(obs, callback) {
 function newObservation() {
 	const header = "<h2>Add New Observation</h2>";
 	const newObs = 'section.new.observation';
-	const footer = `<button onclick="submitNewObservation(event)">Submit New Observation</button>
-		<button onclick="getAndDisplayObservations()">Cancel</button>`;
+	const footer = `
+	<div role="footer"	class="form-buttons">
+		<button onclick="submitNewObservation(event)">Submit New Observation</button>
+		<button onclick="getAndDisplayObservations()">Cancel</button>
+	</div>`;
 	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
 	globalFileHolder = [];
 	populateDatalists();
@@ -703,11 +723,13 @@ function getDate(date) {
 }
 
 function deleteObservation(event, obsId) {
-	document.querySelector('section.edit.observation').innerHTML = "";
+	loading(true, 'Deleting Observation');
 	fetch((URL + obsId), { method: 'DELETE' })
 		// 		.then((res) => res.json())
 		.then((res) => {
+			document.querySelector('section.edit.observation').innerHTML = "";
 			getAndDisplayObservations();
+			loading(false);
 			console.log(res);
 		})
 		.catch(error => console.error('Error:', error))
@@ -749,9 +771,12 @@ function populateThumbnail(file) {
 
 function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>"
-	const footer = `<button onclick="saveObservation(event, '${obsId}')">Save Observation</button>
+	const footer = `
+	<div role="footer"	class="form-buttons">
+		<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
 		<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
-		<button onclick="getAndDisplayObservations()">Cancel</button>`
+		<button onclick="getAndDisplayObservations()">Cancel</button>
+	</div>`
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
 	getObservation(obsId).then(async res => {
 		await populateFields(res);
@@ -774,7 +799,7 @@ function renderObservation(obs, address) {
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `
-	<div class="obs-list-item fade" value='${obs.id}' onclick="viewObservation(this)">
+	<div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">
 		<input type="image" src="/media/edit.png" 
 		onclick="editObservation(event, '${obs.id}')" 
 		class="obs-action edit"
@@ -789,17 +814,18 @@ function renderObservation(obs, address) {
 		`</div>
 		<div class="obs-details">`
 	if (obs.fungi.nickname) obsRender +=
-			`<span class="title"><span class="label">nickname: </span>${obs.fungi.nickname}</span>`;
+			`<span class="title"><span class="label">nickname: </span>"${obs.fungi.nickname}"</span>`;
 	if (obs.fungi.commonName) obsRender +=
 			`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`;
 	if (obs.fungi.genus) obsRender +=
-			`<span class="fungi"><span class="label">genus: </span>${obs.fungi.genus} 
-			<span class="label">species: </span>${obs.fungi.species}</span><span>`;
+			`<span class="fungi">
+				${obs.fungi.genus}  ${obs.fungi.species}
+			</span>`;
 	if (obs.obsDate) {
 		const date = new Date(obs.obsDate);
 		const dateStr = dateString(date);
 		obsRender +=
-			`<span class="fungi"><span class="label">observed </span>${dateStr}`
+			`<span><span class="label">observed </span>${dateStr}`
 		};
 	if (address) obsRender += 
 			`<span class="label">around </span><span id="list-address">${address}</span></span>`;
