@@ -642,7 +642,7 @@ function loading(state, text) {
 		loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
 			<div class="loading-alert">
-				<img src="media/loading-mushroom.gif" class="loading-img">
+				<img src="media/loading.gif" class="loading-img">
 				<span class="loading-text">${text}<span>
 			</div>`;
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
