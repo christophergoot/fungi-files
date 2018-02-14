@@ -63,7 +63,7 @@ const OBSERVATION_FORM = `
 					Location Notes
 				</a>
 				<div class="location notes reveal">
-					<textarea name="locationNotes" rows="5" placeholder="Location Notes"></textarea>
+					<textarea name="locationNotes" id="locationNotes" rows="5" placeholder="Location Notes"></textarea>
 				</div>
 			</div>
 		</div>
@@ -131,7 +131,7 @@ const OBSERVATION_FORM = `
 		</div>
 		<a class="toggle-control" onclick="reveal('.mushroom.notes', event)">Mushroom Notes</a>
 		<div class="mushroom notes reveal">
-			<textarea name="mushroomNotes"  placeholder="Mushroom Notes"></textarea>
+			<textarea name="mushroomNotes" id="mushroomNotes" placeholder="Mushroom Notes"></textarea>
 		</div>
 	</div>
 
@@ -158,7 +158,7 @@ const OBSERVATION_FORM = `
 		</div>
 		<a class="toggle-control" onclick="reveal('.habitat.notes', event)">Habitat Notes</a>
 		<div class="habitat notes reveal">
-			<textarea name="habitatNotes" rows="5" placeholder="Habitat Notes"></textarea>
+			<textarea name="habitatNotes" id="habitatNotes" rows="5" placeholder="Habitat Notes"></textarea>
 		</div>
 	</div>
 	--!>
@@ -637,7 +637,6 @@ function dateFromDateTime(date, time) {
 
 function loading(state, text) {
 	if (state) {
-		console.log('Loading . . . . .   ', text);
 		const loadingScreen = document.createElement('div');
 		loadingScreen.classList.add('popup');
 		loadingScreen.id = 'loading-screen';
@@ -649,7 +648,6 @@ function loading(state, text) {
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
 	} 
 	else if (!state) {
-		console.log('Loading Complete.')
 		const loadingScreen = document.getElementById('loading-screen');
 		loadingScreen.parentNode.removeChild(loadingScreen);
 	}
@@ -783,8 +781,9 @@ async function populateFields(obs) {
 	const obsTime = await getTime(new Date(obs.obsDate));
 	const obsDate = await getDate(new Date(obs.obsDate));
 	// };
-	const possibleNames = { obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, mushroomNotes, locationNotes, habitatNotes, address, featured };
+	const possibleNames = { obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, address, featured };
 	for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
+	for (let n in notes) if (notes[n]) document.getElementById(n).innerHTML = notes[n];
 	if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
 	populateDatalists();
 	displaySection('.edit.observation');
