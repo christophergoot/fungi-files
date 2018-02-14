@@ -76,7 +76,8 @@ button {
 	height: 75px;
 	transition: height .25s ease;
 	resize: none;
-	max-width: 75%
+	max-width: 75%;
+	margin: 0 auto;
 }
 
 .area {
@@ -100,7 +101,7 @@ h3 {
 }
 
 .toggle-control::before {
-	content: "show ";
+	content: "add ";
 }
 
 .toggle-control.visible::before {
@@ -109,11 +110,13 @@ h3 {
 
 .toggle-control {
 	display:block;
-	margin-top:10px;
+	margin: 10px 0;
 	font-size: .75em;
+	text-align: center;
 }
 
 textarea {
+	margin: 0 auto;
 	resize: none;
 	height: 100%;
 	width: 100%;
@@ -195,7 +198,7 @@ h2 {
 
 .observationBox {
 	transition: all .5s cubic-bezier(0, 0, 0.51, 1.51);
-	margin: 0 auto;
+	margin: 0 auto 39px auto;
 	text-align: left;
 	/* padding: 10px; */
 	/* margin: 2px; */
@@ -206,11 +209,11 @@ h2 {
 	max-width: 800px;
 	/* height: 75%; */
 	padding: 10px;
-	position: relative;
+	position: absolute;
 	background: white;
 	display:  block;
 	overflow-y:  auto;
-	z-index: 10;
+	z-index: 15;
 }
 
 .static-map {
@@ -226,6 +229,7 @@ h2 {
 	display: flex;
 	flex-direction: row;
 	flex-wrap:  wrap;
+	justify-content:  space-evenly;
 }
 
 .thumb-div {
@@ -275,9 +279,11 @@ h2 {
 	padding: 5px;
 	position:  sticky;
 	bottom:  0;
+	margin-bottom: 20px;
 	background-color:  white;
 	display: flex;
 	justify-content: space-around;
+	box-shadow: 0px -2px 10px 0px #0000007a;
 }
 
 .photo-count {
@@ -310,6 +316,7 @@ h2 {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	justify-content:  space-evenly;
 	/* margin:  0 auto; */
 }
 
@@ -324,14 +331,38 @@ h2 {
 	top: 45%;
 }
 
-.loading-text {
+.loading-alert {
+	background-color: white;
+	/* top: 30%; */
+	/* margin: 0 auto; */
 	position: fixed;
-	display: flex;
-	color: lightgray;
-	top: 56%;
-	left: 25%;
-	right: 25%;
-	font-size: 1.5em;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 20px;
+	align-items: center;
+	z-index: 11;
+	display:  flex;
+	flex-direction:  row;
+	box-shadow: 3px 3px 5px 1px #00000087;
+}
+
+.loading-img {
+	/* width: 100%; */
+	z-index: 1003;
+	display: inline-block;
+	height: 100px;
+	width:  100px;
+}
+
+.loading-text {
+	/* position: fixed; */
+	display: block;
+	/* color: lightgray; */
+	/* top: 56%; */
+	/* left: 25%; */
+	/* right: 25%; */
+	font-size: 1.25em;
 }
 
 .popup {
@@ -352,11 +383,15 @@ h2 {
 
 .label {
 	color: gray;
-	margin-top: 4px;
+	margin-top: 0px;
 	font-size: .5em;
 	/* position: relative; */
 	display: block;
 	/* bottom: -2px; */
+}
+
+.area > .label {
+	padding-top: 10px;
 }
 
 .inline.label {
@@ -459,12 +494,13 @@ h2 {
 	/* grid-template-columns: 30px 100%; */
 }
 
-.observation .label {/* padding: 0 10px; */}
+.observation .label {margin-top: 5px;}
 
 input[type=text] {
 	border: lightgray 1px solid;
 	padding: 4px;
-	margin: 0px 0;
+	margin: 0;
+	width:  100%;
 }
 
 #address-input, #nickname-input, #common-name-input {
@@ -473,9 +509,20 @@ input[type=text] {
 	box-sizing: border-box;
 }
 
-input.coord, #obs-date-input, #obs-time-input {
-    width: 85%;
-    min-width: 120px;
+.confidence {
+	display: flex;
+	justify-content: space-evenly;
+	flex-direction: row;
+}
+
+input[name="confidence"] {
+	background-color: red;
+	margin-right: 10p;
+}
+
+input.coord, #obs-date-input, #obs-time-input, #genus-input, #species-input {
+    /* width: 85%; */
+    width: 120px;
 }
 
 div.fungi {
@@ -491,21 +538,19 @@ span.fungi {
     color: dimgrey;
 }
 
-#latlng, #datetime {
+#latlng, #datetime, .address-buttons, fungi {
 	display: inline-flex;
 	width: 100%;
 	justify-content: space-between;
 }
 
+.address-buttons {
+	flex-direction: column;
+}
+
 #datetime {
 	/* display: inline-flex; */
 	/* width: 100%; */
-}
-
-.loc-method {
-    /* width: 250px; */
-    /* display: flex; */
-    /* justify-content: space-around; */
 }
 
 .habitat-details {
@@ -520,5 +565,12 @@ span.fungi {
 }
 
 @media (min-width: 500px) {
-	position: sticky;
-	
+
+	header {
+		position: sticky;
+	}
+
+}
+
+@media (min-width: 300px) {
+	.address-bu

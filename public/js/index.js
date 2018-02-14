@@ -24,38 +24,44 @@ const OBSERVATION_FORM = `
 	<div class="location area">
 		<div>
 			<div id="location-options" class="loc-opts">
-				<div class="loc-method">
+				<div>
 					<label>
 						<span class="label">Address</span>
 						<input name="address" id="address-input" type="text" placeholder="Address">
 					</label>
 				</div>
-				<div id="latlng" class="loc-method">
-					<label>
-						<span class="label">Latitude</span>
-						<input readonly id="lat-input" name="lat" class="coord" type="number" placeholder="Lat">
-					</label>
-					<label>
-						<span class="label">Longitude</span>
-						<input readonly id="lng-input" name="lng" class="coord" type="number" placeholder="Long">
-					</label>
-					<button onclick="geolocate()">Use Current Location</button>
+				<div class="address-blocking">
+					<div id="latlng">
+						<label>
+							<span class="label">Latitude</span>
+							<input readonly id="lat-input" name="lat" class="coord" type="number" placeholder="Lat">
+						</label>
+						<label>
+							<span class="label">Longitude</span>
+							<input readonly id="lng-input" name="lng" class="coord" type="number" placeholder="Long">
+						</label>
+					</div>
+					<div id="datetime">
+						<label>
+								<span class="label">Date</span>
+								<input name="obsDate" id="obs-date-input" type="date">
+						</label>
+						<label>
+								<span class="label">Time</span>
+								<input name="obsTime" id="obs-time-input" type="time">
+						</label>
+					</div>
+					<div class="address-buttons">
+						<button onclick="geolocate()">Use Current Location</button>
+						<button onclick="useCurrentTime()">Use Current Time</button>
+					</div>
 				</div>
-				<div id="datetime">
-					<label>
-							<span class="label">Date</span>
-							<input name="obsDate" id="obs-date-input" type="date">
-					</label>
-					<label>
-							<span class="label">Time</span>
-							<input name="obsTime" id="obs-time-input" type="time">
-					</label>
-					<button onclick="useCurrentTime()">Use Current Time</button>
-			</div>
 				<div>
 					<span id="location-text"></span>
 				</div>
-				<a class="toggle-control" onclick="reveal('.location.notes', event)">Location Notes</a>
+				<a class="toggle-control" onclick="reveal('.location.notes', event)">
+					Location Notes
+				</a>
 				<div class="location notes reveal">
 					<textarea name="locationNotes" rows="5" placeholder="Location Notes"></textarea>
 				</div>
@@ -76,32 +82,52 @@ const OBSERVATION_FORM = `
 				<input name="commonName" id="common-name-input" onchange="populateNames(event)" type="text" placeholder="Common Name" list="commonName-datalist">
 			</label>
 		</div>
-		<div class="fungi">
-		<div>
-			<label>
+		<label>
+			<div class="confidence">
 				<span class="label">Identification Confidence</span>
-				<input name="confidence" type="radio" value="0">
-				<input name="confidence" type="radio" value="1">
-				<input name="confidence" type="radio" value="2">
-				<input name="confidence" type="radio" value="3">
-				<input name="confidence" type="radio" value="4">
-				<input name="confidence" type="radio" value="5">
+				<div>	
+					<label>0
+						<input name="confidence" type="radio" value="0">
+					</label>
+				</div>
+				<div>
+					<label>1
+						<input name="confidence" type="radio" value="1">
+					</label>
+				</div>
+				<div>
+					<label>2
+						<input name="confidence" type="radio" value="2">
+					</label>
+				</div>
+				<div>
+					<label>3
+						<input name="confidence" type="radio" value="3">
+					</label>
+				</div>
+				<div>
+					<label>4
+						<input name="confidence" type="radio" value="4">
+					</label>
+				</div>
+				<div>
+					<label>5
+						<input name="confidence" type="radio" value="5">
+					</label>
+				</div>
+			</div>
+		</label>
+		<div class="fungi">
+			<label>
+				<span class="label">genus</span>
+				<datalist id="genus-datalist"></datalist>
+				<input readonly name="genus" id="genus-input" type="text" list="genus-datalist">
 			</label>
-		</div>
-		<div>
-				<label>
-					<span class="label">genus</span>
-					<datalist id="genus-datalist"></datalist>
-					<input readonly name="genus" id="genus-input" type="text" list="genus-datalist">
-				</label>
-			</div>
-			<div>
-				<label>
-					<span class="label">species</span>
-					<datalist id="species-datalist"></datalist>
-					<input readonly name="species" id="species-input" type="text" list="species-datalist">
-				</label>
-			</div>
+			<label>
+				<span class="label">species</span>
+				<datalist id="species-datalist"></datalist>
+				<input readonly name="species" id="species-input" type="text" list="species-datalist">
+			</label>
 		</div>
 		<a class="toggle-control" onclick="reveal('.mushroom.notes', event)">Mushroom Notes</a>
 		<div class="mushroom notes reveal">
@@ -372,6 +398,7 @@ function annimateObservation(event) {
 	const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
 	const viewSection = document.querySelector('section#view-observation');
+	const popup = document.querySelector('section#popup');
 	const startContent = event.innerHTML;
 	const startBox = `
 		id="observation-detail";
@@ -380,7 +407,7 @@ function annimateObservation(event) {
 	let observationDiv = document.querySelector('#observation-detail');
 	requestAnimationFrame(() => {
 		observationDiv.setAttribute("style", "transition: all .5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
-		viewSection.classList.add('popup');
+		popup.classList.remove('hidden');
 		observationDiv.classList.add('observationBox');
 		viewSection.classList.remove('hidden');
 		requestAnimationFrame(() => {
@@ -409,7 +436,8 @@ function makeHero(event){
 function closeObservation (){
 	event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
-		viewSection.classList.remove('popup');
+	const popup = document.querySelector('section#popup');
+		popup.classList.add('hidden');
 		viewSection.classList.add('hidden');
 }
 
@@ -588,6 +616,8 @@ function newObservation() {
 	</div>`;
 	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
 	globalFileHolder = [];
+	// const input = document.getElementById('address-input');
+	// const autocomplete = new google.maps.places.Autocomplete(input);
 	populateDatalists();
 	displaySection('.new.observation');
 }
@@ -609,17 +639,13 @@ function loading(state, text) {
 	if (state) {
 		console.log('Loading . . . . .   ', text);
 		const loadingScreen = document.createElement('div');
-			loadingScreen.classList.add('popup');
-			loadingScreen.id = 'loading-screen';
-		const spinner = document.createElement('img');
-			spinner.src = "media/loading-mushroom.gif";
-			// spinner.classList.add('popup');
-			// spinner.id = "loading-screen";
-		const loadingText = document.createElement('span');
-			loadingText.innerHTML = text;
-			loadingText.classList.add('loading-text');
-		loadingScreen.insertAdjacentElement('beforeend', spinner);
-		// loadingScreen.insertAdjacentElement('beforeend', loadingText);
+		loadingScreen.classList.add('popup');
+		loadingScreen.id = 'loading-screen';
+		loadingScreen.innerHTML = `
+			<div class="loading-alert">
+				<img src="media/loading-mushroom.gif" class="loading-img">
+				<span class="loading-text">${text}<span>
+			</div>`;
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
 	} 
 	else if (!state) {
@@ -633,7 +659,7 @@ function loading(state, text) {
 //directly from HTML onclick event
 async function saveObservation(event, id) {
 	event.preventDefault();
-	loading(true, 'Uploading Photos and Saving Observation');
+	loading(true, 'Saving Changes to Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
@@ -650,10 +676,21 @@ async function saveObservation(event, id) {
 		// arr.forEach(filename => deleteFileUponSave(id, filename));
 		for (let filename of arr) await deleteFileUponSave(id, filename);
 		};
-	document.querySelector('section.edit.observation').innerHTML = "";
+	// document.querySelector('section.edit.observation').innerHTML = "";
 
-	await updateObservation(id, formData);
-	loading(false);
+	// await updateObservation(id, formData);
+	// loading(false);
+
+
+	return new Promise(res => {
+		updateObservation(id, formData)
+	})
+	.then(res => {
+		document.querySelector('section.edit.observation').innerHTML = "";	
+		loading(false);
+	});
+
+
 }
 
 function submitNewObservation(event) {
@@ -669,7 +706,6 @@ function submitNewObservation(event) {
 	return new Promise(res => {
 		publishNewObservation(formData)
 	})
-
 	.then(res => {
 		document.querySelector('section.new.observation').innerHTML = "";	
 		loading(false);
@@ -684,6 +720,7 @@ function updateObservation(id, formData) {
 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
+			loading(false);
 		})
 		.catch(error => console.error('Error:', error))
 }
@@ -776,8 +813,10 @@ function editObservation(event, obsId) {
 		<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
 		<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
 		<button onclick="getAndDisplayObservations()">Cancel</button>
-	</div>`
+	</div>`;
 	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
+	// const input = document.getElementById('address-input');
+	// const autocomplete = new google.maps.places.Autocomplete(input);
 	getObservation(obsId).then(async res => {
 		await populateFields(res);
 		res.photos.files.forEach(file => populateThumbnail(file));
