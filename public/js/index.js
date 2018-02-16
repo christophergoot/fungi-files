@@ -15,11 +15,9 @@ const OBSERVATION_FORM = `
 <input type="hidden" name="filesToBeDeleted">
 <div class="grid wrapper">
 	<div  class="image area">
-		<div>
-			<button onclick="selectFiles(event)">Add Images</button>
-			<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
-			<div class="img-preview">
-			</div>
+		<button onclick="selectFiles(event)">Add Images</button>
+		<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
+		<div class="img-preview">
 		</div>
 	</div>
 	<div class="location area">
@@ -69,8 +67,6 @@ const OBSERVATION_FORM = `
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="map area">
 	</div>
 	<div class="name area">
 		<div>
@@ -455,7 +451,7 @@ function annimateObservation(event) {
 	requestAnimationFrame(() => {
 		observationDiv.setAttribute("style", "transition: all 5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
 		popup.classList.remove('hidden');
-		// observationDiv.classList.add('observationBox');
+		observationDiv.classList.add('observationBox');
 		viewSection.classList.remove('hidden');
 		requestAnimationFrame(() => {
 			observationDiv.removeAttribute("style");
@@ -855,6 +851,7 @@ function populateThumbnail(file) {
 }
 
 function editObservation(event, obsId) {
+	event.stopPropagation();
 	const header = "<h2>Edit Observation</h2>"
 	const footer = `
 	<div role="footer"	class="form-buttons">
@@ -915,8 +912,8 @@ function renderObservation(obs, address) {
 		obsRender +=
 			`<span><span class="label">observed </span>${dateStr}`
 		};
-	if (address) obsRender += 
-			`<span class="label">around </span><span id="list-address">${address}</span></span>`;
+	if (obs.location.address) obsRender += 
+			`<span class="label">around </span><span id="list-address">${obs.location.address}</span></span>`;
 	obsRender += 
 		`</div>
 	</div>`;
