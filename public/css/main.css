@@ -6,14 +6,14 @@ body {
 }
 
 header {
-	background-color: #3c003c;
+	background-color: black;
 	background-image: url("/media/header-background.jpg");
 	background-size:  cover;
 	background-position: center;
 	height: 120px;
 	max-height: 100%;
 	color: white;
-	text-shadow: 0px 2px black;
+	/* text-shadow: 0px 2px black; */
 	text-align: left;
 	padding: 0 10px;
 }
@@ -34,6 +34,10 @@ header>ul>li, header>ul>li:visited {
 	padding: 5px 20px 5px 5px;
 	font-family: 'Quattrocento Sans', sans-serif;
 	color: white;
+	/* color: #2e362d; */
+	color: #c6a987;
+	/* text-shadow: 1px 1px white; */
+	text-shadow: 1px 1px 2px #2e362d, -1px -1px 2px #2e362d;
 }
 
 header>ul>li:hover {
@@ -114,11 +118,15 @@ button:hover {
 }
 
 .name.area {
-    grid-column-start: 2;
-    grid-row-start: 2;
+    /* grid-column-start: 2; */
+    /* grid-row-start: 2; */
+    grid-area: name;
 }
 
-.location.area {grid-column: 2;}
+.location.area {
+	grid-column: 2;
+	grid-area: location;
+	}
 
 
 
@@ -163,11 +171,7 @@ textarea {
 
 h2 {
 	margin: 10px;
-	grid-column-start: 1;
-	grid-column-end: 3;
-	grid-row-start: 1;
-	grid-row-end: 2;
-	color: white;
+	grid-area: header;
 	display: block;
 	/* position: sticky; */
 	font-family: 'Bungee', cursive;
@@ -328,20 +332,20 @@ h2 {
 
 .form-buttons {
 	padding: 5px;
-	/* grid-column: 2; */
-	border-bottom-right-radius: 3px;
-	border-bottom-left-radius: 3px;
+	/* grid-column-start: 1; */
+	grid-area: form-buttons;
+	/* border-bottom-left-radius: 3px; */
 	/* bottom:  0; */
-	/* position: relative; */
-	right: 0;
-	float: right;
+	position: sticky;
+	/* right: 0; */
+	/* float: right; */
 	/* margin-bottom: 20px; */
-	/* background-color:  white; */
+	background-color:  white;
 	background-color: rgba(0, 0, 0, .5);
 	display: flex;
-	width: 340px;
+	/* width: 100%; */
 	justify-content: space-around;
-	box-shadow: 0px -2px 5px 0px #00000069;
+	/* box-shadow: 0px -2px 5px 0px #00000069; */
 }
 
 .photo-count {
@@ -541,6 +545,7 @@ h2 {
 	margin: 0 auto 40px auto;
 	z-index: 16;
 	position: fixed;
+	/* position: absolute; */
 	height: 100%;
 	top: 40px;
 	right: 0;
@@ -552,22 +557,29 @@ h2 {
 
 .grid.wrapper {
     display: grid;
-    /* max-width: 100%; */
-    grid-template-columns: minmax(100px, 450px) 350px;
-    /* grid-template-columns: 100%; */
+    grid-template-areas: "images location"         "images name"          "images form-buttons";
+    grid-auto-rows: auto;
+    grid-template-rows: auto;
+    grid-template-columns: minmax(100px, 420px) 350px;
     grid-gap: 20px;
-    left: 0;
-    right: 0;
+    /* left: 0; */
+    /* right: 0; */
     align-items: left;
 }
 
+
+form#new-observation, form#edit-observation {
+	/* display: grid; */
+}
 .image.area {
-    grid-row-start: 1;
+    /* grid-row-start: 1; */
     /* grid-column-start: 1; */
     /* grid-column-end: 3; */
-    grid-row-end:  3;
-    background-color:  transparent;
+    /* grid-row-end:  3; */
+    grid-area: images;
+    /* float: left; */
     align-items: center;
+    width: 100%;
 }
 
 
@@ -683,4 +695,3 @@ span.fungi {
 }
 
 form#new-observation {
-    /* displa

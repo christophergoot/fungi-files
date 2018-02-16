@@ -9,11 +9,10 @@ const URL = "/observations/";
 let globalFileHolder = [];
 
 const OBSERVATION_FORM = `
-<form enctype="multipart/form-data" method="post" id="new-observation">
+<form enctype="multipart/form-data" method="post" id="new-observation" class='grid wrapper'>
 <input type="hidden" name="id">
 <input type="hidden" name="featured" id="featured-input">
 <input type="hidden" name="filesToBeDeleted">
-<div class="grid wrapper">
 	<div  class="image area">
 		<button onclick="selectFiles(event)">Add Images</button>
 		<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
@@ -161,7 +160,6 @@ const OBSERVATION_FORM = `
 		</div>
 	</div>
 	--!>
-</div>
 </form>
 `;
 
@@ -251,10 +249,12 @@ function enterLocation() {
 			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location>
 			<button onclick="resolveLocation(event)">
 		</form>`;
+// example
 	const input = document.getElementById('address-entry');
 	const autocomplete = new google.maps.places.Autocomplete(input);
 
 
+	
 	// send to google
 
 	// send to something else
@@ -653,13 +653,15 @@ function getAddress(obs, callback) {
 
 function newObservation() {
 	const header = "<h2>Add New Observation</h2>";
-	const newObs = 'section.new.observation';
-	const footer = `
-	<div role="footer"	class="form-buttons">
-		<button onclick="submitNewObservation(event)">Submit New Observation</button>
-		<button onclick="getAndDisplayObservations()">Cancel</button>
-	</div>`;
-	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
+	const newObs = document.querySelector('section.new.observation');
+	const footer = document.createElement('div');
+		footer.classList.add('form-buttons');
+		footer.innerHTML = `
+			<button onclick="submitNewObservation(event)">Submit New Observation</button>
+			<button onclick="getAndDisplayObservations()">Cancel</button>`;
+	newObs.innerHTML = header + OBSERVATION_FORM;
+	const form = document.getElementById('new-observation');
+	form.insertAdjacentElement('beforeend', footer);
 	globalFileHolder = [];
 	populateDatalists();
 	// displaySection('.new.observation');
@@ -852,16 +854,31 @@ function populateThumbnail(file) {
 
 function editObservation(event, obsId) {
 	event.stopPropagation();
-	const header = "<h2>Edit Observation</h2>"
-	const footer = `
-	<div role="footer"	class="form-buttons">
-		<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
-		<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
-		<button onclick="getAndDisplayObservations()">Cancel</button>
-	</div>`;
-	document.querySelector('.edit.observation').innerHTML = header + OBSERVATION_FORM + footer;
-	// const input = document.getElementById('address-input');
-	// const autocomplete = new google.maps.places.Autocomplete(input);
+	const header = "<h2>Edit Observation</h2>";
+	const newObs = document.querySelector('section.edit.observation');
+	const footer = document.createElement('div');
+		footer.classList.add('form-buttons');
+		footer.innerHTML = `
+			<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
+			<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
+			<button onclick="getAndDisplayObservations()">Cancel</button>`;
+	newObs.innerHTML = header + OBSERVATION_FORM;
+	const form = document.getElementById('new-observation');
+	form.insertAdjacentElement('beforeend', footer);
+
+	// const header = "<h2>Edit Observation</h2>"
+	// const footer = `
+	// <div role="footer"	class="form-buttons">
+	// 	<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
+	// 	<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
+	// 	<button onclick="getAndDisplayObservations()">Cancel</button>
+	// </div>`;
+	// document.querySelector(newObs).innerHTML = 
+	// 	"<div class='grid wrapper'>" +
+	// 		header + 
+	// 		OBSERVATION_FORM + 
+	// 		footer +
+	// 	"</div>";
 	getObservation(obsId).then(async res => {
 		await populateFields(res);
 		res.photos.files.forEach(file => populateThumbnail(file));
@@ -938,6 +955,7 @@ function displayObservations(res) {
 }
 
 function getAndDisplayObservations() {
+	event.preventDefault();
 	// clear out old observations
 	document.querySelector('#obs-list').innerHTML = "";
 	getObservations(displayObservations);
