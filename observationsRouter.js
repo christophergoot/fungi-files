@@ -118,7 +118,7 @@ async function updateObservation(req, res, id) {
 			files.map(async file => {
 				const origName = file.originalname;
 				const url = await uploadFile(file, id, 1200);
-				const thumbnail = await uploadFile(file, id, 200);
+				const thumbnail = await uploadFile(file, id, 400);
 				const filename = url.substring(url.lastIndexOf('/') + 1);
 
 				const exif = await getExif(file);

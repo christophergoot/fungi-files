@@ -4,8 +4,9 @@
 <head>
 	<title>Mushroom Journal</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bungee|Quattrocento+Sans|Roboto">
 </head>
 
 <body>
@@ -19,6 +20,12 @@
 			</li>
 			<li>
 				<a onclick="newObservation()">Add New Observation</a>
+			</li>
+			<li>
+				<a onclick="alert('User Accounts are not yet implemented, but should be shortly.')">Account Settings</a>
+			</li>
+			<li>
+				<a onclick="alert('User Accounts are not yet implemented, but should be shortly.')">Logout (Demo Account)</a>
 			</li>
 		</ul>
 	</header>
@@ -34,6 +41,8 @@
 			</div>
 		</section>
 		<section id="popup" class="popup hidden" onclick="closeObservation()">
+		</section>
+		<section id="form-popup" class="popup hidden">
 		</section>
 	</main>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs&libraries=places"></script>

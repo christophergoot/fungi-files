@@ -13,7 +13,8 @@ const OBSERVATION_FORM = `
 <input type="hidden" name="id">
 <input type="hidden" name="featured" id="featured-input">
 <input type="hidden" name="filesToBeDeleted">
-	<div  class="area">
+<div class="grid wrapper">
+	<div  class="image area">
 		<div>
 			<button onclick="selectFiles(event)">Add Images</button>
 			<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
@@ -27,7 +28,7 @@ const OBSERVATION_FORM = `
 				<div>
 					<label>
 						<span class="label">Address</span>
-						<input name="address" id="address-input" type="text" placeholder="Address">
+						<input readonly name="address" id="address-input" type="text" placeholder="Address">
 					</label>
 				</div>
 				<div class="address-blocking">
@@ -52,6 +53,7 @@ const OBSERVATION_FORM = `
 						</label>
 					</div>
 					<div class="address-buttons">
+						<button onclick="enterLocation()">Enter Location</button>
 						<button onclick="geolocate()">Use Current Location</button>
 						<button onclick="useCurrentTime()">Use Current Time</button>
 					</div>
@@ -68,7 +70,9 @@ const OBSERVATION_FORM = `
 			</div>
 		</div>
 	</div>
-	<div class="area">
+	<div class="map area">
+	</div>
+	<div class="name area">
 		<div>
 			<label>
 				<span class="label">Nickname</span>
@@ -87,37 +91,37 @@ const OBSERVATION_FORM = `
 				<span class="label">Identification Confidence</span>
 				<div>	
 					<label>0
-						<input name="confidence" type="radio" value="0">
+						<input name="confidence" type="radio" value="0" title="I guarantee this is wrong">
 					</label>
 				</div>
 				<div>
 					<label>1
-						<input name="confidence" type="radio" value="1">
+						<input name="confidence" type="radio" value="1" title="Shot in the dark">
 					</label>
 				</div>
 				<div>
 					<label>2
-						<input name="confidence" type="radio" value="2">
+						<input name="confidence" type="radio" value="2" title="Maybe, sort-of, kind-of">
 					</label>
 				</div>
 				<div>
 					<label>3
-						<input name="confidence" type="radio" value="3">
+						<input name="confidence" type="radio" value="3" title="Sounds like it could be">
 					</label>
 				</div>
 				<div>
 					<label>4
-						<input name="confidence" type="radio" value="4">
+						<input name="confidence" type="radio" value="4" title="I feel very good about this">
 					</label>
 				</div>
 				<div>
 					<label>5
-						<input name="confidence" type="radio" value="5">
+						<input name="confidence" type="radio" value="5" title="I'd bet my life">
 					</label>
 				</div>
 			</div>
 		</label>
-		<div class="fungi">
+			<div class="fungi">
 			<label>
 				<span class="label">genus</span>
 				<datalist id="genus-datalist"></datalist>
@@ -134,9 +138,8 @@ const OBSERVATION_FORM = `
 			<textarea name="mushroomNotes" id="mushroomNotes" placeholder="Mushroom Notes"></textarea>
 		</div>
 	</div>
-
 <!--
-	<div class="area">
+	<div class="habitat area">
 		<h3>Habitat</h3>
 		<div class="habitat-details">
 			<label>
@@ -162,6 +165,7 @@ const OBSERVATION_FORM = `
 		</div>
 	</div>
 	--!>
+</div>
 </form>
 `;
 
@@ -241,6 +245,24 @@ function receiveFiles(event) {
 		exifFromFile(files[i]);
 	};
 
+}
+
+function enterLocation() {
+	event.preventDefault();
+	// open form
+	const form = `
+		<form>
+			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location>
+			<button onclick="resolveLocation(event)">
+		</form>`;
+	const input = document.getElementById('address-entry');
+	const autocomplete = new google.maps.places.Autocomplete(input);
+
+
+	// send to google
+
+	// send to something else
+	alert("it's on the short list of things to add");
 }
 
 function updateLocation(obs, locationSource) {
@@ -394,7 +416,7 @@ function exifFromFile(file, filename) {
 	};
 }
 
-function annimateObservation(event) {
+function ORIGannimateObservation(event) {
 	const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
 	const viewSection = document.querySelector('section#view-observation');
@@ -404,15 +426,40 @@ function annimateObservation(event) {
 		id="observation-detail";
 		value="${id}";`;
 	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
-	let observationDiv = document.querySelector('#observation-detail');
+	const observationDiv = document.querySelector('#observation-detail');
 	requestAnimationFrame(() => {
-		observationDiv.setAttribute("style", "transition: all .5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
+		observationDiv.setAttribute("style", "transition: all 5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
 		popup.classList.remove('hidden');
 		observationDiv.classList.add('observationBox');
 		viewSection.classList.remove('hidden');
 		requestAnimationFrame(() => {
 			observationDiv.removeAttribute("style");
-// 			observationDiv.querySelector('img').classList.add('obs-img');
+			// observationDiv.querySelector('img').classList.add('obs-img');
+		});
+	});
+}
+
+function annimateObservation(event) {
+	const id = event.attributes.value;
+	const startRect = event.getBoundingClientRect();
+
+	const viewSection = document.querySelector('section#view-observation');
+
+	const popup = document.querySelector('section#popup');
+	const startContent = event.innerHTML;
+	const startBox = `
+		id="observation-detail";
+		value="${id}";`;
+	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
+	const observationDiv = document.querySelector('#observation-detail');
+	requestAnimationFrame(() => {
+		observationDiv.setAttribute("style", "transition: all 5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
+		popup.classList.remove('hidden');
+		// observationDiv.classList.add('observationBox');
+		viewSection.classList.remove('hidden');
+		requestAnimationFrame(() => {
+			observationDiv.removeAttribute("style");
+			// observationDiv.querySelector('img').classList.add('obs-img');
 		});
 	});
 }
@@ -424,9 +471,10 @@ function getObservation(targetId) {
 
 function makeHero(event){
 	event.preventDefault();
-	const {dataset} = event.currentTarget;
+	const {dataset, currentSrc} = event.currentTarget;
 	const {filename, url} = dataset;
 	const hero = document.querySelector('.obs-hero');
+	hero.src = currentSrc;
 	hero.src = url;
 	const buttons = document.querySelectorAll('.img-button');
 	for (let btn of buttons) btn.classList.remove('selected');
@@ -436,12 +484,12 @@ function makeHero(event){
 function closeObservation (){
 	event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
-	const popup = document.querySelector('section#popup');
+	const popup = document.getElementById('popup');
 		popup.classList.add('hidden');
 		viewSection.classList.add('hidden');
 }
 
-function dateString (dateObj) {
+function dateString (dateObj, opt) {
 	const date = new Date(dateObj);
 	const daynames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	const months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December'];
@@ -450,8 +498,9 @@ function dateString (dateObj) {
 	const day = date.getDate();
 	const year = date.getFullYear();
 	const time = date.toLocaleTimeString('en-US');
-	const dateStr = `${dayname} ${month} ${day}, ${year} at ${time}`;
-	return dateStr;
+	if (opt) {
+		if (opt = "date") return `${dayname} ${month} ${day}, ${year}`;
+	} else return `${dayname} ${month} ${day}, ${year} at ${time}`;
 }
 
 function displayObservation(obs) {
@@ -588,7 +637,7 @@ function viewObservation(event) {
 
 	getObservation(id)
 		.then(res => 
-			setTimeout(displayObservation(res), 20000));
+			displayObservation(res));
 }
 
 function getAddress(obs, callback) {
@@ -616,10 +665,10 @@ function newObservation() {
 	</div>`;
 	document.querySelector(newObs).innerHTML = header + OBSERVATION_FORM + footer;
 	globalFileHolder = [];
-	// const input = document.getElementById('address-input');
-	// const autocomplete = new google.maps.places.Autocomplete(input);
 	populateDatalists();
-	displaySection('.new.observation');
+	// displaySection('.new.observation');
+	document.querySelector('.new.observation').classList.remove('hidden');
+	document.querySelector('#form-popup').classList.remove('hidden');
 }
 
 const objFromIterator = (iterator) => {
@@ -638,7 +687,7 @@ function dateFromDateTime(date, time) {
 function loading(state, text) {
 	if (state) {
 		const loadingScreen = document.createElement('div');
-		loadingScreen.classList.add('popup');
+		loadingScreen.classList.add('popup.alert');
 		loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
 			<div class="loading-alert">
@@ -786,7 +835,7 @@ async function populateFields(obs) {
 	for (let n in notes) if (notes[n]) document.getElementById(n).innerHTML = notes[n];
 	if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
 	populateDatalists();
-	displaySection('.edit.observation');
+// 	displaySection('.edit.observation');
 }
 
 function populateThumbnail(file) {
@@ -823,7 +872,9 @@ function editObservation(event, obsId) {
 	});
 	globalFileHolder = [];
 	populateDatalists();
-	displaySection('.edit.observation');
+	document.querySelector('.edit.observation').classList.remove('hidden');
+	document.getElementById('form-popup').classList.remove('hidden');
+// 	displaySection('.edit.observation');
 }
 
 function renderObservation(obs, address) {
@@ -837,20 +888,19 @@ function renderObservation(obs, address) {
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `
-	<div class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">
+	<div style=background-image:url("${thumbnail}" class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">
 		<input type="image" src="/media/edit.png" 
-		onclick="editObservation(event, '${obs.id}')" 
-		class="obs-action edit"
-		alt="Edit Observation" title="Edit Observation"> `;
-		obsRender += 
-		`<div class="obs-thumb"	style=background-image:url("${thumbnail}">`;
+			onclick="editObservation(event, '${obs.id}')" 
+			class="obs-action edit"
+			alt="Edit Observation" title="Edit Observation"> `;
+	// obsRender += 
+		// `<div class="obs-thumb"	style=background-image:url("${thumbnail}">`;
 	if (obs.photos.files.length>1) obsRender +=
 			`<span class="photo-count">
 				+ ${obs.photos.files.length-1} more photos
 			</span>`;
 	obsRender +=
-		`</div>
-		<div class="obs-details">`
+		`<div class="obs-details">`
 	if (obs.fungi.nickname) obsRender +=
 			`<span class="title"><span class="label">nickname: </span>"${obs.fungi.nickname}"</span>`;
 	if (obs.fungi.commonName) obsRender +=
@@ -861,7 +911,7 @@ function renderObservation(obs, address) {
 			</span>`;
 	if (obs.obsDate) {
 		const date = new Date(obs.obsDate);
-		const dateStr = dateString(date);
+		const dateStr = dateString(date, 'date');
 		obsRender +=
 			`<span><span class="label">observed </span>${dateStr}`
 		};

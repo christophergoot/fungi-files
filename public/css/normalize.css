@@ -46,6 +46,8 @@ section {
 
 h1 {
   font-size: 2em;
+  filter: sepia;
+  /* font-family: 'Bungee', cursive; */
   margin: 0;
   display: inline-block;
 }
@@ -102,7 +104,7 @@ pre {
  */
 
 a {
-  background-color: transparent; /* 1 */
+  /* background-color: #ffffff00; */ /* 1 */
   -webkit-text-decoration-skip: objects; /* 2 */
 }
 
