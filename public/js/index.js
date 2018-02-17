@@ -874,6 +874,17 @@ function editObservation(event, obsId) {
 // 	displaySection('.edit.observation');
 }
 
+function showInfo() {
+	// should be for touchscreen enabled devices only
+	event.preventDefault();
+	event.stopPropagation();
+	// define 
+	// add class ('show-info')
+	console.log('need to implement');
+	// const toggle
+}
+
+
 function renderObservation(obs, address) {
 	// define thumbnail
 	let thumbnail = "";
@@ -886,6 +897,10 @@ function renderObservation(obs, address) {
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `
 	<div style=background-image:url("${thumbnail}" class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">
+		<input type="image" src="/media/info.png"
+			onclick="showInfo()"
+			class="show-info-button"
+			alt="Show more information" title="Show more information">
 		<input type="image" src="/media/edit.png" 
 			onclick="editObservation(event, '${obs.id}')" 
 			class="obs-action edit"
