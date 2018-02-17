@@ -322,12 +322,12 @@ h2 {
 
 .img-action.featured {
 	position: absolute;
-	top: 24px;
+	top: 28px;
 }
 
 .img-action.location {
 	position: absolute;
-	top: 49px;
+	top: 53px;
 }
 
 .form-buttons {
@@ -477,12 +477,36 @@ h2 {
 }
 
 .observation-actions {
-	display: inline-flex;
+	/* position: sticky; */
 	/* padding:  2px; */
 }
 .observation-actions>a {
 	margin-right: 10px;
 }
+
+.obs-view-action {
+	position: absolute;
+	height: 32px;
+	right: 0;
+	top: 0;
+	margin: 2px;
+	filter: drop-shadow(1px 1px 0 white) 
+			drop-shadow(-1px 1px 0 white)  
+			invert(100%);-
+	index: 1;
+}
+
+input.obs-view-action.edit {
+    right: 40px;
+}
+
+.obs-view-action:hover {
+	filter: invert(0)
+			drop-shadow(1px 1px 0 white) 
+			drop-shadow(-1px 1px 0 white)  ;
+}
+
+
 /* 
 #observation-detail {
 	z-index: 14;
@@ -565,6 +589,7 @@ h2 {
     /* left: 0; */
     /* right: 0; */
     align-items: left;
+    margin-bottom: 40px;
 }
 
 
@@ -627,8 +652,8 @@ input[name="confidence"] {
 }
 
 input.coord, #obs-date-input, #obs-time-input, #genus-input, #species-input {
-    /* width: 85%; */
-    width: 136px;
+    width: 85%;
+    /* width: 104px; */
 }
 
 div.fungi {
@@ -685,6 +710,8 @@ span.fungi {
 
 	.grid.wrapper {
 		grid-template-columns: 100%;
+		grid-template-areas: "images" "location" "name" "form-buttons";
+
 	}
 }
 
@@ -694,4 +721,4 @@ span.fungi {
 	}
 }
 
-form#new-observation {
+form#new-observ

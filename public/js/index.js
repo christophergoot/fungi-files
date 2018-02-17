@@ -503,12 +503,9 @@ function displayObservation(obs) {
 	// wrapper and options
 	let obsRender = `
 		<div class="observation-actions">
-			<a class="edit-button" onclick="editObservation(event, '${obs.id}')">
-				Edit
-			</a>
-			<a class="close-button" onclick="closeObservation()">
-				Close
-			</a>
+			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="closeObservation();editObservation(event, '${obs.id}')" class="obs-view-action edit">
+			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="closeObservation()" class="obs-view-action close">
+			
 		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
 	
@@ -865,20 +862,6 @@ function editObservation(event, obsId) {
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
-
-	// const header = "<h2>Edit Observation</h2>"
-	// const footer = `
-	// <div role="footer"	class="form-buttons">
-	// 	<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
-	// 	<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
-	// 	<button onclick="getAndDisplayObservations()">Cancel</button>
-	// </div>`;
-	// document.querySelector(newObs).innerHTML = 
-	// 	"<div class='grid wrapper'>" +
-	// 		header + 
-	// 		OBSERVATION_FORM + 
-	// 		footer +
-	// 	"</div>";
 	getObservation(obsId).then(async res => {
 		await populateFields(res);
 		res.photos.files.forEach(file => populateThumbnail(file));
