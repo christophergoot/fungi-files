@@ -14,8 +14,8 @@ const OBSERVATION_FORM = `
 <input type="hidden" name="featured" id="featured-input">
 <input type="hidden" name="filesToBeDeleted">
 	<div  class="image area">
-		<button onclick="selectFiles(event)">Add Images</button>
-		<input onchange="receiveFiles(event)" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
+		<button onclick="run(selectFiles(event))">Add Images</button>
+		<input onchange="run(receiveFiles(event))" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
 		<div class="img-preview">
 		</div>
 	</div>
@@ -50,15 +50,15 @@ const OBSERVATION_FORM = `
 						</label>
 					</div>
 					<div class="address-buttons">
-						<button onclick="enterLocation()">Enter Location</button>
-						<button onclick="geolocate()">Use Current Location</button>
-						<button onclick="useCurrentTime()">Use Current Time</button>
+						<button onclick="run(enterLocation())">Enter Location</button>
+						<button onclick="run(geolocate())">Use Current Location</button>
+						<button onclick="run(useCurrentTime())">Use Current Time</button>
 					</div>
 				</div>
 				<div>
 					<span id="location-text"></span>
 				</div>
-				<a class="toggle-control" onclick="reveal('.location.notes', event)">
+				<a class="toggle-control" onclick="run(reveal('.location.notes', event))">
 					Location Notes
 				</a>
 				<div class="location notes reveal">
@@ -128,7 +128,7 @@ const OBSERVATION_FORM = `
 				<input readonly name="species" id="species-input" type="text" list="species-datalist">
 			</label>
 		</div>
-		<a class="toggle-control" onclick="reveal('.mushroom.notes', event)">Mushroom Notes</a>
+		<a class="toggle-control" onclick="run(reveal('.mushroom.notes', event))">Mushroom Notes</a>
 		<div class="mushroom notes reveal">
 			<textarea name="mushroomNotes" id="mushroomNotes" placeholder="Mushroom Notes"></textarea>
 		</div>
@@ -154,7 +154,7 @@ const OBSERVATION_FORM = `
 			<label>
 				<input type="checkbox" value="Swamp / Bog">Swamp / Bog</label>
 		</div>
-		<a class="toggle-control" onclick="reveal('.habitat.notes', event)">Habitat Notes</a>
+		<a class="toggle-control" onclick="run(reveal('.habitat.notes', event)">Habitat Notes</a>
 		<div class="habitat notes reveal">
 			<textarea name="habitatNotes" id="habitatNotes" rows="5" placeholder="Habitat Notes"></textarea>
 		</div>
@@ -163,6 +163,10 @@ const OBSERVATION_FORM = `
 </form>
 `;
 
+function run(passthrough) {
+	event.preventDefault;
+	passthrough;
+}
 
 function displaySection(sec) {
 	const secs = document.querySelectorAll('section');
@@ -180,7 +184,7 @@ function updateAddress(addressString) {
 }
 
 async function useCurrentTime() {
-	event.preventDefault();
+	// event.preventDefault();
 	const obsTime = await getTime(new Date());
 	const obsDate = await getDate(new Date());
 	updateValue('obsTime', obsTime);
@@ -188,7 +192,7 @@ async function useCurrentTime() {
 }
 
 function geolocate() {
-	event.preventDefault();
+	// event.preventDefault();
 	navigator.geolocation.getCurrentPosition((position) => {
 		const coords = { 
 			'lat': position.coords.latitude, 
@@ -226,12 +230,16 @@ function populateNames(event) {
 }
 
 function selectFiles(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	document.querySelector("#file-input").click();
 }
 
+function click(querySelector) {
+	document.querySelector(querySelector).click();
+}
+
 function receiveFiles(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const files = event.target.files;
 	for (let i = 0; i < files.length; i++) {
 		previewFile(files[i]);
@@ -242,12 +250,12 @@ function receiveFiles(event) {
 }
 
 function enterLocation() {
-	event.preventDefault();
+	// event.preventDefault();
 	// open form
 	const form = `
 		<form>
 			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location>
-			<button onclick="resolveLocation(event)">
+			<button onclick="run(resolveLocation(event))">
 		</form>`;
 // example
 	const input = document.getElementById('address-entry');
@@ -283,7 +291,7 @@ function updateLocation(obs, locationSource) {
 }
 
 function locationFromThumbnail(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const obs = { 
 		'filename': event.currentTarget.dataset.filename,
 		'date': new Date(event.currentTarget.dataset.date),
@@ -301,7 +309,7 @@ function deleteFileUponSave(id, filename) {
 }
 
 function deleteFile(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const { filename } = event.currentTarget.dataset;
 	const target = document.getElementById(`${filename}-div`);
 	const { src } = target.firstElementChild;
@@ -331,8 +339,8 @@ function insertThumbnailStructure(filename) {
 	const newImg = `
 	<div id="${filename}-div" class="thumb-div">
 		<img src="media/loading.gif" id="${filename}-thumb" class="thumb-img" alt="Thumbnail for ${filename}" title="Thumbnail for ${filename}">
-		<input type="image" src="/media/delete.png" onclick="deleteFile(event)" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
-		<input type="image" src="/media/featured.png" onclick="makeFeatured(event)" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
+		<input type="image" src="/media/delete.png" onclick="deleteFile(event))" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
+		<input type="image" src="/media/featured.png" onclick="makeFeatured(event))" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
@@ -340,7 +348,7 @@ function insertThumbnailStructure(filename) {
 }
 
 function makeFeatured(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const filename = event.currentTarget.dataset.filename;
 	const featured = document.getElementsByName('featured')[0];
 	// const oldFilename = featured.value;
@@ -373,7 +381,7 @@ function addGpsAction (lat, lng, filename, date) {
 	const target = document.getElementById(`${filename}-div`);
 	const button = `<input type="image"
 					src="/media/uselocation.png" 
-					onclick="locationFromThumbnail(event)" 
+					onclick="run(locationFromThumbnail(event))" 
 					data-filename="${filename}" 
 					data-lat="${lat}" 
 					data-lng="${lng}" 
@@ -412,7 +420,7 @@ function exifFromFile(file, filename) {
 	};
 }
 
-function ORIGannimateObservation(event) {
+function ORIGannimateObservation(event,id) {
 	const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
 	const viewSection = document.querySelector('section#view-observation');
@@ -435,8 +443,8 @@ function ORIGannimateObservation(event) {
 	});
 }
 
-function annimateObservation(event) {
-	const id = event.attributes.value;
+function annimateObservation(event,id) {
+	// const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
 
 	const viewSection = document.querySelector('section#view-observation');
@@ -466,7 +474,7 @@ function getObservation(targetId) {
 }
 
 function makeHero(event){
-	event.preventDefault();
+	// event.preventDefault();
 	const {dataset, currentSrc} = event.currentTarget;
 	const {filename, url} = dataset;
 	const hero = document.querySelector('.obs-hero');
@@ -478,7 +486,7 @@ function makeHero(event){
 }
 
 function closeObservation (){
-	event.preventDefault();
+	// event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
 	const popup = document.getElementById('popup');
 		popup.classList.add('hidden');
@@ -499,12 +507,17 @@ function dateString (dateObj, opt) {
 	} else return `${dayname} ${month} ${day}, ${year} at ${time}`;
 }
 
+function editFromViewObservation (event, id) {
+	closeObservation();
+	editObservation(event, id);
+}
+
 function displayObservation(obs) {
 	// wrapper and options
 	let obsRender = `
 		<div class="observation-actions">
-			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="closeObservation();editObservation(event, '${obs.id}')" class="obs-view-action edit">
-			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="closeObservation()" class="obs-view-action close">
+			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="run(editFromViewObservation(event, '${obs.id}'))" class="obs-view-action edit">
+			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="run(closeObservation())" class="obs-view-action close">
 			
 		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
@@ -525,7 +538,7 @@ function displayObservation(obs) {
 			src="${file.thumbnail}"
 			data-filename="${file.filename}"
 			data-url="${file.url}"
-			onclick="makeHero(event)"
+			onclick="run(makeHero(event))"
 			>`;
 		obsRender += `</div>`;
 	}
@@ -654,8 +667,8 @@ function newObservation() {
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="submitNewObservation(event)">Submit New Observation</button>
-			<button onclick="getAndDisplayObservations()">Cancel</button>`;
+			<button onclick="run(submitNewObservation(event))">Submit New Observation</button>
+			<button onclick="run(getAndDisplayObservations())">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -736,7 +749,7 @@ async function saveObservation(event, id) {
 }
 
 function submitNewObservation(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	loading(true, 'Saving New Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
@@ -856,9 +869,9 @@ function editObservation(event, obsId) {
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
-			<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
-			<button onclick="getAndDisplayObservations()">Cancel</button>`;
+			<button onclick="run(saveObservation(event, '${obsId}'))">Save Changes</button>
+			<button onclick="run(deleteObservation(event, '${obsId}'))">Delete Observation</button>
+			<button onclick="run(getAndDisplayObservations())">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -874,14 +887,16 @@ function editObservation(event, obsId) {
 // 	displaySection('.edit.observation');
 }
 
-function showInfo() {
+function showInfo(event) {
 	// should be for touchscreen enabled devices only
 	event.preventDefault();
 	event.stopPropagation();
 	// define 
+	const details = event.target.parentElement.querySelector('.obs-details');
+	const icons = event.target.parentElement.querySelectorAll('.obs-action');
 	// add class ('show-info')
-	console.log('need to implement');
-	// const toggle
+	details.classList.toggle('show-details');
+	icons.forEach(icon => icon.classList.toggle('show-icons'));
 }
 
 
@@ -896,15 +911,19 @@ function renderObservation(obs, address) {
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `
-	<div style=background-image:url("${thumbnail}" class="obs-list-item" value='${obs.id}' onclick="viewObservation(this)">
+	<div style=background-image:url("${thumbnail}" class="obs-list-item" value='${obs.id}' onclick="run(viewObservation(this))">
 		<input type="image" src="/media/info.png"
-			onclick="showInfo()"
+			onclick="run(showInfo(event))"
 			class="show-info-button"
 			alt="Show more information" title="Show more information">
 		<input type="image" src="/media/edit.png" 
-			onclick="editObservation(event, '${obs.id}')" 
+			onclick="run(editObservation(event, '${obs.id}'))" 
 			class="obs-action edit"
-			alt="Edit Observation" title="Edit Observation"> `;
+			alt="Edit Observation" title="Edit Observation">
+		<input type="image" src="/media/view.png" 
+			onclick="run(click('.obs-list-item[value='${obs.id}']))" 
+			class="obs-action view"
+			alt="View Observation" title="View Observation"> `;
 	// obsRender += 
 		// `<div class="obs-thumb"	style=background-image:url("${thumbnail}">`;
 	if (obs.photos.files.length>1) obsRender +=
@@ -953,7 +972,7 @@ function displayObservations(res) {
 }
 
 function getAndDisplayObservations() {
-	event.preventDefault();
+	if (event) event.preventDefault();
 	// clear out old observations
 	document.querySelector('#obs-list').innerHTML = "";
 	getObservations(displayObservations);
