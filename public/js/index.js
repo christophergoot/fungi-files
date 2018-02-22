@@ -184,7 +184,7 @@ function updateAddress(addressString) {
 }
 
 async function useCurrentTime() {
-	// event.preventDefault();
+	event.preventDefault();
 	const obsTime = await getTime(new Date());
 	const obsDate = await getDate(new Date());
 	updateValue('obsTime', obsTime);
@@ -192,7 +192,7 @@ async function useCurrentTime() {
 }
 
 function geolocate() {
-	// event.preventDefault();
+	event.preventDefault();
 	navigator.geolocation.getCurrentPosition((position) => {
 		const coords = { 
 			'lat': position.coords.latitude, 
@@ -230,7 +230,7 @@ function populateNames(event) {
 }
 
 function selectFiles(event) {
-	// event.preventDefault();
+	event.preventDefault();
 	document.querySelector("#file-input").click();
 }
 
@@ -238,19 +238,35 @@ function click(querySelector) {
 	document.querySelector(querySelector).click();
 }
 
-function receiveFiles(event) {
-	// event.preventDefault();
-	const files = event.target.files;
-	for (let i = 0; i < files.length; i++) {
-		previewFile(files[i]);
-		globalFileHolder.push(files[i]);
-		exifFromFile(files[i]);
-	};
 
+// const pica = require('pica')();
+ 
+function resizeImage(from, to) {
+	// Resize & convert to blob
+	pica.resize(from, to)
+		.then(result => pica.toBlob(result, 'image/jpeg', 90))
+		.then(blob => resolve(blob));
+}
+
+async function receiveFiles(event) {
+	event.preventDefault();
+	const files = event.target.files;
+	for (let file of files) {
+
+		// Resize & convert to blob
+		// const canvas = document.getElementById('resizeCanvas');
+		// const newBlob = await resizeImage(file, canvas);
+
+		let newBlob = file;
+
+		previewFile(newBlob);
+		globalFileHolder.push(newBlob);
+		exifFromFile(newBlob);
+	}
 }
 
 function enterLocation() {
-	// event.preventDefault();
+	event.preventDefault();
 	// open form
 	const form = `
 		<form>
@@ -291,7 +307,7 @@ function updateLocation(obs, locationSource) {
 }
 
 function locationFromThumbnail(event) {
-	// event.preventDefault();
+	event.preventDefault();
 	const obs = { 
 		'filename': event.currentTarget.dataset.filename,
 		'date': new Date(event.currentTarget.dataset.date),
@@ -309,7 +325,7 @@ function deleteFileUponSave(id, filename) {
 }
 
 function deleteFile(event) {
-	// event.preventDefault();
+	event.preventDefault();
 	const { filename } = event.currentTarget.dataset;
 	const target = document.getElementById(`${filename}-div`);
 	const { src } = target.firstElementChild;
@@ -339,8 +355,8 @@ function insertThumbnailStructure(filename) {
 	const newImg = `
 	<div id="${filename}-div" class="thumb-div">
 		<img src="media/loading.gif" id="${filename}-thumb" class="thumb-img" alt="Thumbnail for ${filename}" title="Thumbnail for ${filename}">
-		<input type="image" src="/media/delete.png" onclick="deleteFile(event))" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
-		<input type="image" src="/media/featured.png" onclick="makeFeatured(event))" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
+		<input type="image" src="/media/delete.png" onclick="run(deleteFile(event))" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
+		<input type="image" src="/media/featured.png" onclick="run(makeFeatured(event))" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
@@ -348,7 +364,7 @@ function insertThumbnailStructure(filename) {
 }
 
 function makeFeatured(event) {
-	// event.preventDefault();
+	event.preventDefault();
 	const filename = event.currentTarget.dataset.filename;
 	const featured = document.getElementsByName('featured')[0];
 	// const oldFilename = featured.value;
@@ -421,7 +437,7 @@ function exifFromFile(file, filename) {
 }
 
 function ORIGannimateObservation(event,id) {
-	const id = event.attributes.value;
+	// const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
 	const viewSection = document.querySelector('section#view-observation');
 	const popup = document.querySelector('section#popup');
@@ -474,7 +490,7 @@ function getObservation(targetId) {
 }
 
 function makeHero(event){
-	// event.preventDefault();
+	event.preventDefault();
 	const {dataset, currentSrc} = event.currentTarget;
 	const {filename, url} = dataset;
 	const hero = document.querySelector('.obs-hero');
@@ -486,7 +502,7 @@ function makeHero(event){
 }
 
 function closeObservation (){
-	// event.preventDefault();
+	event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
 	const popup = document.getElementById('popup');
 		popup.classList.add('hidden');
@@ -749,7 +765,7 @@ async function saveObservation(event, id) {
 }
 
 function submitNewObservation(event) {
-	// event.preventDefault();
+	event.preventDefault();
 	loading(true, 'Saving New Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
@@ -815,6 +831,7 @@ function getDate(date) {
 }
 
 function deleteObservation(event, obsId) {
+	event.preventDefault();
 	loading(true, 'Deleting Observation');
 	fetch((URL + obsId), { method: 'DELETE' })
 		// 		.then((res) => res.json())
@@ -863,6 +880,7 @@ function populateThumbnail(file) {
 }
 
 function editObservation(event, obsId) {
+	event.preventDefault();
 	event.stopPropagation();
 	const header = "<h2>Edit Observation</h2>";
 	const newObs = document.querySelector('section.edit.observation');
@@ -921,7 +939,6 @@ function renderObservation(obs, address) {
 			class="obs-action edit"
 			alt="Edit Observation" title="Edit Observation">
 		<input type="image" src="/media/view.png" 
-			onclick="run(click('.obs-list-item[value='${obs.id}']))" 
 			class="obs-action view"
 			alt="View Observation" title="View Observation"> `;
 	// obsRender += 

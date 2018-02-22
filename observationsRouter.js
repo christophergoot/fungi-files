@@ -17,7 +17,7 @@ const sharp = require('sharp');
 
 router.get('/', (req, res) => {
 	Observation
-		.find()
+		.find().sort({obsDate: 1})
 		.then(obs => {
 			res.json(
 				obs.map(obs => obs.serialize())
