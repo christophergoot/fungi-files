@@ -7,12 +7,25 @@ const { DATABASE_URL, PORT } = require('./config');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const observationsRouter = require('./observationsRouter');
+const passport = require('passport');
+
+const { router: usersRouter } = require('./users');
+const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+app.use('/api/users/', usersRouter);
+app.use('/api/auth/', authRouter);
+
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
+
 
 app.use(bodyParser.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
 app.use('/observations', observationsRouter);
-app.use('users', usersRouter);
 app.use('*', function (req, res) {
 	res.status(404).json({ message: 'Not Found' });
 });
