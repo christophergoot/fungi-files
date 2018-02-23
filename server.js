@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 app.use(morgan('common'));
 app.use(express.static('public'));
 app.use('/observations', observationsRouter);
+app.use('users', usersRouter);
 app.use('*', function (req, res) {
 	res.status(404).json({ message: 'Not Found' });
 });
