@@ -133,33 +133,6 @@ const OBSERVATION_FORM = `
 			<textarea name="mushroomNotes" id="mushroomNotes" placeholder="Mushroom Notes"></textarea>
 		</div>
 	</div>
-<!--
-	<div class="habitat area">
-		<h3>Habitat</h3>
-		<div class="habitat-details">
-			<label>
-				<input type="checkbox" value="Deciduous Woodlot">Deciduous Woodlot</label>
-			<label>
-				<input type="checkbox" value="Coniferous Woodlot">Coniferous Woodlot</label>
-			<label>
-				<input type="checkbox" value="Mixed Woodlot">Mixed Woodlot</label>
-			<label>
-				<input type="checkbox" value="Grassland">Grassland</label>
-			<label>
-				<input type="checkbox" value="On Wood">On Wood</label>
-			<label>
-				<input type="checkbox" value="Leaf Litter">Leaf Litter</label>
-			<label>
-				<input type="checkbox" value="On Soil">On Soil</label>
-			<label>
-				<input type="checkbox" value="Swamp / Bog">Swamp / Bog</label>
-		</div>
-		<a class="toggle-control" onclick="run(reveal('.habitat.notes', event)">Habitat Notes</a>
-		<div class="habitat notes reveal">
-			<textarea name="habitatNotes" id="habitatNotes" rows="5" placeholder="Habitat Notes"></textarea>
-		</div>
-	</div>
-	--!>
 </form>
 `;
 
@@ -834,6 +807,7 @@ function updateObservation(id, formData) {
 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
+			document.querySelector('section.new.observation').innerHTML = "";	
 			loading(false);
 		})
 		.catch(error => console.error('Error:', error))
@@ -847,6 +821,7 @@ function publishNewObservation(formData) {
 		.then((res) => res.json())
 		.then((res) => {
 			getAndDisplayObservations();
+			document.querySelector('section.new.observation').innerHTML = "";	
 			loading(false);
 		})
 		.catch(error => console.error('Error:', error))
@@ -935,7 +910,7 @@ function editObservation(event, obsId) {
 			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
-	form.insertAdjacentElement('beforeend', footer);
+		form.insertAdjacentElement('beforeend', footer);
 	getObservation(obsId).then(async res => {
 		await populateFields(res);
 		res.photos.files.forEach(file => populateThumbnail(file));
