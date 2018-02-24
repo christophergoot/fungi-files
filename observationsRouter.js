@@ -66,7 +66,8 @@ async function uploadFile(file, obsId, size) {
 	const buffer = file.buffer;
 	const resizedBuffer = await processImage(buffer, size);
 	const folder = obsId + '/';
-	const extention = file.originalname.substring(file.originalname.lastIndexOf('.'))
+	// const extention = file.originalname.substring(file.originalname.lastIndexOf('.'))
+	const extention = '.jpg';
 	const fileKey = folder + Date.now() + extention;
 	return new Promise((resolve, reject) => {
 		S3.upload({ Body: resizedBuffer, Key: fileKey }, (err, data) => {

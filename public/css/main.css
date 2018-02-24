@@ -1,6 +1,6 @@
 body {
 	box-sizing: border-box;
-	background-color: black;
+	background-color: rgba(19, 19, 19, 1);
 	font-family: 'Roboto', sans-serif;
 	/* padding-bottom: 50px; */
 }
@@ -602,7 +602,7 @@ input.obs-view-action.edit {
 	z-index: 16;
 	position: fixed;
 	/* position: absolute; */
-	height: 100%;
+	height: auto;
 	top: 0;
 	right: 0;
 	left: 0;
@@ -684,7 +684,7 @@ input[name="confidence"] {
 	margin-right: 10px;
 }
 
-input.coord, #obs-date-input, #obs-time-input, #genus-input, #species-input {
+input.coord, #genus-input, #species-input {
     width: 85%;
     /* width: 104px; */
 }

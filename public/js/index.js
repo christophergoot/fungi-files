@@ -238,30 +238,65 @@ function click(querySelector) {
 	document.querySelector(querySelector).click();
 }
 
+const loadURLFromImage = (image) => new Promise((resolve, reject) => {
+	const reader = new FileReader();
+	reader.onloadend = (event) => {
+		resolve(event.target.result);
+	};
+	reader.readAsDataURL(image);
+});
 
-// const pica = require('pica')();
- 
-function resizeImage(from, to) {
-	// Resize & convert to blob
-	pica.resize(from, to)
-		.then(result => pica.toBlob(result, 'image/jpeg', 90))
-		.then(blob => resolve(blob));
+const createImage = (file) => loadURLFromImage(file).then((url) => new Promise((resolve, reject) => {
+	const image = new Image();
+	image.onload = () => {
+		resolve(image);
+	};
+	image.src = url;
+}));
+
+// async function onImageUpload(event) {
+// 	const files = event.currentTarget.files;
+
+// 	const img = await createImage(file);
+// 	const canvas = document.createElement('canvas');
+// 	const conversionRatio = 1200 / Math.max(img.width, img.height);
+// 	canvas.height = conversionRatio * img.height;
+// 	canvas.width = conversionRatio * img.width;
+// 	const myPica = new pica({ features: ['js', 'wasm', 'ww', 'cib'] });
+// 	await myPica.resize(img, canvas);
+// 	const dataURI = canvas.toDataURL();
+
+// 	image.src = dataURI;
+// }
+
+
+async function resizeImage(file) {
+	const img = await createImage(file);
+	const canvas = document.createElement('canvas');
+	const conversionRatio = 1200 / Math.max(img.width, img.height);
+	canvas.height = conversionRatio * img.height;
+	canvas.width = conversionRatio * img.width;
+	const myPica = new pica({ features: ['js', 'wasm', 'ww'] });
+	// let newBlob;
+	await myPica.resize(img, canvas);
+	const newBlob = await myPica.toBlob(canvas, 'image/jpeg', 90);
+		newBlob.name = file.name;
+		newBlob.originalname = file.name;
+		newBlob.lastModifiedDate = file.lastModifiedDate;
+		newBlob.exifdata = file.exifdata;
+		globalFileHolder.push(newBlob);
 }
 
 async function receiveFiles(event) {
 	event.preventDefault();
 	const files = event.target.files;
 	for (let file of files) {
+		previewFile(file);
+		exifFromFile(file);
+		const newfile = resizeImage(file);
+		// let newBlob = file;
+		// globalFileHolder.push(newFile);
 
-		// Resize & convert to blob
-		// const canvas = document.getElementById('resizeCanvas');
-		// const newBlob = await resizeImage(file, canvas);
-
-		let newBlob = file;
-
-		previewFile(newBlob);
-		globalFileHolder.push(newBlob);
-		exifFromFile(newBlob);
 	}
 }
 
@@ -287,8 +322,8 @@ function enterLocation() {
 
 function updateLocation(obs, locationSource) {
 	getAddress(obs, function (obs, addressString) {
-		updateValue('lat', obs.location.lat);
-		updateValue('lng', obs.location.lng);
+		updateValue('lat', obs.location.lat.toFixed(6));
+		updateValue('lng', obs.location.lng.toFixed(6));
 		updateExif("Location extracted from " + locationSource, "no error");
 		updateValue('address', addressString);
 	});
@@ -298,7 +333,7 @@ function updateLocation(obs, locationSource) {
 			month = ("0" + (date.getMonth() + 1)).slice(-2),
 			day = ("0" + date.getDate()).slice(-2);
 		const obsDate = `${year}-${month}-${day}`;
-		const obsTime = date.toTimeString().substring(0,8) ;
+		const obsTime = date.toTimeString().substring(0,5) ;
 		updateValue('obsDate', obsDate);
 		updateValue('obsTime', obsTime);
 		updateExif("Time, Date and Location extracted from photo", "no error");
@@ -502,7 +537,8 @@ function makeHero(event){
 }
 
 function closeObservation (){
-	event.preventDefault();
+	if (event) event.preventDefault();
+	// event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
 	const popup = document.getElementById('popup');
 		popup.classList.add('hidden');
@@ -524,6 +560,7 @@ function dateString (dateObj, opt) {
 }
 
 function editFromViewObservation (event, id) {
+	if (event) event.preventDefault();
 	closeObservation();
 	editObservation(event, id);
 }
@@ -532,8 +569,8 @@ function displayObservation(obs) {
 	// wrapper and options
 	let obsRender = `
 		<div class="observation-actions">
-			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="run(editFromViewObservation(event, '${obs.id}'))" class="obs-view-action edit">
-			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="run(closeObservation())" class="obs-view-action close">
+			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="editFromViewObservation(event, '${obs.id}')" class="obs-view-action edit">
+			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="closeObservation()" class="obs-view-action close">
 			
 		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
@@ -683,8 +720,8 @@ function newObservation() {
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="run(submitNewObservation(event))">Submit New Observation</button>
-			<button onclick="run(getAndDisplayObservations())">Cancel</button>`;
+			<button onclick="submitNewObservation(event)">Submit New Observation</button>
+			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -734,7 +771,7 @@ async function saveObservation(event, id) {
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
-	globalFileHolder.forEach(file => formData.append('newFiles', file));
+	globalFileHolder.forEach(file => formData.append('newFiles', file, file.name));
 	globalFileHolder = [];
 	const filesToBeDeleted = document.getElementsByName("filesToBeDeleted")[0].value;
 	
@@ -771,7 +808,7 @@ function submitNewObservation(event) {
 	let formData = new FormData(form);
 	formData.delete('fileInput');
 
-	globalFileHolder.forEach(file => formData.append('newFiles', file));
+	globalFileHolder.forEach(file => formData.append('newFiles', file, file.name));
 	globalFileHolder = [];
 
 	return new Promise(res => {
@@ -782,6 +819,12 @@ function submitNewObservation(event) {
 		loading(false);
 	});
 }
+
+window.onkeydown = function( event ) {
+    if ( event.keyCode == 27 ) {
+        closeObservation();
+    }
+};
 
 function updateObservation(id, formData) {
 	fetch(URL + id, {
@@ -887,9 +930,9 @@ function editObservation(event, obsId) {
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="run(saveObservation(event, '${obsId}'))">Save Changes</button>
-			<button onclick="run(deleteObservation(event, '${obsId}'))">Delete Observation</button>
-			<button onclick="run(getAndDisplayObservations())">Cancel</button>`;
+			<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
+			<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
+			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -988,7 +1031,7 @@ function displayObservations(res) {
 	displaySection('.observations');
 }
 
-function getAndDisplayObservations() {
+function getAndDisplayObservations(event) {
 	if (event) event.preventDefault();
 	// clear out old observations
 	document.querySelector('#obs-list').innerHTML = "";
