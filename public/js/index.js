@@ -85,32 +85,32 @@ const OBSERVATION_FORM = `
 			<div class="confidence">
 				<span class="label">Identification Confidence</span>
 				<div>	
-					<label>0
+					<label class="label">0
 						<input name="confidence" type="radio" value="0" title="I guarantee this is wrong">
 					</label>
 				</div>
 				<div>
-					<label>1
+					<label class="label">1
 						<input name="confidence" type="radio" value="1" title="Shot in the dark">
 					</label>
 				</div>
 				<div>
-					<label>2
+					<label class="label">2
 						<input name="confidence" type="radio" value="2" title="Maybe, sort-of, kind-of">
 					</label>
 				</div>
 				<div>
-					<label>3
+					<label class="label">3
 						<input name="confidence" type="radio" value="3" title="Sounds like it could be">
 					</label>
 				</div>
 				<div>
-					<label>4
+					<label class="label">4
 						<input name="confidence" type="radio" value="4" title="I feel very good about this">
 					</label>
 				</div>
 				<div>
-					<label>5
+					<label class="label">5
 						<input name="confidence" type="radio" value="5" title="I'd bet my life">
 					</label>
 				</div>
@@ -219,32 +219,17 @@ const loadURLFromImage = (image) => new Promise((resolve, reject) => {
 	reader.readAsDataURL(image);
 });
 
-const createImage = (file) => loadURLFromImage(file).then((url) => new Promise((resolve, reject) => {
+const createImage = (url) => new Promise((resolve, reject) => {
 	const image = new Image();
 	image.onload = () => {
 		resolve(image);
 	};
 	image.src = url;
-}));
+});
 
-// async function onImageUpload(event) {
-// 	const files = event.currentTarget.files;
-
-// 	const img = await createImage(file);
-// 	const canvas = document.createElement('canvas');
-// 	const conversionRatio = 1200 / Math.max(img.width, img.height);
-// 	canvas.height = conversionRatio * img.height;
-// 	canvas.width = conversionRatio * img.width;
-// 	const myPica = new pica({ features: ['js', 'wasm', 'ww', 'cib'] });
-// 	await myPica.resize(img, canvas);
-// 	const dataURI = canvas.toDataURL();
-
-// 	image.src = dataURI;
-// }
-
-
-async function resizeImage(file) {
-	const img = await createImage(file);
+async function resizeImage(file, url) {
+	console.log('resizing ' + file.size + " size image");
+	const img = await createImage(url);
 	const canvas = document.createElement('canvas');
 	const conversionRatio = 1200 / Math.max(img.width, img.height);
 	canvas.height = conversionRatio * img.height;
@@ -252,23 +237,43 @@ async function resizeImage(file) {
 	const myPica = new pica({ features: ['js', 'wasm', 'ww'] });
 	// let newBlob;
 	await myPica.resize(img, canvas);
-	const newBlob = await myPica.toBlob(canvas, 'image/jpeg', 90);
-		newBlob.name = file.name;
-		newBlob.originalname = file.name;
-		newBlob.lastModifiedDate = file.lastModifiedDate;
-		newBlob.exifdata = file.exifdata;
-		globalFileHolder.push(newBlob);
+	const canvasBlob = await myPica.toBlob(canvas, 'image/jpeg', 90);
+		// newBlob.name = file.name;
+		let newFile = new File([ canvasBlob ], file.name, { type: "image/jpeg" });
+		let newUrl = await loadURLFromImage(canvasBlob);
+		const jpegData = url; // jpegData must be a string that starts with "data:image/jpeg;base64,"(DataURL), "\xff\xd8", or "Exif".
+		const exifObj = piexif.load(jpegData); // Get exif data as object. 
+		const exifStr = piexif.dump(exifObj); // Get exif as string to insert into JPEG.
+		
+// 		let newFile = document.createElement('img');
+// 		newFile.src = await loadURLFromImage(canvasBlob);
+
+// 		let data = newFile.toString("binary"); 
+// 		let newJpeg  = new Buffer(data, "binary");
+// 		return newJpeg;
+		await piexif.insert(exifStr, newFile); // Insert exif into JPEG. If jpegData is DataURL, returns JPEG as DataURL. Else if jpegData is binary as string, returns JPEG as binary as string.
+
+		// newFile = new File([ newUrl ], file.name, { type: "image/jpeg" })
+		console.log('finished resizing. new file size is  ' + newFile.size);
+		
+		return newFile;
+
 }
 
 async function receiveFiles(event) {
 	event.preventDefault();
 	const files = event.target.files;
 	for (let file of files) {
-		previewFile(file);
+
+		// get url from filereader
+		// pass on to previewFile and resizeImage
+		const url = await loadURLFromImage(file);
+
+		previewFile(file, url);
 		exifFromFile(file);
-		const newfile = resizeImage(file);
+		const newFile = await resizeImage(file, url);
 		// let newBlob = file;
-		// globalFileHolder.push(newFile);
+		globalFileHolder.push(newFile);
 
 	}
 }
@@ -384,21 +389,21 @@ function makeFeatured(event) {
 // 	updateValue('featured', filename);
 }
 
-function previewFile(file) {
+function previewFile(file, url) {
 	const filename = file.name;
 	insertThumbnailStructure(filename);
-	const reader = new FileReader();
 	const featured = document.getElementsByName('featured')[0];
-	reader.onloadend = function (event) {
+	// const reader = new FileReader();
+	// reader.onloadend = function (event) {
 		const previewImg = document.getElementById(`${filename}-thumb`);
-		previewImg.src = event.target.result;
+		previewImg.src = url;
 		// if no currently featured image, make current image featured
 		if (!featured.value) {
 			featured.value = filename;
 			previewImg.classList.add('featured-image');
-		}
+		// }
 	};
-	reader.readAsDataURL(file);
+	// reader.readAsDataURL(file);
 }
 
 function addGpsAction (lat, lng, filename, date) {
@@ -414,7 +419,6 @@ function addGpsAction (lat, lng, filename, date) {
 					title="Use Image Location" 
 					class="img-action location">`;
 	target.innerHTML += button;
-
 }
 
 function exifFromFile(file, filename) {
@@ -444,44 +448,29 @@ function exifFromFile(file, filename) {
 	};
 }
 
-function ORIGannimateObservation(event,id) {
-	// const id = event.attributes.value;
-	const startRect = event.getBoundingClientRect();
-	const viewSection = document.querySelector('section#view-observation');
-	const popup = document.querySelector('section#popup');
-	const startContent = event.innerHTML;
-	const startBox = `
-		id="observation-detail";
-		value="${id}";`;
-	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
-	const observationDiv = document.querySelector('#observation-detail');
-	requestAnimationFrame(() => {
-		observationDiv.setAttribute("style", "transition: all 5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
-		popup.classList.remove('hidden');
-		observationDiv.classList.add('observationBox');
-		viewSection.classList.remove('hidden');
-		requestAnimationFrame(() => {
-			observationDiv.removeAttribute("style");
-			// observationDiv.querySelector('img').classList.add('obs-img');
-		});
-	});
-}
-
 function annimateObservation(event,id) {
 	// const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
-
 	const viewSection = document.querySelector('section#view-observation');
-
 	const popup = document.querySelector('section#popup');
+
+	const startSrc = event.style.backgroundImage
 	const startContent = event.innerHTML;
+	// const startContent = 
+
 	const startBox = `
 		id="observation-detail";
 		value="${id}";`;
 	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
 	const observationDiv = document.querySelector('#observation-detail');
 	requestAnimationFrame(() => {
-		observationDiv.setAttribute("style", "transition: all 5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
+		observationDiv.setAttribute("style", 
+			`position:fixed;
+			top: ${startRect.y}px;
+			left: ${startRect.x}px;
+			width: ${startRect.width}px;
+			height: ${startRect.height}px;
+			background-color: rgba(0, 0, 0);`);
 		popup.classList.remove('hidden');
 		observationDiv.classList.add('observationBox');
 		viewSection.classList.remove('hidden');
@@ -544,7 +533,6 @@ function displayObservation(obs) {
 		<div class="observation-actions">
 			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="editFromViewObservation(event, '${obs.id}')" class="obs-view-action edit">
 			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="closeObservation()" class="obs-view-action close">
-			
 		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
 	
@@ -608,45 +596,44 @@ function displayObservation(obs) {
 			${obs.notes.mushroomNotes}
 		</span>`;
 	obsRender += `</div>`; // .classification
-	obsRender += `<div class="location">`;
+
 
 	// date and time		
 	if (obs.obsDate) {
 		const dateStr = dateString(obs.obsDate);
 		obsRender += `
-		<span class="label">
-			observed 
-		</span>
-		${dateStr}`;
+		<div class="date-time">
+			<span class="label">
+				observed 
+			</span>
+			${dateStr}
+		</div>`;
 	};
 
 	// location
 	if (obs.location) {
 		obsRender += `
-		<img src="${staticMapUrl(obs.location)}" class="static-map">
-
-		<div class="location">
-
-		<span class="label">
-				around 
-			</span>
-			${obs.location.address}`;
+			<img src="${staticMapUrl(obs.location)}" class="static-map">
+			<div class="location">
+				<span class="label">
+					around 
+				</span>
+				${obs.location.address}
+			</div>`;
 		if (obs.notes.locationNotes) obsRender += `
-			<span class="label">
-				location notes
-			</span>
-			<span class="notes">
-				${obs.notes.locationNotes}
-			</span>`;
-		obsRender += `
-		</div>`; // .location
+			<div>
+				<span class="label">
+					location notes
+				</span>
+				<span class="notes">
+					${obs.notes.locationNotes}
+				</span>
+			</div>`;
 	};
-		// obsRender += `</div>` // .location
 
 		// closing wrapper and sending html
 	obsRender += `</div>`;
 	document.querySelector('#observation-detail').innerHTML = obsRender;
-
 
 }
 
@@ -666,7 +653,6 @@ function viewObservation(event) {
 	// const observation = getObservation(id);
 	// observation.then((obs) => {
 	// })	
-
 	getObservation(id)
 		.then(res => 
 			displayObservation(res));
@@ -857,7 +843,6 @@ function deleteObservation(event, obsId) {
 			document.querySelector('section.edit.observation').innerHTML = "";
 			getAndDisplayObservations();
 			loading(false);
-			console.log(res);
 		})
 		.catch(error => console.error('Error:', error))
 }
