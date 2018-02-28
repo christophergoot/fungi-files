@@ -246,7 +246,7 @@ function dataURLtoBlob(dataurl) {
 	});
 }
 
-async function resizeImage(file, url) {
+async function resizeImage(file, filename, url) {
 	console.log('resizing ' + file.size + " size image");
 
 	const img = await createImage(url);
@@ -256,51 +256,49 @@ async function resizeImage(file, url) {
 	canvas.height = conversionRatio * img.height;
 	canvas.width = conversionRatio * img.width;
 
-	const myPica = new pica({ features: ['js', 'wasm', 'ww'] });
-	// let newBlob;
+	const myPica = new pica({ features: ['js', 'wasm', 'ww', 'cid'] });
 	await myPica.resize(img, canvas);
+
 	const canvasBlob = await myPica.toBlob(canvas, 'image/jpeg', 90);
-		// newBlob.name = file.name;
-		// let newFile = new File([ canvasBlob ], file.name, { type: "image/jpeg" });
-		let newUrl = await loadURLFromImage(canvasBlob);
-		// const jpegData = newUrl; // jpegData must be a string that starts with "data:image/jpeg;base64,"(DataURL), "\xff\xd8", or "Exif".
-		// const exifObj = piexif.load(jpegData); // Get exif data as object. 
-		// const exifStr = piexif.dump(exifObj); // Get exif as string to insert into JPEG.
-		const exifStr = piexif.dump(piexif.load(url)); // Get exif data as object. 
-		
-// 		let newFile = document.createElement('img');
-// 		newFile.src = await loadURLFromImage(canvasBlob);
+	let newUrl = await loadURLFromImage(canvasBlob);
+	const exifStr = piexif.dump(piexif.load(url)); // Get exif data as object. 
+	const finalUrl = piexif.insert(exifStr, newUrl); // Insert exif into JPEG. If jpegData is DataURL, returns JPEG as DataURL. Else if jpegData is binary as string, returns JPEG as binary as string.
 
-// 		let data = newFile.toString("binary"); 
-// 		let newJpeg  = new Buffer(data, "binary");
-// 		return newJpeg;
-		// await piexif.insert(exifStr, newFile); // Insert exif into JPEG. If jpegData is DataURL, returns JPEG as DataURL. Else if jpegData is binary as string, returns JPEG as binary as string.
-		const finalUrl = piexif.insert(exifStr, newUrl); // Insert exif into JPEG. If jpegData is DataURL, returns JPEG as DataURL. Else if jpegData is binary as string, returns JPEG as binary as string.
+	return new File([dataURLtoBlob(finalUrl)], filename, { type: "image/jpeg" });
+}
 
-		return new File([dataURLtoBlob(finalUrl)], file.name, { type: "image/jpeg" });
-		// newFile = new File([ newUrl ], file.name, { type: "image/jpeg" })
-		
-		// return newFile;
-
+function previewFile(file, filename, url) {
+	// file.name = new Date().getTime() + file.name;
+	// const filename = file.name;
+	const featured = document.getElementsByName('featured')[0];
+	// const reader = new FileReader();
+	// reader.onloadend = function (event) {
+		const previewImg = document.getElementById(`${filename}-thumb`);
+		previewImg.src = url;
+		// if no currently featured image, make current image featured
+		if (!featured.value) {
+			featured.value = filename;
+			previewImg.classList.add('featured-image');
+		// }
+	};
+	// reader.readAsDataURL(file);
 }
 
 async function receiveFiles(event) {
 	event.preventDefault();
-	const files = event.target.files;
-	for (let file of files) {
+	const files = [...event.target.files];
+	// for (let file of files) {
+	const allResolved = await Promise.all(
+		files.map(async file => {
+			const filename = new Date().getTime() + "." + file.name;
+			insertThumbnailStructure(filename);
+			const url = await loadURLFromImage(file);
+			previewFile(file, filename, url);
+			exifFromFile(file, filename);
 
-		// get url from filereader
-		// pass on to previewFile and resizeImage
-		const url = await loadURLFromImage(file);
-		previewFile(file, url);
-		exifFromFile(file);
-
-		const newFile = await resizeImage(file, url);
-		// const newUrl = await loadURLFromImage(newFile);
-		// let newBlob = file;
-		globalFileHolder.push(newFile);
-
-	}
+			const newFile = await resizeImage(file, filename, url);
+			globalFileHolder.push(newFile);
+		}));
 }
 
 function enterLocation() {
@@ -412,23 +410,6 @@ function makeFeatured(event) {
 	newFeatured.classList.add('featured-image');
 	featured.value = filename;
 // 	updateValue('featured', filename);
-}
-
-function previewFile(file, url) {
-	const filename = file.name;
-	insertThumbnailStructure(filename);
-	const featured = document.getElementsByName('featured')[0];
-	// const reader = new FileReader();
-	// reader.onloadend = function (event) {
-		const previewImg = document.getElementById(`${filename}-thumb`);
-		previewImg.src = url;
-		// if no currently featured image, make current image featured
-		if (!featured.value) {
-			featured.value = filename;
-			previewImg.classList.add('featured-image');
-		// }
-	};
-	// reader.readAsDataURL(file);
 }
 
 function addGpsAction (lat, lng, filename, date) {

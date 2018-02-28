@@ -3,7 +3,8 @@ body {
 	background-color: rgba(19, 19, 19, 1);
 	font-family: 'Roboto', sans-serif;
 	/* background-image: linear-gradient(rgba(19, 19, 19, 1), rgba(0, 0, 0, 0.5)),                   url(../media/background-image.jpg); */
-	background-size: cover;
+	/* background-size: cover; */
+	/* background-repeat:  no-repeat; */
 }
 
 header {
@@ -577,10 +578,10 @@ input.obs-view-action.edit {
 	transition: all .25s;
 	bottom: 0px;
 }
-
+/* 
 .obs-list-item:hover .obs-action {
 	display: block;
-}
+} */
 
 .observation {
 	background-color: rgba(0, 0, 0, 0.50);
