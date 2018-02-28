@@ -533,7 +533,7 @@ function editFromViewObservation (event, id) {
 	editObservation(event, id);
 }
 
-function displayObservation(obs) {
+function displayObservation(obs, src) {
 	// wrapper and options
 	let obsRender = `
 		<div class="observation-actions">
@@ -543,11 +543,8 @@ function displayObservation(obs) {
 		<div class="obs-detail" value='${obs.id}'>`;
 	
 	// hero image
-	let hero = "media/mushroom.jpg";
-	if (obs.featured) {
-		const filename = obs.featured;
-		for (let file of obs.photos.files) if (file.filename === filename) hero = file.url;
-	} else if (obs.photos.files[0]) hero = obs.photos.files[0].url;
+	// start with thumbnail src
+	let hero = src;
 	obsRender += `<img class="obs-hero" src="${hero}">`;
 
 	// image carousel
@@ -641,6 +638,13 @@ function displayObservation(obs) {
 	obsRender += `</div>`;
 	document.querySelector('#observation-detail').innerHTML = obsRender;
 
+	// replace thumbnail src with fullsize src
+	if (obs.featured) {
+		const filename = obs.featured;
+		for (let file of obs.photos.files) if (file.filename === filename) hero = file.url;
+	} else if (obs.photos.files[0]) hero = obs.photos.files[0].url;
+	document.querySelector('.obs-hero').src = hero;
+
 }
 
 function staticMapUrl(latlng) {
@@ -654,14 +658,20 @@ function staticMapUrl(latlng) {
 }
 
 function viewObservation(event) {
-	annimateObservation(event);
+	const regExp = /\(([^)]+)\)/;
+	const src = regExp.exec(event.style.backgroundImage)[1].slice(1,-1);
+
 	const id = event.attributes.value.value;
+	// const src = event.style.backgroundImage //"url("https://fungi-files-observation-images.s3.amazonaws.com/5a97071c6a9dce2774b5ea4e/1519847208985.jpg")"
+	annimateObservation(event, id);
 	// const observation = getObservation(id);
 	// observation.then((obs) => {
 	// })	
 	getObservation(id)
-		.then(res => 
-			displayObservation(res));
+		.then(res => {
+			displayObservation(res, src);
+			console.log("res", res);
+		});
 }
 
 function getAddress(obs, callback) {
