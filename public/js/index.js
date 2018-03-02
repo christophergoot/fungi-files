@@ -436,29 +436,6 @@ function exifFromFile(file, filename) {
 	};
 }
 
-function ORIGannimateObservation(event,id) {
-	// const id = event.attributes.value;
-	const startRect = event.getBoundingClientRect();
-	const viewSection = document.querySelector('section#view-observation');
-	const popup = document.querySelector('section#popup');
-	const startContent = event.innerHTML;
-	const startBox = `
-		id="observation-detail";
-		value="${id}";`;
-	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
-	const observationDiv = document.querySelector('#observation-detail');
-	requestAnimationFrame(() => {
-		observationDiv.setAttribute("style", "transition: all 5s ease-in-out; position:fixed; top:" + startRect.y + "px; left:" + startRect.x + "px; width:" + startRect.width + "px; height:" + startRect.height + "px; background-color: white;");
-		popup.classList.remove('hidden');
-		observationDiv.classList.add('observationBox');
-		viewSection.classList.remove('hidden');
-		requestAnimationFrame(() => {
-			observationDiv.removeAttribute("style");
-			// observationDiv.querySelector('img').classList.add('obs-img');
-		});
-	});
-}
-
 function annimateObservation(event,id) {
 	// const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
@@ -640,6 +617,90 @@ function displayObservation(obs) {
 
 }
 
+function closePopup (event, popupId) {
+	event.preventDefault();
+	console.log('closing popup');
+	// const popupId = event;
+	const popup = document.getElementById(`${popupId}-popup`);
+	const alert = document.getElementById(`${popupId}-alert`);
+	const page = document.querySelector('main');
+	page.removeChild(popup);
+	page.removeChild(alert);
+}
+
+function showPopup (content, popupId) {
+	console.log('showing popup');
+	const popup = document.createElement('section');
+	const alert = document.createElement('section');
+	const page = document.querySelector('main');
+	popup.setAttribute('id', `${popupId}-popup`);
+	alert.setAttribute('id', `${popupId}-alert`);
+	popup.classList.add('popup');
+	// popup.setAttribute(onclick, closePopup(event));
+	alert.classList.add('popup-alert');
+	alert.innerHTML = content;
+	page.insertAdjacentElement('beforeend', popup);
+	page.insertAdjacentElement('beforeend', alert);
+}
+
+function login (event) {
+	event.preventDefault();
+	const form = document.querySelector('#login-form');
+	let formData = new FormData(form);
+
+	fetch('/api/auth/login', {
+		method: 'POST',
+		body: formData
+	})
+		.then((res) => console.log(res.json()))
+		.catch(error => console.error('Error:', error));
+}
+
+function signup (event) {
+	event.preventDefault();
+	const form = document.querySelector('#signup-form');
+	let formData = new FormData(form);
+
+	fetch('/api/users', {
+		method: 'POST',
+		body: formData
+	})
+		.then((res) => console.log(res.json()))
+		.catch(error => console.error('Error:', error));
+}
+
+function loginForm () {
+	event.preventDefault();
+	console.log('showing login form');
+	const popupId = 'login-form';
+	const form = `
+		<form enctype="multipart/form-data" method="post" id="login-form" class="alert-form">
+			<input name="username" type="text" placeholder="username">
+			<input name="password" type="password" placeholder="password">
+			<button onclick="login(event)">Login</button>
+			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		</form>`;
+	showPopup(form, popupId);
+}
+
+function signupForm () {
+	event.preventDefault();
+	console.log('showing signup form');
+	const popupId = 'signup-form';
+	const form = `
+		<h2>Signup</h2>
+		<form enctype="multipart/form-data" method="post" id="signup-form" class="alert-form">
+		<input name="firstName" type="text" placeholder="first name">
+		<input name="lastName" type="text" placeholder="last name">
+		<input name="username" type="text" placeholder="username">
+		<input name="password" type="password" placeholder="password">
+			<button onclick="signup(event)">Login</button>
+			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		</form>`;
+	showPopup(form, popupId);
+}
+
+
 function staticMapUrl(latlng) {
 	let url = "https://maps.googleapis.com/maps/api/staticmap?";
 	url += "size=200x200";
@@ -714,7 +775,7 @@ function loading(state, text) {
 		loadingScreen.classList.add('popup.alert');
 		loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
-			<div class="loading-alert">
+			<div class="popup-alert">
 				<img src="media/loading.gif" class="loading-img">
 				<span class="loading-text">${text}<span>
 			</div>`;
