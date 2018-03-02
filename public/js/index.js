@@ -50,9 +50,9 @@ const OBSERVATION_FORM = `
 						</label>
 					</div>
 					<div class="address-buttons">
-						<button onclick="run(enterLocation())">Enter Location</button>
-						<button onclick="run(geolocate())">Use Current Location</button>
-						<button onclick="run(useCurrentTime())">Use Current Time</button>
+						<button onclick="enterLocation()">Enter Location</button>
+						<button onclick="geolocate()">Use Current Location</button>
+						<button onclick="useCurrentTime()">Use Current Time</button>
 					</div>
 				</div>
 				<div>
@@ -321,13 +321,12 @@ function enterLocation() {
 	alert("it's on the short list of things to add");
 }
 
-function updateLocation(obs, locationSource) {
-	getAddress(obs, function (obs, addressString) {
-		updateValue('lat', obs.location.lat.toFixed(6));
-		updateValue('lng', obs.location.lng.toFixed(6));
-		updateExif("Location extracted from " + locationSource, "no error");
-		updateValue('address', addressString);
-	});
+async function updateLocation(obs, locationSource) {
+	const addressString = await getAddress(obs);
+	updateValue('lat', obs.location.lat.toFixed(6));
+	updateValue('lng', obs.location.lng.toFixed(6));
+	updateExif("Location extracted from " + locationSource, "no error");
+	updateValue('address', addressString);
 	if(obs.date) {
 		const date = new Date(obs.date);
 		const year = date.getFullYear(),
@@ -670,22 +669,24 @@ function viewObservation(event) {
 	getObservation(id)
 		.then(res => {
 			displayObservation(res, src);
-			console.log("res", res);
+			// console.log("res", res);
 		});
 }
 
-function getAddress(obs, callback) {
-	const coords = { 'lat': obs.location.lat, 'lng': obs.location.lng };
-	const geocoder = new google.maps.Geocoder;
-	geocoder.geocode({ 'location': coords }, function (results, status) {
-		let addressString;
-		if (status === "ZERO_RESULTS") {
-			addressString = "";
-		} else if (results) {
-			if (results[1]) { addressString = results[1].formatted_address; }
-			else addressString = results[0].formatted_address;
-		} else { addressString = ""; }
-		callback(obs, addressString);
+function getAddress(obs) {
+	return new Promise((res, rej) => {
+		const coords = { 'lat': obs.location.lat, 'lng': obs.location.lng };
+		const geocoder = new google.maps.Geocoder;
+		geocoder.geocode({ 'location': coords }, function (results, status) {
+			let addressString;
+			if (status === "ZERO_RESULTS") {
+				addressString = "";
+			} else if (results) {
+				if (results[1]) { addressString = results[1].formatted_address; }
+				else addressString = results[0].formatted_address;
+			} else { addressString = ""; }
+			res(addressString);
+		});
 	});
 }
 
@@ -998,12 +999,28 @@ function getObservations(callback) {
 		})
 }
 
-function displayObservations(res) {
+function sleep (ms) {
+	return new Promise((res, rej) => {
+		setTimeout(() => res(), ms);
+	})
+}
+
+async function displayObservations(res) {
+	// strategy
+		// start getAddress for each obs
+		
 	const observations = res;
+	let addressArr = [];
 	for (let obs of observations) {
-		if ((obs.location.lat) && (obs.location.lng)) setTimeout(getAddress(obs, renderObservation), 200);
-		else renderObservation(obs, "Unknown Location");
+		// get address for all
+		if ((obs.location.lat) && (obs.location.lng)) addressArr.push(getAddress(obs));
+		else addressArr.push("Unknown Location");
+		await sleep(10);
 	};
+	for (let i=0; i<observations.length; i++) {
+		const address = await addressArr[i];
+		renderObservation(observations[i], address);
+	}
 	displaySection('.observations');
 }
 
