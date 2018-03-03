@@ -3,7 +3,8 @@ const express = require('express');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-
+// const multer  = require('multer');
+// const upload = multer();
 const config = require('../config');
 const router = express.Router();
 
@@ -17,8 +18,10 @@ const createAuthToken = function(user) {
 
 const localAuth = passport.authenticate('local', {session: false});
 router.use(bodyParser.json());
+// router.use(upload.none());
 // The user provides a username and password to login
 router.post('/login', localAuth, (req, res) => {
+  // console.log(req);
   const authToken = createAuthToken(req.user.serialize());
   res.json({authToken});
 });

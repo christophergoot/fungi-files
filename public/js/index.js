@@ -7,6 +7,7 @@ const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 const URL = "/observations/";
 
 let globalFileHolder = [];
+let JWT = "";
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation" class='grid wrapper'>
@@ -320,7 +321,10 @@ function locationFromThumbnail(event) {
 function deleteFileUponSave(id, filename) {
 	return fetch(`${URL}${id}/${filename}`, {
 		method: 'DELETE',
-		headers: { 'Content-Type': 'application/json' }
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+			'content-type': 'application/x-www-form-urlencoded'
+		}
 	});
 }
 
@@ -462,7 +466,13 @@ function annimateObservation(event,id) {
 }
 
 function getObservation(targetId) {
-	return fetch(URL + targetId, { method: 'GET' })
+	return fetch(URL + targetId, { 
+		method: 'GET',
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+			'content-type': 'application/x-www-form-urlencoded'
+		}
+})
 		.then((res) => res.json());
 }
 
@@ -618,7 +628,7 @@ function displayObservation(obs) {
 }
 
 function closePopup (event, popupId) {
-	event.preventDefault();
+	if (event) event.preventDefault();
 	console.log('closing popup');
 	// const popupId = event;
 	const popup = document.getElementById(`${popupId}-popup`);
@@ -629,55 +639,104 @@ function closePopup (event, popupId) {
 }
 
 function showPopup (content, popupId) {
-	console.log('showing popup');
+	if (event) {
+		event.preventDefault();
+		event.stopPropagation();
+	}
 	const popup = document.createElement('section');
 	const alert = document.createElement('section');
 	const page = document.querySelector('main');
 	popup.setAttribute('id', `${popupId}-popup`);
 	alert.setAttribute('id', `${popupId}-alert`);
 	popup.classList.add('popup');
-	// popup.setAttribute(onclick, closePopup(event));
 	alert.classList.add('popup-alert');
 	alert.innerHTML = content;
 	page.insertAdjacentElement('beforeend', popup);
 	page.insertAdjacentElement('beforeend', alert);
+	popup.onclick = (event) => {
+		popup.onclick = closePopup(event,popupId);
+	};
+	popup.onkeydown = (event) => {
+		if ( event.keyCode == 27 ) {
+			console.log('esc pressed');
+			closePopup(event,popupId);
+		}
+	};
 }
 
-function login (event) {
-	event.preventDefault();
-	const form = document.querySelector('#login-form');
-	let formData = new FormData(form);
+function jsonFromForm(formId) {
+	let obj = {};
+	const form = document.getElementById(formId);
+	const elements = form.querySelectorAll("input, select, textarea");
+	for (let i = 0; i < elements.length; ++i) {
+		const element = elements[i];
+		const name = element.name;
+		const value = element.value;
+		if (name) {
+			obj[name] = value;
+		}
+	}
+	return JSON.stringify(obj);
+}
 
-	fetch('/api/auth/login', {
+function login (event,popupId) {
+	event.preventDefault();
+	// const form = document.querySelector('#login-form');
+	// let formData = new FormData(form);
+	const formData = jsonFromForm(popupId);
+	fetch('./api/auth/login', {
 		method: 'POST',
-		body: formData
+		// body: JSON.stringify(formData),
+		body: formData,
+		headers: {
+			'content-type': 'application/json'
+		  }
 	})
-		.then((res) => console.log(res.json()))
+		.then((res) => res.json())
+		.then(res => {
+			console.log(res)
+			JWT = res.authToken;
+			closePopup(event, popupId);
+			getAndDisplayObservations();
+		})
 		.catch(error => console.error('Error:', error));
 }
 
-function signup (event) {
+function signup (event, popupId) {
 	event.preventDefault();
-	const form = document.querySelector('#signup-form');
-	let formData = new FormData(form);
+	// const form = document.querySelector('#signup-form');
+	const formData = jsonFromForm(popupId);
 
 	fetch('/api/users', {
 		method: 'POST',
-		body: formData
+		body: formData,
+		headers: {
+			'content-type': 'application/json'
+		  }
+
 	})
-		.then((res) => console.log(res.json()))
+		.then((res) => {
+			console.log(res.json());
+			closePopup(event, popupId);
+			loginForm();
+			const form = document.getElementById('login-form-alert');
+			const alert = `
+				<h3>Account Successfully Created</h3>
+				<p>Please Login below to continue</p>`;
+			form.insertAdjacentHTML('afterBegin', alert);
+		})
 		.catch(error => console.error('Error:', error));
 }
 
 function loginForm () {
-	event.preventDefault();
-	console.log('showing login form');
+	if (event) event.preventDefault();
 	const popupId = 'login-form';
 	const form = `
-		<form enctype="multipart/form-data" method="post" id="login-form" class="alert-form">
-			<input name="username" type="text" placeholder="username">
-			<input name="password" type="password" placeholder="password">
-			<button onclick="login(event)">Login</button>
+		<h2>Login</h2>
+		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
+			<input value="demo-user" name="username" type="text" placeholder="username" required>
+			<input value="demopassword" name="password" type="password" placeholder="password" required>
+			<button onclick="login(event,'${popupId}')">Login</button>
 			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
@@ -685,16 +744,16 @@ function loginForm () {
 
 function signupForm () {
 	event.preventDefault();
-	console.log('showing signup form');
+	event.stopPropagation();
 	const popupId = 'signup-form';
 	const form = `
 		<h2>Signup</h2>
-		<form enctype="multipart/form-data" method="post" id="signup-form" class="alert-form">
+		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
 		<input name="firstName" type="text" placeholder="first name">
 		<input name="lastName" type="text" placeholder="last name">
-		<input name="username" type="text" placeholder="username">
-		<input name="password" type="password" placeholder="password">
-			<button onclick="signup(event)">Login</button>
+		<input name="username" type="text" placeholder="username" required>
+		<input name="password" type="password" placeholder="password" required>
+			<button onclick="signup(event,'${popupId}')">Sign Up</button>
 			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
@@ -775,7 +834,7 @@ function loading(state, text) {
 		loadingScreen.classList.add('popup.alert');
 		loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
-			<div class="popup-alert">
+			<div class="popup-alert loading">
 				<img src="media/loading.gif" class="loading-img">
 				<span class="loading-text">${text}<span>
 			</div>`;
@@ -848,6 +907,10 @@ function updateObservation(id, formData) {
 	fetch(URL + id, {
 		method: 'PUT',
 		body: formData,
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+			'content-type': 'application/x-www-form-urlencoded'
+		}
 	})
 		.then((res) => res.json())
 		.then((res) => {
@@ -1033,11 +1096,33 @@ function renderObservation(obs, address) {
 }
 
 function getObservations(callback) {
-	fetch(URL, { method: 'GET' })
-		.then((res) => res.json())
+	fetch(URL, { 
+		method: 'GET',
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+			'content-type': 'application/x-www-form-urlencoded'
+			}
+		})
+		.then((res) => {
+			
+// 			return res.json();
+			})
 		.then((res) => {
 			callback(res);
 		})
+		.catch(err => {
+			console.log(err);
+			validateMe();
+		})
+}
+
+function validateMe() {
+	const content = `
+	<h2>Protected Resource</h2>
+	<p>The resource you are trying to access is protected</p>
+	<p>Please <a onclick="signupForm()">Sign Up</a> or <a onclick="loginForm()">Login</a> to continue</p>
+	`;
+	showPopup(content, 'protected-resource');
 }
 
 function displayObservations(res) {

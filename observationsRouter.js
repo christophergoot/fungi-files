@@ -15,6 +15,10 @@ const S3 = new AWS.S3({
 });
 const sharp = require('sharp');
 
+const passport = require('passport');
+const jwtAuth = passport.authenticate('jwt', { session: false });
+router.use(jwtAuth);
+
 router.get('/', (req, res) => {
 	Observation
 		.find().sort({obsDate: 1})
