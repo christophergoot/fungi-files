@@ -277,8 +277,6 @@ function enterLocation() {
 // example
 	const input = document.getElementById('address-entry');
 	const autocomplete = new google.maps.places.Autocomplete(input);
-
-
 	
 	// send to google
 
@@ -470,7 +468,6 @@ function getObservation(targetId) {
 		method: 'GET',
 		headers: {
 			'Authorization': 'Bearer ' + JWT,
-			'content-type': 'application/x-www-form-urlencoded'
 		}
 })
 		.then((res) => res.json());
@@ -629,8 +626,6 @@ function displayObservation(obs) {
 
 function closePopup (event, popupId) {
 	if (event) event.preventDefault();
-	console.log('closing popup');
-	// const popupId = event;
 	const popup = document.getElementById(`${popupId}-popup`);
 	const alert = document.getElementById(`${popupId}-alert`);
 	const page = document.querySelector('main');
@@ -664,6 +659,26 @@ function showPopup (content, popupId) {
 	};
 }
 
+function splashPage() {
+	const content = `
+	<h2>Hello, yo</h2>
+	<p>Not much to see here right now, but soon it shall <h3>SPLASH!</h3>
+	<p>In the meantime, you should</p>
+	<button onclick="loginForm()">LOGIN as Demo User</button>
+	<button onclick="signupForm()">SIGN UP for an Account</button>
+	`;
+	let splash;
+	if (document.querySelector('section.splash-page')) splash = document.querySelector('section.splash-page')
+	else {
+		splash = document.createElement('section');
+		document.querySelector('main').insertAdjacentElement('beforeend', splash);
+	};
+	splash.classList.add('hidden', 'splash-page', 'popup-alert');
+	splash.innerHTML = content;
+	displaySection('.splash-page');
+}
+
+
 function jsonFromForm(formId) {
 	let obj = {};
 	const form = document.getElementById(formId);
@@ -694,7 +709,6 @@ function login (event,popupId) {
 	})
 		.then((res) => res.json())
 		.then(res => {
-			console.log(res)
 			JWT = res.authToken;
 			closePopup(event, popupId);
 			getAndDisplayObservations();
@@ -716,7 +730,6 @@ function signup (event, popupId) {
 
 	})
 		.then((res) => {
-			console.log(res.json());
 			closePopup(event, popupId);
 			loginForm();
 			const form = document.getElementById('login-form-alert');
@@ -963,7 +976,6 @@ function deleteObservation(event, obsId) {
 			document.querySelector('section.edit.observation').innerHTML = "";
 			getAndDisplayObservations();
 			loading(false);
-			console.log(res);
 		})
 		.catch(error => console.error('Error:', error))
 }
@@ -1100,18 +1112,17 @@ function getObservations(callback) {
 		method: 'GET',
 		headers: {
 			'Authorization': 'Bearer ' + JWT,
-			'content-type': 'application/x-www-form-urlencoded'
 			}
 		})
 		.then((res) => {
 			
-// 			return res.json();
+			return res.json();
 			})
 		.then((res) => {
 			callback(res);
 		})
 		.catch(err => {
-			console.log(err);
+			console.error(err);
 			validateMe();
 		})
 }
@@ -1166,5 +1177,5 @@ function populateDatalists() {
 }
 
 window.onload = function () {
-	getAndDisplayObservations();
+	splashPage();
 }
