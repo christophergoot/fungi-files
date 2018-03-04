@@ -12,6 +12,7 @@ let JWT = "";
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation" class='grid wrapper'>
 <input type="hidden" name="id">
+<input type="hidden" name="userId">
 <input type="hidden" name="featured" id="featured-input">
 <input type="hidden" name="filesToBeDeleted">
 	<div  class="image area">
@@ -320,8 +321,7 @@ function deleteFileUponSave(id, filename) {
 	return fetch(`${URL}${id}/${filename}`, {
 		method: 'DELETE',
 		headers: {
-			'Authorization': 'Bearer ' + JWT,
-			'content-type': 'application/x-www-form-urlencoded'
+			'Authorization': 'Bearer ' + JWT
 		}
 	});
 }
@@ -461,6 +461,12 @@ function annimateObservation(event,id) {
 			// observationDiv.querySelector('img').classList.add('obs-img');
 		});
 	});
+}
+
+function payloadFromToken(token) {
+	const base64Url = token.split('.')[1];
+	const base64 = base64Url.replace('-', '+').replace('_', '/');
+	return JSON.parse(window.atob(base64));
 }
 
 function getObservation(targetId) {
@@ -659,10 +665,46 @@ function showPopup (content, popupId) {
 	};
 }
 
+function lisFromObjs(arr) {
+	let lis = "";
+	for (let li of arr) lis += `
+		<li>
+			<a onclick="${li.onclick}">
+				${li.li}
+			</a>
+		</li>`
+	return lis;
+}
+
+function refreshNavMenu() {
+	let menuItems = [];
+	if (JWT) {
+		menuItems = [
+			{li: "All Observations", onclick: "getAndDisplayObservations()"},
+			{li: "Add New Observation", onclick: "newObservation()"},
+			{li: "Settings", onclick: "settings()"},
+			{li: "Logout", onclick: "logout()"}
+		];
+	} else {
+		menuItems = [
+			{li: "Login", onclick: "loginForm()"},
+			{li: "Sign Up", onclick: "signupForm()"}
+		]
+	}
+	const nav = document.querySelector('ul.nav-menu');
+	const lis = lisFromObjs(menuItems);
+	nav.innerHTML = lis;
+}
+
+function goHome() {
+	if (JWT) getAndDisplayObservations();
+	else splashPage();
+}
+
 function splashPage() {
 	const content = `
-	<h2>Hello, yo</h2>
-	<p>Not much to see here right now, but soon it shall <h3>SPLASH!</h3>
+	<h2>Hello</h2>
+	<p>And welcome, Fungi Enthusiast. This is basic right now, but soon it shall <h2>SPLASH!</h2>
 	<p>In the meantime, you should</p>
 	<button onclick="loginForm()">LOGIN as Demo User</button>
 	<button onclick="signupForm()">SIGN UP for an Account</button>
@@ -678,6 +720,27 @@ function splashPage() {
 	displaySection('.splash-page');
 }
 
+function settings() {
+	// alert('soon, maybe');
+	const payload = payloadFromToken(JWT);
+	// const prettyPayload = JSON.stringify(payload.user, null, 2);
+	let prettyPayload = "";
+	// JSON.stringify(payload.user).substring(1,-1).split(',').forEach((el) => prettyPayload += '<li>' + el + '</li>');
+	for (let el in payload.user) prettyPayload += `<li>${el}: ${payload.user[el]}</li>`;
+	const content = `
+		<h2>User Details</h2>
+		<p>from JWT payload</p>
+		<p>${prettyPayload}</p>`;
+	showPopup(content, "settings");
+}
+
+function logout() {
+	if (event) event.preventDefault();
+	console.log('logging out');
+	JWT = "";
+	refreshNavMenu();
+	splashPage();
+}
 
 function jsonFromForm(formId) {
 	let obj = {};
@@ -710,6 +773,7 @@ function login (event,popupId) {
 		.then((res) => res.json())
 		.then(res => {
 			JWT = res.authToken;
+			refreshNavMenu();
 			closePopup(event, popupId);
 			getAndDisplayObservations();
 		})
@@ -720,7 +784,6 @@ function signup (event, popupId) {
 	event.preventDefault();
 	// const form = document.querySelector('#signup-form');
 	const formData = jsonFromForm(popupId);
-
 	fetch('/api/users', {
 		method: 'POST',
 		body: formData,
@@ -816,8 +879,8 @@ function newObservation() {
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="run(submitNewObservation(event))">Submit New Observation</button>
-			<button onclick="run(getAndDisplayObservations())">Cancel</button>`;
+			<button onclick="submitNewObservation(event)">Submit New Observation</button>
+			<button onclick="getAndDisplayObservations()">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -900,20 +963,17 @@ async function saveObservation(event, id) {
 function submitNewObservation(event) {
 	event.preventDefault();
 	loading(true, 'Saving New Observation');
-	let form = document.querySelector('#new-observation');
+	const form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
+
+	const userId = payloadFromToken(JWT).user.userId;
+	formData.set('userId', userId);
 
 	globalFileHolder.forEach(file => formData.append('newFiles', file));
 	globalFileHolder = [];
 
-	return new Promise(res => {
-		publishNewObservation(formData)
-	})
-	.then(res => {
-		document.querySelector('section.new.observation').innerHTML = "";	
-		loading(false);
-	});
+	publishNewObservation(formData)
 }
 
 function updateObservation(id, formData) {
@@ -921,8 +981,7 @@ function updateObservation(id, formData) {
 		method: 'PUT',
 		body: formData,
 		headers: {
-			'Authorization': 'Bearer ' + JWT,
-			'content-type': 'application/x-www-form-urlencoded'
+			'Authorization': 'Bearer ' + JWT
 		}
 	})
 		.then((res) => res.json())
@@ -937,13 +996,20 @@ function publishNewObservation(formData) {
 	fetch(URL, {
 		method: 'POST',
 		body: formData,
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+		}
 	})
 		.then((res) => res.json())
 		.then((res) => {
+			document.querySelector('section.new.observation').innerHTML = "";	
 			getAndDisplayObservations();
 			loading(false);
 		})
-		.catch(error => console.error('Error:', error))
+		.catch(error => {
+			loading(false);
+			console.error('Error:', error);
+			})
 }
 
 function getTime(date) {
@@ -970,7 +1036,12 @@ function getDate(date) {
 function deleteObservation(event, obsId) {
 	event.preventDefault();
 	loading(true, 'Deleting Observation');
-	fetch((URL + obsId), { method: 'DELETE' })
+	fetch((URL + obsId), {
+		method: 'DELETE',
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+		}
+	})
 		// 		.then((res) => res.json())
 		.then((res) => {
 			document.querySelector('section.edit.observation').innerHTML = "";
@@ -982,7 +1053,7 @@ function deleteObservation(event, obsId) {
 
 
 async function populateFields(obs) {
-	const { id, fungi, location, notes, photos, featured } = obs;
+	const { id, userId, fungi, location, notes, photos, featured } = obs;
 	const { commonName, genus, species, nickname, confidence } = fungi;
 	const { lat, lng, address } = location;
 	const { mushroomNotes, habitatNotes, locationNotes, speciminNotes } = notes;

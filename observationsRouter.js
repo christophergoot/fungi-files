@@ -49,7 +49,7 @@ function nestFields(req) {
 	const fungiFields = ['commonName', 'species', 'genus', 'confidence', 'nickname'];
 	const notesFields = ['mushroomNotes', 'locationNotes', 'habitatNotes', 'speciminNotes'];
 	const locationFields = ['lat', 'lng', 'address'];
-	const observation = { 'fungi': {}, 'notes': {}, 'location': {}, 'featured': req.body.featured };
+	const observation = { 'fungi': {}, 'notes': {}, 'location': {}, 'featured': req.body.featured, 'userId': req.body.userId };
 	for (let field of fields) if (req.body[field]) {
 		if (fungiFields.includes(field)) observation.fungi[field] = req.body[field];
 		if (notesFields.includes(field)) observation.notes[field] = req.body[field];
@@ -106,9 +106,6 @@ function getExif(file) {
 			}
 		});
 }
-
-
-
 
 async function updateObservation(req, res, id) {
 	const observation = nestFields(req);

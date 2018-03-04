@@ -65,15 +65,18 @@ a {
 
 button {
 	/* background-color: hsl(0, 0%, 100%); */
-	background-image: linear-gradient(to bottom, #ffffff, #b5b5b5);
+	background-image: linear-gradient(to bottom, #c6a987, rgb(78, 71, 61));
 	margin: 5px 5px;
+	padding: 5px;
 	border-radius:  5px;
 	border: none;
+	color: rgb(228, 203, 173);
+	color: black;
 	/* width: 25%; */
 }
 
 button:hover {
-    background-image: linear-gradient(to bottom, #d4d4d4, #8e8e8e);
+    background-image: linear-gradient(to bottom, #8f7961, #1a1a1a);
 }
 
 .hidden {
@@ -384,6 +387,12 @@ h2 {
 	flex-direction:  row;
 	box-shadow: 3px 3px 5px 1px #00000087;
 	border-radius: 4px;
+}
+
+section.splash-page {
+    /* background-image: url("/media/background-image.jpg"); */
+    background-size:  cover;
+    background-position: center;
 }
 
 .popup-alert.loading {
@@ -748,7 +757,6 @@ span.fungi {
 		display: none;
 	}
 }
-
 
 
 
