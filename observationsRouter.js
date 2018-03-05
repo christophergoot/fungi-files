@@ -68,10 +68,10 @@ function processImage(buffer, size) {
 		.catch(err => console.error(err));
 }
 
-async function uploadFile(file, obsId, size) {
+async function uploadFile(file, userId, obsId, size) {
 	const buffer = file.buffer;
 	const resizedBuffer = await processImage(buffer, size);
-	const folder = obsId + '/';
+	const folder = userId + '/' + obsId + '/';
 	const extention = file.originalname.substring(file.originalname.lastIndexOf('.'))
 	const fileKey = folder + Date.now() + extention;
 	return new Promise((resolve, reject) => {
@@ -113,7 +113,7 @@ async function updateObservation(req, res, id) {
 	const observation = nestFields(req);
 	observation.id = id;
 	observation.obsDate = new Date(req.body.obsDate + " " + req.body.obsTime);
-
+	const userId = observation.userId;
 	const files = req.files;
 	if (files.length > 0) {
 		// upload files
@@ -121,8 +121,8 @@ async function updateObservation(req, res, id) {
 		const allResolved = await Promise.all(
 			files.map(async file => {
 				const origName = file.originalname;
-				const url = await uploadFile(file, id, 1200);
-				const thumbnail = await uploadFile(file, id, 400);
+				const url = await uploadFile(file, userId, id, 1200);
+				const thumbnail = await uploadFile(file, userId, id, 400);
 				const filename = url.substring(url.lastIndexOf('/') + 1);
 
 				const exif = await getExif(file);
