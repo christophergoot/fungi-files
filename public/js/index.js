@@ -744,6 +744,7 @@ function logout() {
 	if (event) event.preventDefault();
 	console.log('logging out');
 	JWT = "";
+	localStorage.setItem('JWT', "");
 	refreshNavMenu();
 	splashPage();
 }
@@ -763,6 +764,24 @@ function jsonFromForm(formId) {
 	return JSON.stringify(obj);
 }
 
+function refreshToken () {
+	const token = JWT;
+	fetch('./api/auth/refresh', {
+		method: 'POST',
+// 		body: formData,
+		headers: {
+			'content-type': 'application/json',
+			'Authorization': 'Bearer ' + JWT
+		  }
+	})
+	.then(res => res.json())
+	.then(authToken => {
+		localStorage.setItem('JWT', authToken.authToken);
+		JWT = authToken.authToken;
+	})
+	.catch(error => console.error('Error', error));
+}
+
 function login (event,popupId) {
 	event.preventDefault();
 	// const form = document.querySelector('#login-form');
@@ -770,7 +789,6 @@ function login (event,popupId) {
 	const formData = jsonFromForm(popupId);
 	fetch('./api/auth/login', {
 		method: 'POST',
-		// body: JSON.stringify(formData),
 		body: formData,
 		headers: {
 			'content-type': 'application/json'
@@ -1257,5 +1275,9 @@ function populateDatalists() {
 }
 
 window.onload = function () {
-	splashPage();
+	refreshNavMenu();
+	if (JWT) {
+		refreshToken();
+		getAndDisplayObservations();
+	} else splashPage();
 }
