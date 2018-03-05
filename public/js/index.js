@@ -267,22 +267,28 @@ async function receiveFiles(event) {
 	}
 }
 
+async function resolveLocation(event) {
+	event.preventDefault();
+	console.log(event);
+	const address = event.path[1]["0"].value;
+	const latlng = await `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GOOGLEMAPS_API_KEY}`;
+	console.log('latlng', latlng);
+	alert('need to get latlng from', address);
+	closePopup(event, 'address-entry');
+}
+
 function enterLocation() {
 	event.preventDefault();
 	// open form
 	const form = `
 		<form>
-			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location>
-			<button onclick="run(resolveLocation(event))">
-		</form>`;
-// example
+			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location">
+			<button onclick="resolveLocation(event)">Submit</button>
+		</form>
+		<p>right now it doesn't send the input anywhere</p>`;
+	showPopup(form, 'address-entry');
 	const input = document.getElementById('address-entry');
 	const autocomplete = new google.maps.places.Autocomplete(input);
-	
-	// send to google
-
-	// send to something else
-	alert("it's on the short list of things to add");
 }
 
 function updateLocation(obs, locationSource) {
@@ -967,7 +973,7 @@ function submitNewObservation(event) {
 	let formData = new FormData(form);
 	formData.delete('fileInput');
 
-	const userId = payloadFromToken(JWT).user.userId;
+	const userId = payloadFromToken(JWT).user.userId.toString();
 	formData.set('userId', userId);
 
 	globalFileHolder.forEach(file => formData.append('newFiles', file));
@@ -1062,7 +1068,7 @@ async function populateFields(obs) {
 	const obsTime = await getTime(new Date(obs.obsDate));
 	const obsDate = await getDate(new Date(obs.obsDate));
 	// };
-	const possibleNames = { obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, address, featured };
+	const possibleNames = { obsTime, obsDate, id, userId, commonName, genus, species, nickname, lat, lng, address, featured };
 	for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 	for (let n in notes) if (notes[n]) document.getElementById(n).innerHTML = notes[n];
 	if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;

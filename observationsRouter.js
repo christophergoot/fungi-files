@@ -21,7 +21,8 @@ router.use(jwtAuth);
 
 router.get('/', (req, res) => {
 	Observation
-		.find().sort({obsDate: 1})
+		.find({ 'userId': req.user.userId })
+		.sort({obsDate: 1})
 		// .find({}, null, {sort: 'obsDate'})
 		.then(obs => {
 			res.json(
@@ -36,8 +37,9 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
 	Observation
-		.findById(req.params.id)
-		.then(obs => res.json(obs.serialize()))
+		// .findById(req.params.id)
+		.find({ 'userId': req.user.userId, '_id': req.params.id })
+		.then(obs => res.json(obs[0].serialize()))
 		.catch(err => {
 			console.error(err);
 			res.status(500).json({ error: 'something went wrong getting single observation' });
