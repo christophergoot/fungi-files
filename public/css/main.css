@@ -401,7 +401,13 @@ section.splash-page {
 
 .popup-alert>form {
     display: block;
-    color: red;
+    /* color: red; */
+}
+
+span.required {
+    color: rgba(255, 0, 0, 0.50);
+    display: flex;
+    flex-flow: row-reverse;
 }
 
 .loading-img {

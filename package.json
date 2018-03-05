@@ -7,6 +7,7 @@
     "aws-sdk": "^2.186.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^4.0.0",
+    "email-validator": "^1.1.1",
     "exif": "^0.6.0",
     "exif-js": "^2.3.0",
     "exif-reader": "^1.0.2",

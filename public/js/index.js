@@ -710,7 +710,9 @@ function goHome() {
 function splashPage() {
 	const content = `
 	<h2>Hello</h2>
-	<p>And welcome, Fungi Enthusiast. This is basic right now, but soon it shall <h2>SPLASH!</h2>
+	<p>And welcome, Fungi Enthusiast.</p>
+	<p>This is basic right now, but soon it shall</p>
+	<h2>SPLASH!</h2>
 	<p>In the meantime, you should</p>
 	<button onclick="loginForm()">LOGIN as Demo User</button>
 	<button onclick="signupForm()">SIGN UP for an Account</button>
@@ -742,7 +744,6 @@ function settings() {
 
 function logout() {
 	if (event) event.preventDefault();
-	console.log('logging out');
 	JWT = "";
 	localStorage.setItem('JWT', "");
 	refreshNavMenu();
@@ -757,7 +758,7 @@ function jsonFromForm(formId) {
 		const element = elements[i];
 		const name = element.name;
 		const value = element.value;
-		if (name) {
+		if (name && value) {
 			obj[name] = value;
 		}
 	}
@@ -791,7 +792,7 @@ function login (event,popupId) {
 		method: 'POST',
 		body: formData,
 		headers: {
-			'content-type': 'application/json'
+			'content-type': 'application/json',
 		  }
 	})
 		.then((res) => res.json())
@@ -816,18 +817,25 @@ function signup (event, popupId) {
 		headers: {
 			'content-type': 'application/json'
 		  }
-
 	})
-		.then((res) => {
-			closePopup(event, popupId);
-			loginForm();
-			const form = document.getElementById('login-form-alert');
-			const alert = `
-				<h3>Account Successfully Created</h3>
-				<p>Please Login below to continue</p>`;
-			form.insertAdjacentHTML('afterBegin', alert);
+		.then(res => res.json())
+		.then(res => {
+			if (res.status === 201) {
+				closePopup(event, popupId);
+				loginForm();
+				const form = document.getElementById('login-form-alert');
+				const alert = `
+					<h3>Account Successfully Created</h3>
+					<p>Please Login below to continue</p>`;
+				form.insertAdjacentHTML('afterBegin', alert);
+			}
+			if (res.status === 422) {
+				console.log(res.code, res.message, res.location, res.reason);
+				console.log(res.body.code);
+				console.log('code 422');
+			}
 		})
-		.catch(error => console.error('Error:', error));
+// 		.catch(error => console.error('Error:', error));
 }
 
 function loginForm () {
@@ -836,8 +844,12 @@ function loginForm () {
 	const form = `
 		<h2>Login</h2>
 		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
-			<input value="demo-user" name="username" type="text" placeholder="username" required>
-			<input value="demopassword" name="password" type="password" placeholder="password" required>
+			<span class="required">*
+				<input value="demo-user" name="username" type="text" placeholder="username" required>
+			</span>
+			<span class="required">*
+				<input value="demopassword" name="password" type="password" placeholder="password" required>
+			</span>
 			<button onclick="login(event,'${popupId}')">Login</button>
 			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
@@ -853,11 +865,17 @@ function signupForm () {
 		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
 		<input name="firstName" type="text" placeholder="first name">
 		<input name="lastName" type="text" placeholder="last name">
-		<input name="username" type="text" placeholder="username" required>
-		<input name="email" type="email" placeholder="email" required>
-		<input name="password" type="password" placeholder="password" required>
-			<button onclick="signup(event,'${popupId}')">Sign Up</button>
-			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		<span class="required">*
+			<input name="username" type="text" placeholder="username" required>
+		</span>
+		<span class="required">*
+			<input name="email" type="email" placeholder="email" required>
+		</span>
+		<span class="required">*
+			<input name="password" type="password" placeholder="password" required>
+		</span>
+		<button onclick="signup(event,'${popupId}')">Sign Up</button>
+		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
 }
