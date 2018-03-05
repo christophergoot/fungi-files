@@ -7,7 +7,7 @@ const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 const URL = "/observations/";
 
 let globalFileHolder = [];
-let JWT = "";
+let JWT = localStorage.getItem('JWT');
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation" class='grid wrapper'>
@@ -778,6 +778,8 @@ function login (event,popupId) {
 	})
 		.then((res) => res.json())
 		.then(res => {
+			// assign JWT to localStorage
+			localStorage.setItem('JWT', res.authToken);
 			JWT = res.authToken;
 			refreshNavMenu();
 			closePopup(event, popupId);
@@ -834,6 +836,7 @@ function signupForm () {
 		<input name="firstName" type="text" placeholder="first name">
 		<input name="lastName" type="text" placeholder="last name">
 		<input name="username" type="text" placeholder="username" required>
+		<input name="email" type="email" placeholder="email" required>
 		<input name="password" type="password" placeholder="password" required>
 			<button onclick="signup(event,'${popupId}')">Sign Up</button>
 			<button onclick="closePopup(event,'${popupId}')">Cancel</button>

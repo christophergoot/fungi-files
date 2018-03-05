@@ -19,27 +19,35 @@ const passport = require('passport');
 const jwtAuth = passport.authenticate('jwt', { session: false });
 router.use(jwtAuth);
 
-router.get('/', (req, res) => {
-	Observation
-		.find({ 'userId': req.user.userId })
+function getAllObservations(userId) {
+	return Observation
+		.find({ 'userId': userId })
 		.sort({obsDate: 1})
 		// .find({}, null, {sort: 'obsDate'})
-		.then(obs => {
-			res.json(
-				obs.map(obs => obs.serialize())
-			);
-		})
+		.then(obs => obs.map(obs => obs.serialize()))
+}
+
+router.get('/', (req, res) => {
+	const userId = req.user.userId;
+	getAllObservations(userId)
+		.then(obs => res.json(obs))
 		.catch(err => {
 			console.error(err);
 			res.status(500).json({ error: 'something went wrong getting all observations' });
 		});
 });
 
-router.get('/:id', (req, res) => {
-	Observation
-		// .findById(req.params.id)
-		.find({ 'userId': req.user.userId, '_id': req.params.id })
-		.then(obs => res.json(obs[0].serialize()))
+function getOneObservation (userId, obsId) {
+	return Observation
+		.findOne({ 'userId': userId, '_id': obsId })
+		.then(obs => obs.serialize());
+}
+
+router.get('/:id', async (req, res) => {
+	const {userId} = req.user;
+	const {id} = req.params;
+	getOneObservation(userId,id)
+		.then(obs => res.json(obs))
 		.catch(err => {
 			console.error(err);
 			res.status(500).json({ error: 'something went wrong getting single observation' });
@@ -172,7 +180,8 @@ function keyFromUrl(url) {
 	const arr = url.split('/');
 	const filename = arr[arr.length - 1];
 	const id = arr[arr.length - 2];
-	const key = id + "/" + filename;
+	const userId = arr[arr.length - 3]
+	const key = userId + "/" + id + "/" + filename;
 	return key;
 }
 
@@ -185,19 +194,26 @@ function deleteS3File(key) {
 	})
 }
 
-// delete entire observation
-router.delete('/:id', (req, res) => {
-	const { id } = req.params;
+async function deleteSingleObservation(obsId, userId) {
 	// removes document from mongo, passes on deleted document
-	Observation
-		.findByIdAndRemove(id)
+	return Observation
+		.findOneAndRemove({ 'userId': userId, '_id': obsId })
 		.then(async (obs) => {
 			const arr = obs.photos.files;
 			for (let i = 0; i < arr.length; i++) {
 				await deleteS3File(keyFromUrl(arr[i].url));
 				await deleteS3File(keyFromUrl(arr[i].thumbnail));
 			};
+			return obs;
 		})
+
+}
+
+// delete entire observation
+router.delete('/:id', (req, res) => {
+	const { id } = req.params;
+	const { userId } = req.user;
+	deleteSingleObservation(id, userId)
 		.then(obs => {
 			res.status(204).json({ message: 'success' });
 		})
@@ -208,9 +224,7 @@ router.delete('/:id', (req, res) => {
 
 })
 
-// delete single file
-router.delete('/:id/:filename', async (req, res) => {
-	const { id, filename } = req.params;
+async function deleteSingleFile(id, userId, filename) {
 	const obs = await Observation.findById(id);
 	let { files } = obs.photos;
 
@@ -224,10 +238,17 @@ router.delete('/:id/:filename', async (req, res) => {
 		}
 	}
 	await obs.save();
+}
+// delete single file
+router.delete('/:id/:filename', async (req, res) => {
+	const { id, filename } = req.params;
+	const { userId } = req.user;
+	await deleteSingleFile(id, userId, filename);
+
 	res.status(204).json({ message: 'success' });
 })
 
 
 
 
-module.exports = router;
+module.exports = { router, getAllObservations, getOneObservation, deleteSingleObservation };

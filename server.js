@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const { DATABASE_URL, PORT } = require('./config');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const observationsRouter = require('./observationsRouter');
+const observationsRouter = require('./observationsRouter').router;
 const passport = require('passport');
 
 const { router: usersRouter } = require('./users');
