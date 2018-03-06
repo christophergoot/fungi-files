@@ -406,8 +406,10 @@ section.splash-page {
 
 span.required {
     color: rgba(255, 0, 0, 0.50);
-    display: flex;
-    flex-flow: row-reverse;
+    position: absolute;
+    right: 20px;
+    font-size: .8em;
+    /* flex-flow: row-reverse; */
 }
 
 .loading-img {
@@ -649,7 +651,12 @@ input.obs-view-action.edit {
 }
 
 .error {
-	color: red;
+	color: rgba(255, 0, 0, 0.50);
+}
+
+.input-error {
+	/* border: dashed rgba(255, 0, 0, 0.50); */
+	background-color: rgba(189, 158, 123, .75);
 }
 
 .observation .label {margin-top: 5px;}
@@ -660,7 +667,7 @@ input[type=text], input[type=number], textarea, input[type=date], input[type=tim
 	border-left: none;
 	border-right: none;
 	/* border: none; */
-	padding: 5px;
+	padding: 10px;
 	font-size: .9em;
 	margin: 0;
 	border-radius: 3px;
@@ -763,7 +770,6 @@ span.fungi {
 		display: none;
 	}
 }
-
 
 
 

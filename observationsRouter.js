@@ -1,3 +1,4 @@
+const config = require('./config');
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -10,7 +11,7 @@ const AWS = require('aws-sdk');
 const S3 = new AWS.S3({
 	apiVersion: '2006-03-01',
 	params: {
-		Bucket: 'fungi-files-observation-images'
+		Bucket: config.S3_BUCKET
 	}
 });
 const sharp = require('sharp');

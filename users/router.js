@@ -11,8 +11,8 @@ const jsonParser = bodyParser.json();
 const validator = require("email-validator");
  
 // Post to register a new user
-router.post('/', jsonParser, (req, res) => {
-  const requiredFields = ['username', 'password', 'email'];
+router.post('/', jsonParser, async (req, res) => {
+  const requiredFields = ['username', 'email', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
 
   if (missingField) {
@@ -108,43 +108,43 @@ router.post('/', jsonParser, (req, res) => {
     return res.status(422).json({
       code: 422,
       reason: 'ValidationError',
-      message: 'supplied value is not valid',
+      message: 'a valid email is required',
       location: 'email'
     });
  
   }
 
 
-  return User.find({ username })
+  await User.find({ username })
     .count()
     .then(count => {
       if (count > 0) {
         // There is an existing user with the same username
-        return Promise.reject({
+        return res.status(422).json({
           code: 422,
           reason: 'ValidationError',
           message: 'Username already taken',
           location: 'username'
         });
       }
-    })
-    .then(() => {
-      User.find({ email })
+    });
+  
+  await User.find({ email })
         .count()
         .then(count => {
           if (count > 0) {
-            // There is an existing user with the same username
-            return Promise.reject({
+            // There is an existing user with the same email
+            return res.status(422).json({
               code: 422,
               reason: 'ValidationError',
               message: 'An account with given email already exists',
               location: 'email'
             });
           }
-        })
+        });
+  
       // If there is no existing user or email, hash the password
-      return User.hashPassword(password);
-    })
+  return User.hashPassword(password)
     .then(hash => {
       return User.create({
         username,

@@ -795,16 +795,45 @@ function login (event,popupId) {
 			'content-type': 'application/json',
 		  }
 	})
-		.then((res) => res.json())
-		.then(res => {
-			// assign JWT to localStorage
-			localStorage.setItem('JWT', res.authToken);
-			JWT = res.authToken;
-			refreshNavMenu();
-			closePopup(event, popupId);
-			getAndDisplayObservations();
-		})
-		.catch(error => console.error('Error:', error));
+// 	.then(res => res.json())
+	.then(res => {
+		if (!res.ok) {
+			res.json()
+				.then(res => {
+					// console.log(text.location);
+					const { message } = res;
+					displayFormError(message);
+				})
+		} else { 
+			res.json()
+				.then(res => {
+					// assign JWT to localStorage
+					localStorage.setItem('JWT', res.authToken);
+					JWT = res.authToken;
+					refreshNavMenu();
+					closePopup(event, popupId);
+					getAndDisplayObservations();
+				})
+		};
+	})
+	.catch(error => console.error('Error:', error));
+}
+
+function displayFormError(message, location) {
+	// clear out previous errors
+	document.querySelectorAll('input.input-error')
+		.forEach(el => el.classList.remove('input-error'));
+	document.querySelectorAll('span.error')
+		.forEach(el => el.remove());
+	const html = `<span class="error">${message}</span>`;
+		if (location) {
+			const input = document.querySelector(`input[name=${location}]`);
+			input.insertAdjacentHTML('afterend', html);
+			input.classList.add('input-error');
+		} else {
+			const input = document.querySelector('form');
+			input.insertAdjacentHTML('beforestart', html);
+		}
 }
 
 function signup (event, popupId) {
@@ -818,9 +847,16 @@ function signup (event, popupId) {
 			'content-type': 'application/json'
 		  }
 	})
-		.then(res => res.json())
 		.then(res => {
-			if (res.status === 201) {
+			if (!res.ok) {
+				res.json()
+					.then(res => {
+						// console.log(text.location);
+						const { message, location } = res;
+						displayFormError(message, location);
+					})
+			}
+			else {
 				closePopup(event, popupId);
 				loginForm();
 				const form = document.getElementById('login-form-alert');
@@ -828,30 +864,25 @@ function signup (event, popupId) {
 					<h3>Account Successfully Created</h3>
 					<p>Please Login below to continue</p>`;
 				form.insertAdjacentHTML('afterBegin', alert);
-			}
-			if (res.status === 422) {
-				console.log(res.code, res.message, res.location, res.reason);
-				console.log(res.body.code);
-				console.log('code 422');
-			}
+				}
 		})
-// 		.catch(error => console.error('Error:', error));
+		.catch(error => {
+			console.error('Error:', error);
+		})
 }
 
-function loginForm () {
+function loginForm() {
 	if (event) event.preventDefault();
 	const popupId = 'login-form';
 	const form = `
 		<h2>Login</h2>
 		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
-			<span class="required">*
-				<input value="demo-user" name="username" type="text" placeholder="username" required>
-			</span>
-			<span class="required">*
-				<input value="demopassword" name="password" type="password" placeholder="password" required>
-			</span>
-			<button onclick="login(event,'${popupId}')">Login</button>
-			<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		<span class="required">* required</span>
+		<input value="demo-user" name="username" type="text" placeholder="username" required>
+		<span class="required">* required</span>
+		<input value="demopassword" name="password" type="password" placeholder="password" required>
+		<button onclick="login(event,'${popupId}')">Login</button>
+		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
 }
@@ -865,15 +896,12 @@ function signupForm () {
 		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
 		<input name="firstName" type="text" placeholder="first name">
 		<input name="lastName" type="text" placeholder="last name">
-		<span class="required">*
-			<input name="username" type="text" placeholder="username" required>
-		</span>
-		<span class="required">*
-			<input name="email" type="email" placeholder="email" required>
-		</span>
-		<span class="required">*
-			<input name="password" type="password" placeholder="password" required>
-		</span>
+		<span class="required">* required</span>
+		<input name="username" type="text" placeholder="username" required>
+		<span class="required">* required</span>
+		<input name="email" type="email" placeholder="email" required>
+		<span class="required">* required</span>
+		<input name="password" type="password" placeholder="password" required>
 		<button onclick="signup(event,'${popupId}')">Sign Up</button>
 		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
