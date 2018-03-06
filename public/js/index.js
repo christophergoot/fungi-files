@@ -7,10 +7,12 @@ const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
 const URL = "/observations/";
 
 let globalFileHolder = [];
+let JWT = localStorage.getItem('JWT');
 
 const OBSERVATION_FORM = `
 <form enctype="multipart/form-data" method="post" id="new-observation" class='grid wrapper'>
 <input type="hidden" name="id">
+<input type="hidden" name="userId">
 <input type="hidden" name="featured" id="featured-input">
 <input type="hidden" name="filesToBeDeleted">
 	<div  class="image area">
@@ -301,24 +303,28 @@ async function receiveFiles(event) {
 		}));
 }
 
+async function resolveLocation(event) {
+	event.preventDefault();
+	console.log(event);
+	const address = event.path[1]["0"].value;
+	const latlng = await `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GOOGLEMAPS_API_KEY}`;
+	console.log('latlng', latlng);
+	alert('need to get latlng from', address);
+	closePopup(event, 'address-entry');
+}
+
 function enterLocation() {
 	event.preventDefault();
 	// open form
 	const form = `
 		<form>
-			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location>
-			<button onclick="run(resolveLocation(event))">
-		</form>`;
-// example
+			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location">
+			<button onclick="resolveLocation(event)">Submit</button>
+		</form>
+		<p>right now it doesn't send the input anywhere</p>`;
+	showPopup(form, 'address-entry');
 	const input = document.getElementById('address-entry');
 	const autocomplete = new google.maps.places.Autocomplete(input);
-
-
-	
-	// send to google
-
-	// send to something else
-	alert("it's on the short list of things to add");
 }
 
 async function updateLocation(obs, locationSource) {
@@ -355,7 +361,9 @@ function locationFromThumbnail(event) {
 function deleteFileUponSave(id, filename) {
 	return fetch(`${URL}${id}/${filename}`, {
 		method: 'DELETE',
-		headers: { 'Content-Type': 'application/json' }
+		headers: {
+			'Authorization': 'Bearer ' + JWT
+		}
 	});
 }
 
@@ -486,8 +494,19 @@ function annimateObservation(event,id) {
 	});
 }
 
+function payloadFromToken(token) {
+	const base64Url = token.split('.')[1];
+	const base64 = base64Url.replace('-', '+').replace('_', '/');
+	return JSON.parse(window.atob(base64));
+}
+
 function getObservation(targetId) {
-	return fetch(URL + targetId, { method: 'GET' })
+	return fetch(URL + targetId, { 
+		method: 'GET',
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+		}
+})
 		.then((res) => res.json());
 }
 
@@ -646,6 +665,277 @@ function displayObservation(obs, src) {
 
 }
 
+function closePopup (event, popupId) {
+	if (event) event.preventDefault();
+	const popup = document.getElementById(`${popupId}-popup`);
+	const alert = document.getElementById(`${popupId}-alert`);
+	const page = document.querySelector('main');
+	page.removeChild(popup);
+	page.removeChild(alert);
+}
+
+function showPopup (content, popupId) {
+	if (event) {
+		event.preventDefault();
+		event.stopPropagation();
+	}
+	const popup = document.createElement('section');
+	const alert = document.createElement('section');
+	const page = document.querySelector('main');
+	popup.setAttribute('id', `${popupId}-popup`);
+	alert.setAttribute('id', `${popupId}-alert`);
+	popup.classList.add('popup');
+	alert.classList.add('popup-alert');
+	alert.innerHTML = content;
+	page.insertAdjacentElement('beforeend', popup);
+	page.insertAdjacentElement('beforeend', alert);
+	popup.onclick = (event) => {
+		popup.onclick = closePopup(event,popupId);
+	};
+	popup.onkeydown = (event) => {
+		if ( event.keyCode == 27 ) {
+			console.log('esc pressed');
+			closePopup(event,popupId);
+		}
+	};
+}
+
+function lisFromObjs(arr) {
+	let lis = "";
+	for (let li of arr) lis += `
+		<li>
+			<a onclick="${li.onclick}">
+				${li.li}
+			</a>
+		</li>`
+	return lis;
+}
+
+function refreshNavMenu() {
+	let menuItems = [];
+	if (JWT) {
+		menuItems = [
+			{li: "All Observations", onclick: "getAndDisplayObservations()"},
+			{li: "Add New Observation", onclick: "newObservation()"},
+			{li: "Settings", onclick: "settings()"},
+			{li: "Logout", onclick: "logout()"}
+		];
+	} else {
+		menuItems = [
+			{li: "Login", onclick: "loginForm()"},
+			{li: "Sign Up", onclick: "signupForm()"}
+		]
+	}
+	const nav = document.querySelector('ul.nav-menu');
+	const lis = lisFromObjs(menuItems);
+	nav.innerHTML = lis;
+}
+
+function goHome() {
+	if (JWT) getAndDisplayObservations();
+	else splashPage();
+}
+
+function splashPage() {
+	const content = `
+	<h2>Hello</h2>
+	<p>And welcome, Fungi Enthusiast.</p>
+	<p>This is basic right now, but soon it shall</p>
+	<h2>SPLASH!</h2>
+	<p>In the meantime, you should</p>
+	<button onclick="loginForm()">LOGIN as Demo User</button>
+	<button onclick="signupForm()">SIGN UP for an Account</button>
+	`;
+	let splash;
+	if (document.querySelector('section.splash-page')) splash = document.querySelector('section.splash-page')
+	else {
+		splash = document.createElement('section');
+		document.querySelector('main').insertAdjacentElement('beforeend', splash);
+	};
+	splash.classList.add('hidden', 'splash-page', 'popup-alert');
+	splash.innerHTML = content;
+	displaySection('.splash-page');
+}
+
+function settings() {
+	// alert('soon, maybe');
+	const payload = payloadFromToken(JWT);
+	// const prettyPayload = JSON.stringify(payload.user, null, 2);
+	let prettyPayload = "";
+	// JSON.stringify(payload.user).substring(1,-1).split(',').forEach((el) => prettyPayload += '<li>' + el + '</li>');
+	for (let el in payload.user) prettyPayload += `<li>${el}: ${payload.user[el]}</li>`;
+	const content = `
+		<h2>User Details</h2>
+		<p>from JWT payload</p>
+		<p>${prettyPayload}</p>`;
+	showPopup(content, "settings");
+}
+
+function logout() {
+	if (event) event.preventDefault();
+	JWT = "";
+	localStorage.setItem('JWT', "");
+	refreshNavMenu();
+	splashPage();
+}
+
+function jsonFromForm(formId) {
+	let obj = {};
+	const form = document.getElementById(formId);
+	const elements = form.querySelectorAll("input, select, textarea");
+	for (let i = 0; i < elements.length; ++i) {
+		const element = elements[i];
+		const name = element.name;
+		const value = element.value;
+		if (name && value) {
+			obj[name] = value;
+		}
+	}
+	return JSON.stringify(obj);
+}
+
+function refreshToken () {
+	const token = JWT;
+	fetch('./api/auth/refresh', {
+		method: 'POST',
+// 		body: formData,
+		headers: {
+			'content-type': 'application/json',
+			'Authorization': 'Bearer ' + JWT
+		  }
+	})
+	.then(res => res.json())
+	.then(authToken => {
+		localStorage.setItem('JWT', authToken.authToken);
+		JWT = authToken.authToken;
+	})
+	.catch(error => console.error('Error', error));
+}
+
+function login (event,popupId) {
+	event.preventDefault();
+	const formData = jsonFromForm(popupId);
+	fetch('./api/auth/login', {
+		method: 'POST',
+		body: formData,
+		headers: {
+			'content-type': 'application/json',
+		  }
+	})
+// 	.then(res => res.json())
+	.then(res => {
+		if (!res.ok) {
+			res.json()
+				.then(res => {
+					console.log(res);
+					const { message } = res;
+					displayFormError(message);
+				})
+		} else { 
+			res.json()
+				.then(res => {
+					// assign JWT to localStorage
+					localStorage.setItem('JWT', res.authToken);
+					JWT = res.authToken;
+					refreshNavMenu();
+					getAndDisplayObservations();
+					closePopup(event, popupId);
+				})
+		};
+	})
+	.catch(error => console.error('Error:', error));
+}
+
+function displayFormError(message, location) {
+	// clear out previous errors
+	document.querySelectorAll('input.input-error')
+		.forEach(el => el.classList.remove('input-error'));
+	document.querySelectorAll('span.error')
+		.forEach(el => el.remove());
+	const html = `<span class="error">${message}</span>`;
+		if (location) {
+			const input = document.querySelector(`input[name=${location}]`);
+			input.insertAdjacentHTML('afterend', html);
+			input.classList.add('input-error');
+		} else {
+			const input = document.querySelector('form');
+			input.insertAdjacentHTML('beforestart', html);
+		}
+}
+
+function signup (event, popupId) {
+	event.preventDefault();
+	// const form = document.querySelector('#signup-form');
+	const formData = jsonFromForm(popupId);
+	fetch('/api/users', {
+		method: 'POST',
+		body: formData,
+		headers: {
+			'content-type': 'application/json'
+		  }
+	})
+		.then(res => {
+			if (!res.ok) {
+				res.json()
+					.then(res => {
+						// console.log(text.location);
+						const { message, location } = res;
+						displayFormError(message, location);
+					})
+			}
+			else {
+				closePopup(event, popupId);
+				loginForm();
+				const form = document.getElementById('login-form-alert');
+				const alert = `
+					<h3>Account Successfully Created</h3>
+					<p>Please Login below to continue</p>`;
+				form.insertAdjacentHTML('afterBegin', alert);
+				}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		})
+}
+
+function loginForm() {
+	if (event) event.preventDefault();
+	const popupId = 'login-form';
+	const form = `
+		<h2>Login</h2>
+		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
+		<span class="required">* required</span>
+		<input value="demo-user" name="username" type="text" placeholder="username" required>
+		<span class="required">* required</span>
+		<input value="demopassword" name="password" type="password" placeholder="password" required>
+		<button onclick="login(event,'${popupId}')">Login</button>
+		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		</form>`;
+	showPopup(form, popupId);
+}
+
+function signupForm () {
+	event.preventDefault();
+	event.stopPropagation();
+	const popupId = 'signup-form';
+	const form = `
+		<h2>Signup</h2>
+		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
+		<input name="firstName" type="text" placeholder="first name">
+		<input name="lastName" type="text" placeholder="last name">
+		<span class="required">* required</span>
+		<input name="username" type="text" placeholder="username" required>
+		<span class="required">* required</span>
+		<input name="email" type="email" placeholder="email" required>
+		<span class="required">* required</span>
+		<input name="password" type="password" placeholder="password" required>
+		<button onclick="signup(event,'${popupId}')">Sign Up</button>
+		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		</form>`;
+	showPopup(form, popupId);
+}
+
+
 function staticMapUrl(latlng) {
 	let url = "https://maps.googleapis.com/maps/api/staticmap?";
 	url += "size=200x200";
@@ -697,7 +987,7 @@ function newObservation() {
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
 			<button onclick="submitNewObservation(event)">Submit New Observation</button>
-			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
+			<button onclick="getAndDisplayObservations()">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -727,7 +1017,7 @@ function loading(state, text) {
 		loadingScreen.classList.add('popup.alert');
 		loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
-			<div class="loading-alert">
+			<div class="popup-alert loading">
 				<img src="media/loading.gif" class="loading-img">
 				<span class="loading-text">${text}<span>
 			</div>`;
@@ -780,20 +1070,17 @@ async function saveObservation(event, id) {
 function submitNewObservation(event) {
 	event.preventDefault();
 	loading(true, 'Saving New Observation');
-	let form = document.querySelector('#new-observation');
+	const form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
 	formData.delete('fileInput');
 
-	globalFileHolder.forEach(file => formData.append('newFiles', file, file.name));
+	const userId = payloadFromToken(JWT).user.userId.toString();
+	formData.set('userId', userId);
+
+	globalFileHolder.forEach(file => formData.append('newFiles', file));
 	globalFileHolder = [];
 
-	return new Promise(res => {
-		publishNewObservation(formData)
-	})
-	.then(res => {
-		document.querySelector('section.new.observation').innerHTML = "";	
-		loading(false);
-	});
+	publishNewObservation(formData)
 }
 
 window.onkeydown = function( event ) {
@@ -806,6 +1093,9 @@ function updateObservation(id, formData) {
 	fetch(URL + id, {
 		method: 'PUT',
 		body: formData,
+		headers: {
+			'Authorization': 'Bearer ' + JWT
+		}
 	})
 		.then((res) => res.json())
 		.then((res) => {
@@ -820,14 +1110,21 @@ function publishNewObservation(formData) {
 	fetch(URL, {
 		method: 'POST',
 		body: formData,
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+		}
 	})
 		.then((res) => res.json())
 		.then((res) => {
+			document.querySelector('section.new.observation').innerHTML = "";	
 			getAndDisplayObservations();
 			document.querySelector('section.new.observation').innerHTML = "";	
 			loading(false);
 		})
-		.catch(error => console.error('Error:', error))
+		.catch(error => {
+			loading(false);
+			console.error('Error:', error);
+			})
 }
 
 function getTime(date) {
@@ -854,7 +1151,12 @@ function getDate(date) {
 function deleteObservation(event, obsId) {
 	event.preventDefault();
 	loading(true, 'Deleting Observation');
-	fetch((URL + obsId), { method: 'DELETE' })
+	fetch((URL + obsId), {
+		method: 'DELETE',
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+		}
+	})
 		// 		.then((res) => res.json())
 		.then((res) => {
 			document.querySelector('section.edit.observation').innerHTML = "";
@@ -866,7 +1168,7 @@ function deleteObservation(event, obsId) {
 
 
 async function populateFields(obs) {
-	const { id, fungi, location, notes, photos, featured } = obs;
+	const { id, userId, fungi, location, notes, photos, featured } = obs;
 	const { commonName, genus, species, nickname, confidence } = fungi;
 	const { lat, lng, address } = location;
 	const { mushroomNotes, habitatNotes, locationNotes, speciminNotes } = notes;
@@ -875,7 +1177,7 @@ async function populateFields(obs) {
 	const obsTime = await getTime(new Date(obs.obsDate));
 	const obsDate = await getDate(new Date(obs.obsDate));
 	// };
-	const possibleNames = { obsTime, obsDate, id, commonName, genus, species, nickname, lat, lng, address, featured };
+	const possibleNames = { obsTime, obsDate, id, userId, commonName, genus, species, nickname, lat, lng, address, featured };
 	for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 	for (let n in notes) if (notes[n]) document.getElementById(n).innerHTML = notes[n];
 	if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
@@ -992,11 +1294,32 @@ function renderObservation(obs, address) {
 }
 
 function getObservations(callback) {
-	fetch(URL, { method: 'GET' })
-		.then((res) => res.json())
+	fetch(URL, { 
+		method: 'GET',
+		headers: {
+			'Authorization': 'Bearer ' + JWT,
+			}
+		})
+		.then((res) => {
+			
+			return res.json();
+			})
 		.then((res) => {
 			callback(res);
 		})
+		.catch(err => {
+			console.error(err);
+			validateMe();
+		})
+}
+
+function validateMe() {
+	const content = `
+	<h2>Protected Resource</h2>
+	<p>The resource you are trying to access is protected</p>
+	<p>Please <a onclick="signupForm()">Sign Up</a> or <a onclick="loginForm()">Login</a> to continue</p>
+	`;
+	showPopup(content, 'protected-resource');
 }
 
 function sleep (ms) {
@@ -1056,5 +1379,9 @@ function populateDatalists() {
 }
 
 window.onload = function () {
-	getAndDisplayObservations();
+	refreshNavMenu();
+	if (JWT) {
+		refreshToken();
+		getAndDisplayObservations();
+	} else splashPage();
 }

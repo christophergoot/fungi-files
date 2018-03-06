@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const observationSchema = mongoose.Schema({
+	userId: String,
 	fungi: {
 		nickname: String,
 		commonName: String,
@@ -47,6 +48,7 @@ observationSchema.methods.serialize = function() {
 	const pubDateObj = new Date(this.pubDate);
 	return {
 		id: this._id,
+		userId: this.userId,
 		fungi: this.fungi,
 		location: this.location,
 		notes: this.notes,

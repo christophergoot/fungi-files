@@ -11,21 +11,19 @@
 
 <body>
 	<header>
-		<h1><a onclick="getAndDisplayObservations()">
+		<h1><a onclick="goHome()">
 			Mushroom Journal
 		</a></h1>
-		<ul>
+		<ul class="nav-menu">
 			<li>
-				<a onclick="getAndDisplayObservations()">All Observations</a>
+				<a onclick="loginForm()">
+					Login
+				</a>
 			</li>
 			<li>
-				<a onclick="newObservation()">Add New Observation</a>
-			</li>
-			<li>
-				<a onclick="alert('User Accounts are not yet implemented, but should be shortly.')">Account Settings</a>
-			</li>
-			<li>
-				<a onclick="alert('User Accounts are not yet implemented, but should be shortly.')">Logout (Demo Account)</a>
+				<a onclick="signupForm()">
+					Sign Up
+				</a>
 			</li>
 		</ul>
 	</header>

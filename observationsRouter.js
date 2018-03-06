@@ -1,3 +1,4 @@
+const config = require('./config');
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -10,30 +11,44 @@ const AWS = require('aws-sdk');
 const S3 = new AWS.S3({
 	apiVersion: '2006-03-01',
 	params: {
-		Bucket: 'fungi-files-observation-images'
+		Bucket: config.S3_BUCKET
 	}
 });
 const sharp = require('sharp');
 
-router.get('/', (req, res) => {
-	Observation
-		.find().sort({obsDate: -1})
+const passport = require('passport');
+const jwtAuth = passport.authenticate('jwt', { session: false });
+router.use(jwtAuth);
+
+function getAllObservations(userId) {
+	return Observation
+		.find({ 'userId': userId })
+		.sort({obsDate: 1})
 		// .find({}, null, {sort: 'obsDate'})
-		.then(obs => {
-			res.json(
-				obs.map(obs => obs.serialize())
-			);
-		})
+		.then(obs => obs.map(obs => obs.serialize()))
+}
+
+router.get('/', (req, res) => {
+	const userId = req.user.userId;
+	getAllObservations(userId)
+		.then(obs => res.json(obs))
 		.catch(err => {
 			console.error(err);
 			res.status(500).json({ error: 'something went wrong getting all observations' });
 		});
 });
 
-router.get('/:id', (req, res) => {
-	Observation
-		.findById(req.params.id)
-		.then(obs => res.json(obs.serialize()))
+function getOneObservation (userId, obsId) {
+	return Observation
+		.findOne({ 'userId': userId, '_id': obsId })
+		.then(obs => obs.serialize());
+}
+
+router.get('/:id', async (req, res) => {
+	const {userId} = req.user;
+	const {id} = req.params;
+	getOneObservation(userId,id)
+		.then(obs => res.json(obs))
 		.catch(err => {
 			console.error(err);
 			res.status(500).json({ error: 'something went wrong getting single observation' });
@@ -45,7 +60,7 @@ function nestFields(req) {
 	const fungiFields = ['commonName', 'species', 'genus', 'confidence', 'nickname'];
 	const notesFields = ['mushroomNotes', 'locationNotes', 'habitatNotes', 'speciminNotes'];
 	const locationFields = ['lat', 'lng', 'address'];
-	const observation = { 'fungi': {}, 'notes': {}, 'location': {}, 'featured': req.body.featured };
+	const observation = { 'fungi': {}, 'notes': {}, 'location': {}, 'featured': req.body.featured, 'userId': req.body.userId };
 	for (let field of fields) if (req.body[field]) {
 		if (fungiFields.includes(field)) observation.fungi[field] = req.body[field];
 		if (notesFields.includes(field)) observation.notes[field] = req.body[field];
@@ -62,12 +77,12 @@ function processImage(buffer, size) {
 		.catch(err => console.error(err));
 }
 
-async function uploadFile(file, obsId, size) {
+async function uploadFile(file, userId, obsId, size) {
 	const buffer = file.buffer;
 	const resizedBuffer = await processImage(buffer, size);
-	const folder = obsId + '/';
 	// const extention = file.originalname.substring(file.originalname.lastIndexOf('.'))
 	const extention = '.jpg';
+	const folder = userId + '/' + obsId + '/';
 	const fileKey = folder + Date.now() + extention;
 	return new Promise((resolve, reject) => {
 		S3.upload({ Body: resizedBuffer, Key: fileKey }, (err, data) => {
@@ -104,14 +119,11 @@ function getExif(file) {
 		});
 }
 
-
-
-
 async function updateObservation(req, res, id) {
 	const observation = nestFields(req);
 	observation.id = id;
 	observation.obsDate = new Date(req.body.obsDate + " " + req.body.obsTime);
-
+	const userId = observation.userId;
 	const files = req.files;
 	if (files.length > 0) {
 		// upload files
@@ -119,8 +131,8 @@ async function updateObservation(req, res, id) {
 		const allResolved = await Promise.all(
 			files.map(async file => {
 				const origName = file.originalname;
-				const url = await uploadFile(file, id, 1200);
-				const thumbnail = await uploadFile(file, id, 400);
+				const url = await uploadFile(file, userId, id, 1200);
+				const thumbnail = await uploadFile(file, userId, id, 400);
 				const filename = url.substring(url.lastIndexOf('/') + 1);
 
 				const exif = await getExif(file);
@@ -170,7 +182,8 @@ function keyFromUrl(url) {
 	const arr = url.split('/');
 	const filename = arr[arr.length - 1];
 	const id = arr[arr.length - 2];
-	const key = id + "/" + filename;
+	const userId = arr[arr.length - 3]
+	const key = userId + "/" + id + "/" + filename;
 	return key;
 }
 
@@ -183,19 +196,26 @@ function deleteS3File(key) {
 	})
 }
 
-// delete entire observation
-router.delete('/:id', (req, res) => {
-	const { id } = req.params;
+async function deleteSingleObservation(obsId, userId) {
 	// removes document from mongo, passes on deleted document
-	Observation
-		.findByIdAndRemove(id)
+	return Observation
+		.findOneAndRemove({ 'userId': userId, '_id': obsId })
 		.then(async (obs) => {
 			const arr = obs.photos.files;
 			for (let i = 0; i < arr.length; i++) {
 				await deleteS3File(keyFromUrl(arr[i].url));
 				await deleteS3File(keyFromUrl(arr[i].thumbnail));
 			};
+			return obs;
 		})
+
+}
+
+// delete entire observation
+router.delete('/:id', (req, res) => {
+	const { id } = req.params;
+	const { userId } = req.user;
+	deleteSingleObservation(id, userId)
 		.then(obs => {
 			res.status(204).json({ message: 'success' });
 		})
@@ -206,9 +226,7 @@ router.delete('/:id', (req, res) => {
 
 })
 
-// delete single file
-router.delete('/:id/:filename', async (req, res) => {
-	const { id, filename } = req.params;
+async function deleteSingleFile(id, userId, filename) {
 	const obs = await Observation.findById(id);
 	let { files } = obs.photos;
 
@@ -222,10 +240,17 @@ router.delete('/:id/:filename', async (req, res) => {
 		}
 	}
 	await obs.save();
+}
+// delete single file
+router.delete('/:id/:filename', async (req, res) => {
+	const { id, filename } = req.params;
+	const { userId } = req.user;
+	await deleteSingleFile(id, userId, filename);
+
 	res.status(204).json({ message: 'success' });
 })
 
 
 
 
-module.exports = router;
+module.exports = { router, getAllObservations, getOneObservation, deleteSingleObservation };

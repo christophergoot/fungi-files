@@ -6,6 +6,7 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 chai.use(chaiHttp);
 const mongoose = require('mongoose');
+const {getAllObservations, getOneObservation, deleteSingleObservation} = require('../observationsRouter');
 
 const {Observation} = require('../models');
 const {runServer, app, closeServer} = require('../server');
@@ -13,6 +14,8 @@ const {DATABASE_URL, TEST_DATABASE_URL} = require('../config');
 const SEED_OBSERVATION_COUNT = 20;
 
 const faker = require('faker');
+
+const userId = "fake.userId.for.testing";
 
 function tearDownDb() {
 	return mongoose.connection.dropDatabase();
@@ -26,6 +29,7 @@ function seedObservations() {
 
 function fakeObservation() {
 	let obs = {};
+		obs.userId = userId;
 		obs.fungi = {};
 		obs.fungi.nickname = faker.name.firstName();
 		obs.fungi.commonName = faker.name.lastName();
@@ -52,57 +56,29 @@ describe('API Endpoint tests', () => {
 	beforeEach(() => seedObservations());
 	after(() => closeServer());
 	afterEach(() => tearDownDb());
-	it('should get all observations on GET', () => {
-		// strategy
-		// 	make a get request
-		//  compare count of seeded data against GET
-		// 	compare values against the DB directly
-		return chai.request(app)
-			.get('/observations')
-				.then(res => res.body.length)
-				.then(getCount => {
-					SEED_OBSERVATION_COUNT.should.equal(getCount);
-			})
+	it('should get all observations on GET', async () => {
+		const obs = await getAllObservations(userId)
+		const getCount = obs.length;
+		SEED_OBSERVATION_COUNT.should.equal(getCount);
 	});
-	it('should get a single observation on GET:id', () => {
-		// strategy
-		// 	call mongo for an example id
-		// 	place GET call using that id
-		// 	varify some that id
-		return Observation.find().limit(1)
-			.then(res => {
-				const knownId = res[0]._id.toString();
-				const knownFungi = res[0].fungi;
-				return chai.request(app)
-				.get('/observations/' + knownId)
-					.then(res => {
-						res.body.id.should.equal(knownId);
-						res.body.fungi.commonName.should.equal(knownFungi.commonName);
-					})
-			})
+	it('should get a single observation on GET:id', async () => {
+		const knownObs = await Observation.find().limit(1);
+		const knownFungi = knownObs[0].fungi;
+		const knownId = knownObs[0]._id.toString();
+		const obs = await getOneObservation(userId, knownId);
+		obs.id.toString().should.equal(knownId);
+		obs.fungi.commonName.should.equal(knownFungi.commonName);
 	})
-	it('should delete a single observation on DEL:id', () => {
-		// strategy
-		// 	call mongo for an example id
-		// 	make DEL call using that id
-			// verify status code
-		// 	attempt to GET:id
-		// 		verify error Code
-		// 	make GET call
-		// 		verify count = initial seed count -1
-		return Observation.find().limit(1)
-			.then(res => {
-				const knownId = res[0]._id.toString();
-				return chai.request(app)
-				.delete(`/observations/${knownId}`)
-					.then(res => {
-						res.should.have.status(204)
-						return Observation.find().count();
-					})
-					.then(endCount => endCount.should.equal(SEED_OBSERVATION_COUNT - 1))
-			})
+	it('should delete a single observation on DEL:id', async () => {
+		const knownRes = await Observation.find({'userId': userId}).limit(1);
+		const knownId = knownRes[0]._id.toString();
+		const res = await deleteSingleObservation(knownId, userId);
+			// res.should.have.status(204);
+			res.id.toString().should.equal(knownId);
+		const endCount = await Observation.find({'userId': userId}).count();
+			endCount.should.equal(SEED_OBSERVATION_COUNT - 1);
 	})
 	it('should update an observation on PUT', () => {
-		
+		console.log('not yet implemented');
 	})
 })
