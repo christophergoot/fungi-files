@@ -122,6 +122,18 @@ function getExif(file) {
 async function updateObservation(req, res, id) {
 	const observation = nestFields(req);
 	observation.id = id;
+	if (!req.body.obsDate) return res.status(422).json({
+		code: 422,
+		reason: 'ValidationError',
+		message: 'Observation date is required',
+		location: 'obsDate'
+	  });
+	  if (!req.body.obsTime) return res.status(422).json({
+		code: 422,
+		reason: 'ValidationError',
+		message: 'Observation time is required',
+		location: 'obsTime'
+	  });
 	observation.obsDate = new Date(req.body.obsDate + " " + req.body.obsTime);
 	const userId = observation.userId;
 	const files = req.files;

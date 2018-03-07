@@ -1055,11 +1055,6 @@ async function saveObservation(event, id) {
 		// arr.forEach(filename => deleteFileUponSave(id, filename));
 		for (let filename of arr) await deleteFileUponSave(id, filename);
 		};
-	// document.querySelector('section.edit.observation').innerHTML = "";
-
-	// await updateObservation(id, formData);
-	// loading(false);
-
 
 	return new Promise(res => {
 		updateObservation(id, formData)
@@ -1094,6 +1089,29 @@ window.onkeydown = function( event ) {
     }
 };
 
+function handleObservationChange(res) {
+	if (!res.ok) {
+		res.json()
+			.then(res => {
+				const { message, location } = res;
+				displayFormError(message, location);
+				loading(false);
+			})
+	} else { 
+		res.json()
+			.then(res => {
+				document.querySelector('section.new.observation').innerHTML = "";	
+				goHome();
+				document.querySelector('section.new.observation').innerHTML = "";	
+				loading(false);
+			})
+			.catch(error => {
+				loading(false);
+				console.error('Error:', error);
+				});
+	};
+}
+
 function updateObservation(id, formData) {
 	fetch(URL + id, {
 		method: 'PUT',
@@ -1102,13 +1120,10 @@ function updateObservation(id, formData) {
 			'Authorization': 'Bearer ' + JWT
 		}
 	})
-		.then((res) => res.json())
-		.then((res) => {
-			getAndDisplayObservations();
-			document.querySelector('section.new.observation').innerHTML = "";	
-			loading(false);
-		})
-		.catch(error => console.error('Error:', error))
+	.then((res) => {
+		handleObservationChange(res);
+	})
+	.catch(error => console.error('Error:', error));
 }
 
 function publishNewObservation(formData) {
@@ -1119,17 +1134,10 @@ function publishNewObservation(formData) {
 			'Authorization': 'Bearer ' + JWT,
 		}
 	})
-		.then((res) => res.json())
-		.then((res) => {
-			document.querySelector('section.new.observation').innerHTML = "";	
-			getAndDisplayObservations();
-			document.querySelector('section.new.observation').innerHTML = "";	
-			loading(false);
-		})
-		.catch(error => {
-			loading(false);
-			console.error('Error:', error);
-			})
+	.then(res => {
+		handleObservationChange(res);
+	})
+	.catch(error => console.error('Error:', error));
 }
 
 function getTime(date) {
