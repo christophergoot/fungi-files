@@ -115,24 +115,24 @@ router.post('/', jsonParser, async (req, res) => {
   }
 
 
-  await User.find({ username })
-    .count()
-    .then(count => {
-      if (count > 0) {
+  const countUser = await User.find({ username })
+    .count();
+    // .then(count => {
+      if (countUser > 0) {
         // There is an existing user with the same username
-        return res.status(422).json({
+          return res.status(422).json({
           code: 422,
           reason: 'ValidationError',
           message: 'Username already taken',
           location: 'username'
         });
-      }
-    });
+      };
+    // });
   
-  await User.find({ email })
-        .count()
-        .then(count => {
-          if (count > 0) {
+ const countEmail = await User.find({ email })
+        .count();
+        // .then(count => {
+          if (countEmail > 0) {
             // There is an existing user with the same email
             return res.status(422).json({
               code: 422,
@@ -140,8 +140,8 @@ router.post('/', jsonParser, async (req, res) => {
               message: 'An account with given email already exists',
               location: 'email'
             });
-          }
-        });
+          };
+        // });
   
       // If there is no existing user or email, hash the password
   return User.hashPassword(password)
@@ -165,16 +165,6 @@ router.post('/', jsonParser, async (req, res) => {
       }
       res.status(500).json({ code: 500, message: 'Internal server error' });
     });
-});
-
-// Never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-router.get('/', (req, res) => {
-  return User.find({email})
-    .then(users => res.json(users.map(user => user.serialize())))
-    .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
 module.exports = { router };

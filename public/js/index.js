@@ -715,7 +715,7 @@ function refreshNavMenu() {
 	let menuItems = [];
 	if (JWT) {
 		menuItems = [
-			{li: "All Observations", onclick: "getAndDisplayObservations()"},
+			{li: "All Observations", onclick: "getAndDisplayObservations(event)"},
 			{li: "Add New Observation", onclick: "newObservation()"},
 			{li: "Settings", onclick: "settings()"},
 			{li: "Logout", onclick: "logout()"}
@@ -743,7 +743,8 @@ function splashPage() {
 	<p>This is basic right now, but soon it shall</p>
 	<h2>SPLASH!</h2>
 	<p>In the meantime, you should</p>
-	<button onclick="loginForm()">LOGIN as Demo User</button>
+	<button onclick="loginForm('demo-user')">LOGIN as Demo User</button>
+	<button onclick="loginForm()">LOGIN</button>
 	<button onclick="signupForm()">SIGN UP for an Account</button>
 	`;
 	let splash;
@@ -837,9 +838,9 @@ function login (event,popupId) {
 					// assign JWT to localStorage
 					localStorage.setItem('JWT', res.authToken);
 					JWT = res.authToken;
-					refreshNavMenu();
-					getAndDisplayObservations();
 					closePopup(event, popupId);
+					refreshNavMenu();
+					goHome();
 				})
 		};
 	})
@@ -859,7 +860,7 @@ function displayFormError(message, location) {
 			input.classList.add('input-error');
 		} else {
 			const input = document.querySelector('form');
-			input.insertAdjacentHTML('beforestart', html);
+			input.insertAdjacentHTML('beforebegin', html);
 		}
 }
 
@@ -898,20 +899,24 @@ function signup (event, popupId) {
 		})
 }
 
-function loginForm() {
+function loginForm(str) {
 	if (event) event.preventDefault();
 	const popupId = 'login-form';
 	const form = `
 		<h2>Login</h2>
 		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
 		<span class="required">* required</span>
-		<input value="demo-user" name="username" type="text" placeholder="username" required>
+		<input name="username" type="text" placeholder="username" required>
 		<span class="required">* required</span>
-		<input value="demopassword" name="password" type="password" placeholder="password" required>
+		<input name="password" type="password" placeholder="password" required>
 		<button onclick="login(event,'${popupId}')">Login</button>
 		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
+	if (str === "demo-user") {
+		const cred = {username: "demo-user", password: "demopassword"};
+		for(let name in cred) updateValue(name, cred[name]);
+	}
 }
 
 function signupForm () {
@@ -987,7 +992,7 @@ function newObservation() {
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
 			<button onclick="submitNewObservation(event)">Submit New Observation</button>
-			<button onclick="getAndDisplayObservations()">Cancel</button>`;
+			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);

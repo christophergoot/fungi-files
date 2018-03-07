@@ -23,7 +23,7 @@ router.use(jwtAuth);
 function getAllObservations(userId) {
 	return Observation
 		.find({ 'userId': userId })
-		.sort({obsDate: 1})
+		.sort({obsDate: -1})
 		// .find({}, null, {sort: 'obsDate'})
 		.then(obs => obs.map(obs => obs.serialize()))
 }
