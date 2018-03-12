@@ -10,11 +10,6 @@ const UserSchema = mongoose.Schema({
     required: true,
     unique: true
   },
-  userId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   email: {
     type: String,
     required: true,
@@ -30,11 +25,11 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.methods.serialize = function() {
   return {
-    userId: this._id || '',
+    firstName: this.firstName || '',
+    lastName: this.lastName || '',
     username: this.username || '',
     email: this.email || '',
-    firstName: this.firstName || '',
-    lastName: this.lastName || ''
+    userId: this._id || ''
   };
 };
 

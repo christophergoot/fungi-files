@@ -157,15 +157,27 @@ async function updateObservation(req, res, id) {
 			})
 		)
 
-		Observation
-		.findById(id, function (err, obs) {
-			if (!obs.photos) obs.photos = {};
-			if (!obs.photos.files) obs.photos.files = [];
-			for (let file of newFiles) obs.photos.files.push(file);
-			obs.save();
-		});
+		const obs = await Observation.findById(id);
+		if (!obs.photos) obs.photos = {};
+		if (!obs.photos.files) obs.photos.files = [];
+		for (let file of newFiles) obs.photos.files.push(file);
+		await obs.save();
 	};
-	// update the other input fields
+	
+	if (observation.featured) {
+		const obs = await Observation.findById(id);
+		if (obs.photos.files[0].filename !== observation.featured) {
+			let featuredIndex = "";
+			// for (let i=0; i<obs.photos.files.length; i++) {
+			for (let [i,file] of obs.photos.files.entries()) {
+				if (file.filename === observation.featured) featuredIndex = i;
+			}
+			const featuredFile = obs.photos.files.splice(featuredIndex,1);
+			obs.photos.files.unshift(featuredFile[0]);
+			await obs.save();
+		};
+	};
+// update the other input fields
 	Observation
 		.findByIdAndUpdate(id, { $set: observation })
 		.then(obs => res.status(201).json(obs.serialize()), )

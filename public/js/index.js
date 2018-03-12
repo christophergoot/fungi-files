@@ -1,5 +1,3 @@
-'use strict'
-
 const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'species': 'Abortivum' }, { 'commonName': 'Admirable Bolete', 'genus': 'Boletus', 'species': 'Mirabilis' }, { 'commonName': 'Alcohol Inky Cap', 'genus': 'Coprinus', 'species': 'Atramentarius' }, { 'commonName': 'American Matsutake', 'genus': 'Tricholoma', 'species': 'Magnivelare' }, { 'commonName': 'Angels\' Wings', 'genus': 'Pleurocybella', 'species': 'Porrigens' }, { 'commonName': 'Anise-Scented', 'genus': 'Clitocybe', 'species': 'Odora' }, { 'commonName': 'Apricot Jelly Mushroom', 'genus': 'Phlogiotis', 'species': 'Helvelloides' }, { 'commonName': 'Aspen Scaber Stalk', 'genus': 'Leccinum', 'species': 'Insigne' }, { 'commonName': 'Bare-Toothed Russula', 'genus': 'Russula', 'species': 'Vesca' }, { 'commonName': 'Barrow\'s Bolete', 'genus': 'Boletus', 'species': 'Barrowsii' }, { 'commonName': 'Bay Bolete', 'genus': 'Boletus', 'species': 'Badius' }, { 'commonName': 'Bear\'s Head', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Belly-Button Mushroom', 'genus': 'Hydnum', 'species': 'Umbilicatum' }, { 'commonName': 'Black Chanterelle', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Black Forest Mushroom', 'genus': 'Lentinus', 'species': 'Edodes' }, { 'commonName': 'Black Fungus', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Black Kame', 'genus': 'Terfezia', 'species': 'Bouderi' }, { 'commonName': 'Black Saddle Mushroom', 'genus': 'Helvella', 'species': 'Lacunosa' }, { 'commonName': 'Blackening Russula', 'genus': 'Russula', 'species': 'Nigricans' }, { 'commonName': 'Bleeding Agaricus', 'genus': 'Agaricus', 'species': 'Fuscofibrillosus Haemorrhoidarius' }, { 'commonName': 'Bleeding Milky Cap', 'genus': 'Lactarius', 'species': 'Rubrilacteus' }, { 'commonName': 'Blewit', 'genus': 'Lepista', 'species': 'Nuda' }, { 'commonName': 'Blue Milky Cap', 'genus': 'Lactarius', 'species': 'Indigo' }, { 'commonName': 'Bracelet Cortinarius', 'genus': 'Cortinarius', 'species': 'Armillatus' }, { 'commonName': 'Brown Kame', 'genus': 'Terfezia', 'species': 'Claveryi' }, { 'commonName': 'Butter Bolete', 'genus': 'Boletus', 'species': 'Appendiculatus' }, { 'commonName': 'Butter Mushroom', 'genus': 'Pholiota', 'species': 'Aurivella' }, { 'commonName': 'Button Mushroom', 'genus': 'Agaricus', 'species': 'Brunnescens' }, { 'commonName': 'Candy Cap', 'genus': 'Lactarius', 'species': 'Fragilis' }, { 'commonName': 'Cauliflower Mushroom', 'genus': 'Sparassis', 'species': 'Crispa' }, { 'commonName': 'Cèpe', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Charcoal Burner', 'genus': 'Russula', 'species': 'Cyanoxantha' }, { 'commonName': 'Chicken Of The Woods', 'genus': 'Rozites', 'species': 'Caperata' }, { 'commonName': 'Cinnabar-Red Chanterelle', 'genus': 'Cantharellus', 'species': 'Cinnabarinus' }, { 'commonName': 'Cloud Ear Mushroom', 'genus': 'Auricularia', 'species': 'Auricula' }, { 'commonName': 'Clustered Blue Chanterelle', 'genus': 'Polyozellus', 'species': 'Multiplex' }, { 'commonName': 'Comb Tooth Mushroom', 'genus': 'Hericium', 'species': 'Ramosum' }, { 'commonName': 'Commercial Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus' }, { 'commonName': 'Common Store Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus' }, { 'commonName': 'Coral Hericium', 'genus': 'Hericium', 'species': 'Coralloides' }, { 'commonName': 'Crocodile Agaricus', 'genus': 'Agaricus', 'species': 'Crocodilinus' }, { 'commonName': 'Death Cap', 'genus': 'Amanita', 'species': 'Phalloides' }, { 'commonName': 'Delicious Milky Cap', 'genus': 'Lactarius', 'species': 'Deliciosus' }, { 'commonName': 'Dotted-Stalk Suillus', 'genus': 'Suillus', 'species': 'Granulatus' }, { 'commonName': 'Drumstick Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes' }, { 'commonName': 'Egg Mushroom', 'genus': 'Cantharellus', 'species': 'Cibarius' }, { 'commonName': 'Enoki', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Fairy-Ring Mushroom', 'genus': 'Marasmius', 'species': 'Oreades' }, { 'commonName': 'Fawn Mushroom', 'genus': 'Pluteus', 'species': 'Cervinus' }, { 'commonName': 'Field Or Meadow Mushroom', 'genus': 'Agaricus', 'species': 'Campestris' }, { 'commonName': 'Fragrant Clitocybe', 'genus': 'Clitocybe', 'species': 'Fragrans' }, { 'commonName': 'French Black Truffle', 'genus': 'Tuber', 'species': 'Melanosporum' }, { 'commonName': 'Garlic Marasmius', 'genus': 'Marasmius', 'species': 'Scorodonius' }, { 'commonName': 'Golden Chanterelle', 'genus': 'Cantharellus', 'species': 'Cibarius' }, { 'commonName': 'Golden Needle', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Green-Spored Parasol', 'genus': 'Lepiota', 'species': 'Molybdites' }, { 'commonName': 'Green-Spored Parasol Mushroom', 'genus': 'Chlorophyllum', 'species': 'Molybdites' }, { 'commonName': 'Gypsy Mushroom', 'genus': 'Rozites', 'species': 'Caperata' }, { 'commonName': 'Hedgehog Mushroom', 'genus': 'Hydnum', 'species': 'Repandum' }, { 'commonName': 'Hen Of The Woods', 'genus': 'Polypilus', 'species': 'Frondosa' }, { 'commonName': 'Honey Or Oak Mushroom', 'genus': 'Armillaria', 'species': 'Mellea' }, { 'commonName': 'Horn Of Plenty', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Horse Mushroom', 'genus': 'Agaricus', 'species': 'Arvensis' }, { 'commonName': 'Inky Cap', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Italian White Truffle', 'genus': 'Tuber', 'species': 'Magnatum' }, { 'commonName': 'Judas\' Ear', 'genus': 'Auricularia', 'species': 'Auricula' }, { 'commonName': 'King Bolete', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Lawyer\'S Wig', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Man On Horseback', 'genus': 'Tricholoma', 'species': 'Flavovirens Equestre' }, { 'commonName': 'Manzanita Scaber Stalk', 'genus': 'Leccinum', 'species': 'Manzanitae' }, { 'commonName': 'Matsutake', 'genus': 'Armillaria', 'species': 'Matsutake' }, { 'commonName': 'Mica Cap', 'genus': 'Coprinus', 'species': 'Micaceus' }, { 'commonName': 'Monkey Head', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Morel', 'genus': 'Morchella', 'species': 'Esculenta' }, { 'commonName': 'Nameko', 'genus': 'Pholiota', 'species': 'Nameko' }, { 'commonName': 'Old Man Of The Woods', 'genus': 'Strobilomyces', 'species': 'Confusus' }, { 'commonName': 'Orange-Capped Scaber Stalk', 'genus': 'Leccinum', 'species': 'Aurantiacum' }, { 'commonName': 'Oregon White Truffle', 'genus': 'Tuber', 'species': 'Gibbosum' }, { 'commonName': 'Oyster Mushroom', 'genus': 'Pleurotus', 'species': 'Ostreatus' }, { 'commonName': 'Paddy Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea' }, { 'commonName': 'Painted Suillus', 'genus': 'Suillus', 'species': 'Pictus' }, { 'commonName': 'Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Procera' }, { 'commonName': 'Peck', 'genus': 'Agaricus', 'species': 'Rodmanii' }, { 'commonName': 'Pig\'s Ear', 'genus': 'Gomphus', 'species': 'Clavatus' }, { 'commonName': 'Pine Mushroom', 'genus': 'Tricholoma', 'species': 'Magnivelare' }, { 'commonName': 'Pom-Pom', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Porcini', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Puffball', 'genus': 'Calvatia', 'species': 'Gigantea' }, { 'commonName': 'Red-Tipped Coral Mushroom', 'genus': 'Ramaria', 'species': 'Botrytis' }, { 'commonName': 'Regal Bolete', 'genus': 'Boletus', 'species': 'Regius' }, { 'commonName': 'Russula Like Waxy Cap', 'genus': 'Hygrophorus', 'species': 'Russula' }, { 'commonName': 'Salt-Loving Mushroom', 'genus': 'Agaricus', 'species': 'Bernardii' }, { 'commonName': 'Scaber Stalk', 'genus': 'Leccinum', 'species': 'Scaber' }, { 'commonName': 'Shaggy Mane', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Shaggy Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes' }, { 'commonName': 'Shellfish-Scented Russula', 'genus': 'Russula', 'species': 'Xerampelina' }, { 'commonName': 'Shiitake', 'genus': 'Lentinus', 'species': 'Edodes' }, { 'commonName': 'Short-Stalked Slippery Cap', 'genus': 'Suillus', 'species': 'Brevipes' }, { 'commonName': 'Short-Stem Russula', 'genus': 'Russula', 'species': 'Delica' }, { 'commonName': 'Silver Ear Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Smooth Chanterelle', 'genus': 'Cantharellus', 'species': 'Lateritius' }, { 'commonName': 'Snow Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Snowbank False Morel', 'genus': 'Gyromitra', 'species': 'Gigas' }, { 'commonName': 'Sponge', 'genus': 'Morchella', 'species': 'Esculenta' }, { 'commonName': 'Spring Agaricus', 'genus': 'Agaricus', 'species': 'Bitorquis' }, { 'commonName': 'Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea' }, { 'commonName': 'Summer Truffle', 'genus': 'Tuber', 'species': 'Aestivum' }, { 'commonName': 'Sweet Tooth', 'genus': 'Hydnum', 'species': 'Repandum' }, { 'commonName': 'Sweetbread Mushroom', 'genus': 'Clitopilus', 'species': 'Prunulus' }, { 'commonName': 'Tacky Green Russula', 'genus': 'Russula', 'species': 'Aeruginea' }, { 'commonName': 'Texas White Truffle', 'genus': 'Tuber', 'species': 'Texensis' }, { 'commonName': 'The Prince', 'genus': 'Agaricus', 'species': 'Augustus' }, { 'commonName': 'Tree Ear', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Tricholoma Magnivelare', 'genus': 'Armillaria', 'species': 'Ponderosa' }, { 'commonName': 'Trumpet Chanterelle', 'genus': 'Cantharellus', 'species': 'Tubaeformis' }, { 'commonName': 'Trumpet Of Death', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Two-Colored Bolete', 'genus': 'Boletus', 'species': 'Bicolor' }, { 'commonName': 'Umbrella Polypore', 'genus': 'Polyporus', 'species': 'Umbellatus' }, { 'commonName': 'Variant Of B. Edulis', 'genus': 'Boletus', 'species': 'Pinicola' }, { 'commonName': 'Velvet Foot', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'White Chanterelle', 'genus': 'Cantharellus', 'species': 'Subalbidus' }, { 'commonName': 'White Jelly Fungus', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Wine-Cap Stropharia', 'genus': 'Stropharia', 'species': 'Rugosoannulata' }, { 'commonName': 'Winter Mushroom', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Wood Ear Mushroom', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Zeller\'s Bolete', 'genus': 'Boletus', 'species': 'Zelleri' }];
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
@@ -15,132 +13,120 @@ const OBSERVATION_FORM = `
 <input type="hidden" name="userId">
 <input type="hidden" name="featured" id="featured-input">
 <input type="hidden" name="filesToBeDeleted">
-	<div  class="image area">
-		<button onclick="run(selectFiles(event))">Add Images</button>
-		<input onchange="run(receiveFiles(event))" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
+<input type="hidden" name="address" id="address-input">
+<input type="hidden" name="lat" id="lat-input">
+<input type="hidden" name="lng" id="lng-input">
+<div  class="image area">
+		<button onclick="run(event,selectFiles,[event])">Add Images</button>
+		<input onchange="run(event,receiveFiles,[event])" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
 		<div class="img-preview">
 		</div>
 	</div>
 	<div class="location area">
 		<div>
 			<div id="location-options" class="loc-opts">
-				<div>
-					<label>
-						<span class="label">Address</span>
-						<input readonly name="address" id="address-input" type="text" placeholder="Address">
-					</label>
+				<div class="input-wrapper">
+					<span class="inline label">Location</span>
+					<span id="address">Unknown</span>
 				</div>
 				<div class="address-blocking">
 					<div id="latlng">
-						<label>
-							<span class="label">Latitude</span>
-							<input readonly id="lat-input" name="lat" class="coord" type="number" placeholder="Lat">
-						</label>
-						<label>
-							<span class="label">Longitude</span>
-							<input readonly id="lng-input" name="lng" class="coord" type="number" placeholder="Long">
-						</label>
+						<span class="inline label">lat</span>
+						<span id="lat">Unknown</span>
+						<span class="inline label">long</span>
+						<span id="lng">Unknown</span>
 					</div>
 					<div id="datetime">
-						<label>
-								<span class="label">Date</span>
-								<input name="obsDate" id="obs-date-input" type="date">
-						</label>
-						<label>
-								<span class="label">Time</span>
-								<input name="obsTime" id="obs-time-input" type="time">
-						</label>
+						<div>
+							<span class="inline label">Date</span>
+							<input name="obsDate" id="obs-date-input" type="date">
+						</div>
+						<div>
+							<span class="inline label">Time</span>
+							<input name="obsTime" id="obs-time-input" type="time">
+						</div>
 					</div>
 					<div class="address-buttons">
-						<button onclick="enterLocation()">Enter Location</button>
-						<button onclick="geolocate()">Use Current Location</button>
-						<button onclick="useCurrentTime()">Use Current Time</button>
+						<button onclick="run(event,enterLocation)">Enter Location</button>
+						<button onclick="run(event,geolocate)">Use Current Location</button>
+						<button onclick="run(event,useCurrentTime)">Use Current Time</button>
 					</div>
 				</div>
 				<div>
 					<span id="location-text"></span>
 				</div>
-				<a class="toggle-control" onclick="run(reveal('.location.notes', event))">
-					Location Notes
-				</a>
-				<div class="location notes reveal">
-					<textarea name="locationNotes" id="locationNotes" rows="5" placeholder="Location Notes"></textarea>
-				</div>
 			</div>
 		</div>
 	</div>
 	<div class="name area">
-		<div>
-			<label>
-				<span class="label">Nickname</span>
-				<input name="nickname" id="nickname-input" type="text" placeholder="Nickname">
-			</label>
+		<div class="input-wrapper">
+				<input name="nickname" id="nickname-input" type="text">
+				<span class="floating label">Nickname</span>
 		</div>
-		<div>
-			<label>
-				<span class="label">Common Name</span>
+		<div class="input-wrapper">
 				<datalist id="commonName-datalist"></datalist>
-				<input name="commonName" id="common-name-input" onchange="populateNames(event)" type="text" placeholder="Common Name" list="commonName-datalist">
-			</label>
+				<input name="commonName" id="common-name-input" onchange="populateNames(event)" type="text" list="commonName-datalist">
+				<span class="floating label">Common Name</span>
 		</div>
-		<label>
+		<div class="classification-details">
+			<div class="fungi">
+				<span class="inline label">genus</span>
+				<span id="genus">Unknown</span>
+				<span class="inline label">species</span>
+				<span id="species">Unknown</span>
+				<input name="genus" id="genus-input" type="hidden">
+				<input name="species" id="species-input" type="hidden">
+			</div>
 			<div class="confidence">
 				<span class="label">Identification Confidence</span>
-				<div>	
-					<label class="label">0
-						<input name="confidence" type="radio" value="0" title="I guarantee this is wrong">
-					</label>
-				</div>
-				<div>
-					<label class="label">1
-						<input name="confidence" type="radio" value="1" title="Shot in the dark">
-					</label>
-				</div>
-				<div>
-					<label class="label">2
-						<input name="confidence" type="radio" value="2" title="Maybe, sort-of, kind-of">
-					</label>
-				</div>
-				<div>
-					<label class="label">3
-						<input name="confidence" type="radio" value="3" title="Sounds like it could be">
-					</label>
-				</div>
-				<div>
-					<label class="label">4
-						<input name="confidence" type="radio" value="4" title="I feel very good about this">
-					</label>
-				</div>
-				<div>
-					<label class="label">5
-						<input name="confidence" type="radio" value="5" title="I'd bet my life">
-					</label>
-				</div>
+				<label class="input-container">
+					<input name="confidence" type="radio" value="0" title="I guarantee this is wrong">
+					<span class="checkmark">0</span>
+				</label>
+				<label class="input-container">
+					<input name="confidence" type="radio" value="1" title="Shot in the dark">
+					<span class="checkmark">1</span>
+				</label>
+				<label class="input-container">
+					<input name="confidence" type="radio" value="2" title="Maybe, sort-of, kind-of">
+					<span class="checkmark">2</span>
+				</label>
+				<label class="input-container">
+					<input name="confidence" type="radio" value="3" title="Sounds like it could be">
+					<span class="checkmark">3</span>
+				</label>
+				<label class="input-container">
+					<input name="confidence" type="radio" value="4" title="I feel very good about this">
+					<span class="checkmark">4</span>
+				</label>
+				<label class="input-container">
+					<input name="confidence" type="radio" value="5" title="I'd bet my life">
+					<span class="checkmark">5</span>
+				</label>
 			</div>
-		</label>
-			<div class="fungi">
-			<label>
-				<span class="label">genus</span>
-				<datalist id="genus-datalist"></datalist>
-				<input readonly name="genus" id="genus-input" type="text" list="genus-datalist">
-			</label>
-			<label>
-				<span class="label">species</span>
-				<datalist id="species-datalist"></datalist>
-				<input readonly name="species" id="species-input" type="text" list="species-datalist">
-			</label>
-		</div>
-		<a class="toggle-control" onclick="run(reveal('.mushroom.notes', event))">Mushroom Notes</a>
-		<div class="mushroom notes reveal">
-			<textarea name="mushroomNotes" id="mushroomNotes" placeholder="Mushroom Notes"></textarea>
 		</div>
 	</div>
 </form>
 `;
 
-function run(passthrough) {
-	event.preventDefault;
-	passthrough;
+const LOCATION_NOTES = `
+	<a class="toggle-control" onclick="run(event,reveal,['.location.notes', event])">
+		Location Notes
+	</a>
+	<div class="location notes reveal">
+		<textarea name="locationNotes" id="locationNotes" rows="5" placeholder="Location Notes"></textarea>
+	</div>
+	`;
+const MUSHROOM_NOTES = `
+	<a class="toggle-control" onclick="run(event,reveal,['.mushroom.notes',event])">Mushroom Notes</a>
+	<div class="mushroom notes reveal">
+		<textarea name="mushroomNotes" id="mushroomNotes" placeholder="Mushroom Notes"></textarea>
+	</div>
+	`;
+
+function run(event, passthrough, params=[]) {
+	event.preventDefault();
+	return passthrough(...params, event);
 }
 
 function displaySection(sec) {
@@ -159,7 +145,7 @@ function updateAddress(addressString) {
 }
 
 async function useCurrentTime() {
-	event.preventDefault();
+	// event.preventDefault();
 	const obsTime = await getTime(new Date());
 	const obsDate = await getDate(new Date());
 	updateValue('obsTime', obsTime);
@@ -167,7 +153,7 @@ async function useCurrentTime() {
 }
 
 function geolocate() {
-	event.preventDefault();
+	// event.preventDefault();
 	navigator.geolocation.getCurrentPosition((position) => {
 		const coords = { 
 			'lat': position.coords.latitude, 
@@ -191,6 +177,13 @@ function updateExif(string, status) {
 	};
 }
 
+function updateSpan(spanId,innerHTML) {
+	// if (event) event.preventDefault;
+	const span = document.getElementById(spanId);
+	span.innerHTML = innerHTML;
+}
+
+
 function populateNames(event) {
 	const inputName = event.target.attributes.name.value;
 	const inputValue = event.target.value;
@@ -200,12 +193,14 @@ function populateNames(event) {
 			updateValue('commonName', commonName);
 			updateValue('genus', genus);
 			updateValue('species', species);
+			updateSpan('genus', genus);
+			updateSpan('species', species);
 		};
 	};
 }
 
 function selectFiles(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	document.querySelector("#file-input").click();
 }
 
@@ -286,8 +281,15 @@ function previewFile(file, filename, url) {
 	// reader.readAsDataURL(file);
 }
 
+function disableSubmitButton(bool) {
+	const target = document.getElementById('save-obs-submit');
+	if (bool) target.disabled = true;
+	else target.disabled = false;
+}
+
 async function receiveFiles(event) {
-	event.preventDefault();
+	// event.preventDefault();
+	disableSubmitButton(true);
 	const files = [...event.target.files];
 	// for (let file of files) {
 	const allResolved = await Promise.all(
@@ -300,11 +302,13 @@ async function receiveFiles(event) {
 
 			const newFile = await resizeImage(file, filename, url);
 			globalFileHolder.push(newFile);
+
 		}));
+	disableSubmitButton(false);
 }
 
 async function resolveLocation(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	console.log(event);
 	const address = event.path[1]["0"].value;
 	const latlng = await `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GOOGLEMAPS_API_KEY}`;
@@ -314,12 +318,12 @@ async function resolveLocation(event) {
 }
 
 function enterLocation() {
-	event.preventDefault();
+	// event.preventDefault();
 	// open form
 	const form = `
 		<form>
 			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location">
-			<button onclick="resolveLocation(event)">Submit</button>
+			<button onclick="run(event,resolveLocation,[event])">Submit</button>
 		</form>
 		<p>right now it doesn't send the input anywhere</p>`;
 	showPopup(form, 'address-entry');
@@ -331,8 +335,11 @@ async function updateLocation(obs, locationSource) {
 	const addressString = await getAddress(obs);
 	updateValue('lat', obs.location.lat.toFixed(6));
 	updateValue('lng', obs.location.lng.toFixed(6));
-	updateExif("Location extracted from " + locationSource, "no error");
 	updateValue('address', addressString);
+	updateSpan('lat', obs.location.lat.toFixed(6));
+	updateSpan('lng', obs.location.lng.toFixed(6));
+	updateSpan('address', addressString);
+	updateExif("Location extracted from " + locationSource, "no error");
 	if(obs.date) {
 		const date = new Date(obs.date);
 		const year = date.getFullYear(),
@@ -348,7 +355,7 @@ async function updateLocation(obs, locationSource) {
 }
 
 function locationFromThumbnail(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const obs = { 
 		'filename': event.currentTarget.dataset.filename,
 		'date': new Date(event.currentTarget.dataset.date),
@@ -368,7 +375,7 @@ function deleteFileUponSave(id, filename) {
 }
 
 function deleteFile(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const { filename } = event.currentTarget.dataset;
 	const target = document.getElementById(`${filename}-div`);
 	const { src } = target.firstElementChild;
@@ -398,8 +405,8 @@ function insertThumbnailStructure(filename) {
 	const newImg = `
 	<div id="${filename}-div" class="thumb-div">
 		<img src="media/loading.gif" id="${filename}-thumb" class="thumb-img" alt="Thumbnail for ${filename}" title="Thumbnail for ${filename}">
-		<input type="image" src="/media/delete.png" onclick="run(deleteFile(event))" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
-		<input type="image" src="/media/featured.png" onclick="run(makeFeatured(event))" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
+		<input type="image" src="/media/delete.png" onclick="run(event,deleteFile,[event])" data-filename="${filename}" alt="Remove Image" title="Remove Image" class="img-action delete">
+		<input type="image" src="/media/featured.png" onclick="run(event,makeFeatured,[event])" data-filename="${filename}" alt="Use as Featured Image" title="Use as Featured Image" class="img-action featured">
 	</div>
 			`;
 	const thumbDiv = document.querySelector('.img-preview');
@@ -407,7 +414,7 @@ function insertThumbnailStructure(filename) {
 }
 
 function makeFeatured(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	const filename = event.currentTarget.dataset.filename;
 	const featured = document.getElementsByName('featured')[0];
 	// const oldFilename = featured.value;
@@ -423,7 +430,7 @@ function addGpsAction (lat, lng, filename, date) {
 	const target = document.getElementById(`${filename}-div`);
 	const button = `<input type="image"
 					src="/media/uselocation.png" 
-					onclick="run(locationFromThumbnail(event))" 
+					onclick="run(event,locationFromThumbnail,[event])" 
 					data-filename="${filename}" 
 					data-lat="${lat}" 
 					data-lng="${lng}" 
@@ -511,20 +518,20 @@ function getObservation(targetId) {
 }
 
 function makeHero(event){
-	event.preventDefault();
+	// event.preventDefault();
 	const {dataset, currentSrc} = event.currentTarget;
 	const {filename, url} = dataset;
 	const hero = document.querySelector('.obs-hero');
 	hero.src = currentSrc;
 	hero.src = url;
 	const buttons = document.querySelectorAll('.img-button');
-	for (let btn of buttons) btn.classList.remove('selected');
-	event.currentTarget.classList.add('selected');
+	for (let btn of buttons) btn.classList.remove('featured-image');
+	event.currentTarget.classList.add('featured-image');
 }
 
 function closeObservation (){
-	if (event) event.preventDefault();
-	// event.preventDefault();
+	// if (event) event.preventDefault();
+	// // event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
 	const popup = document.getElementById('popup');
 		popup.classList.add('hidden');
@@ -546,7 +553,7 @@ function dateString (dateObj, opt) {
 }
 
 function editFromViewObservation (event, id) {
-	if (event) event.preventDefault();
+	// if (event) event.preventDefault();
 	closeObservation();
 	editObservation(event, id);
 }
@@ -555,8 +562,8 @@ function displayObservation(obs, src) {
 	// wrapper and options
 	let obsRender = `
 		<div class="observation-actions">
-			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="editFromViewObservation(event, '${obs.id}')" class="obs-view-action edit">
-			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="closeObservation()" class="obs-view-action close">
+			<input type="image" src="/media/edit.png" title="Edit Observation" alt="Edit Observation" onclick="run(event,editFromViewObservation,[event,'${obs.id}'])" class="obs-view-action edit">
+			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="run(event,closeObservation)" class="obs-view-action close">
 		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
 	
@@ -568,46 +575,61 @@ function displayObservation(obs, src) {
 	// image carousel
 	if (obs.photos.files.length>0) {
 		obsRender += `<div class="obs-carousel">`;
-		for (let file of obs.photos.files) obsRender += `<img 
-			class="img-button" 
-			src="${file.thumbnail}"
-			data-filename="${file.filename}"
-			data-url="${file.url}"
-			onclick="run(makeHero(event))"
-			>`;
+		for (let [i,file] of obs.photos.files.entries()) {
+			if (i === 0) 
+				obsRender += `<img 
+					class="img-button featured-image" 
+					src="${file.thumbnail}"
+					data-filename="${file.filename}"
+					data-url="${file.url}"
+					onclick="run(event,makeHero,[event])"
+					onmouseover="run(event,makeHero,[event])"
+					>`;
+			else obsRender += `<img 
+					class="img-button" 
+					src="${file.thumbnail}"
+					data-filename="${file.filename}"
+					data-url="${file.url}"
+					onclick="run(event,makeHero,[event])"
+					onmouseover="run(event,makeHero,[event])"
+					>`;
+		}
 		obsRender += `</div>`;
 	}
 
+	obsRender += `<div>`; // bloack wrapper
+
 	// fungi classification
-	obsRender += `<div class="classification">`
+	if (obs.fungi.nickname || obs.fungi.commonName) 
+		obsRender += `<div class="classification">`;
 	if (obs.fungi.nickname) obsRender +=
 		`<span class="title">
-			<span class="label">
-				nickname: 
+			<span class="inline label">
+				nickname
 			</span>
 			${obs.fungi.nickname}
 		</span>`;
 	if (obs.fungi.commonName) obsRender +=
 		`<span class="title">
-			<span class="label">
-				common name: 
+			<span class="inline label">
+				common name
 			</span>
 			${obs.fungi.commonName}
 		</span>`;
 	if (obs.fungi.genus) obsRender +=
 		`<span class="fungi">
-			<span class="label">
-				genus: 
+			<span class="inline label">
+				genus
 			</span>
 			${obs.fungi.genus} 
-			<span class="label">
-				species: 
+			<span class="inline label">
+				species
 			</span>
 			${obs.fungi.species}
 		</span>`;
 	if (obs.fungi.confidence) obsRender += `
 		<div>
-			Classified with ${obs.fungi.confidence * 20}% Confidence
+			classified with ${obs.fungi.confidence * 20}% confidence
 		</div>`;
 	if (obs.notes.mushroomNotes) obsRender += `
 		<span class="label">
@@ -616,15 +638,15 @@ function displayObservation(obs, src) {
 		<span class="notes">
 			${obs.notes.mushroomNotes}
 		</span>`;
-	obsRender += `</div>`; // .classification
-
+	if (obs.fungi.nickname || obs.fungi.commonName) 
+		obsRender += `</div>`; // .classification
 
 	// date and time		
 	if (obs.obsDate) {
 		const dateStr = dateString(obs.obsDate);
 		obsRender += `
 		<div class="date-time">
-			<span class="label">
+			<span class="inline label">
 				observed 
 			</span>
 			${dateStr}
@@ -634,9 +656,8 @@ function displayObservation(obs, src) {
 	// location
 	if (obs.location) {
 		obsRender += `
-			<img src="${staticMapUrl(obs.location)}" class="static-map">
 			<div class="location">
-				<span class="label">
+				<span class="inline label">
 					around 
 				</span>
 				${obs.location.address}
@@ -652,9 +673,22 @@ function displayObservation(obs, src) {
 			</div>`;
 	};
 
+	obsRender += `</div>
+		<img src="${staticMapUrl(obs.location)}" class="static-map">
+		`; // bloack wrapper
+
+	// action buttons
+	obsRender += `
+		<div class="obs-buttons">
+			<button onclick="run(event,editFromViewObservation,[event,'${obs.id}'])">Edit</button>
+			<button onclick="run(event,closeObservation)">Close</button>
+		</div>
+		`;
+
 		// closing wrapper and sending html
 	obsRender += `</div>`;
 	document.querySelector('#observation-detail').innerHTML = obsRender;
+
 
 	// replace thumbnail src with fullsize src
 	if (obs.featured) {
@@ -666,7 +700,7 @@ function displayObservation(obs, src) {
 }
 
 function closePopup (event, popupId) {
-	if (event) event.preventDefault();
+	// if (event) event.preventDefault();
 	const popup = document.getElementById(`${popupId}-popup`);
 	const alert = document.getElementById(`${popupId}-alert`);
 	const page = document.querySelector('main');
@@ -675,10 +709,10 @@ function closePopup (event, popupId) {
 }
 
 function showPopup (content, popupId) {
-	if (event) {
-		event.preventDefault();
-		event.stopPropagation();
-	}
+	// if (event) {
+	// 	event.preventDefault();
+	// 	event.stopPropagation();
+	// }
 	const popup = document.createElement('section');
 	const alert = document.createElement('section');
 	const page = document.querySelector('main');
@@ -718,11 +752,11 @@ function refreshNavMenu() {
 			{li: "All Observations", onclick: "getAndDisplayObservations(event)"},
 			{li: "Add New Observation", onclick: "newObservation()"},
 			{li: "Settings", onclick: "settings()"},
-			{li: "Logout", onclick: "logout()"}
+			{li: "Logout", onclick: "run(event,logout)"}
 		];
 	} else {
 		menuItems = [
-			{li: "Login", onclick: "loginForm()"},
+			{li: "Login", onclick: "loginForm(event)"},
 			{li: "Sign Up", onclick: "signupForm()"}
 		]
 	}
@@ -743,9 +777,9 @@ function splashPage() {
 	<p>This is basic right now, but soon it shall</p>
 	<h2>SPLASH!</h2>
 	<p>In the meantime, you should</p>
-	<button onclick="loginForm('demo-user')">LOGIN as Demo User</button>
-	<button onclick="loginForm()">LOGIN</button>
-	<button onclick="signupForm()">SIGN UP for an Account</button>
+	<button onclick="run(event,loginForm,[event,'demo-user'])">LOGIN as Demo User</button>
+	<button onclick="run(event,loginForm)">LOGIN</button>
+	<button onclick="run(event,signupForm)">SIGN UP for an Account</button>
 	`;
 	let splash;
 	if (document.querySelector('section.splash-page')) splash = document.querySelector('section.splash-page')
@@ -773,7 +807,7 @@ function settings() {
 }
 
 function logout() {
-	if (event) event.preventDefault();
+	// if (event) event.preventDefault();
 	JWT = "";
 	localStorage.setItem('JWT', "");
 	refreshNavMenu();
@@ -813,8 +847,8 @@ function refreshToken () {
 	.catch(error => console.error('Error', error));
 }
 
-function login (event,popupId) {
-	event.preventDefault();
+function login(event,popupId) {
+	// event.preventDefault();
 	const formData = jsonFromForm(popupId);
 	fetch('./api/auth/login', {
 		method: 'POST',
@@ -823,12 +857,10 @@ function login (event,popupId) {
 			'content-type': 'application/json',
 		  }
 	})
-// 	.then(res => res.json())
 	.then(res => {
 		if (!res.ok) {
 			res.json()
 				.then(res => {
-					console.log(res);
 					const { message } = res;
 					displayFormError(message);
 				})
@@ -859,13 +891,13 @@ function displayFormError(message, location) {
 			input.insertAdjacentHTML('afterend', html);
 			input.classList.add('input-error');
 		} else {
-			const input = document.querySelector('form');
-			input.insertAdjacentHTML('beforebegin', html);
+			const inputs = document.querySelectorAll('form');
+			inputs[inputs.length-1].insertAdjacentHTML('beforebegin', html);
 		}
 }
 
 function signup (event, popupId) {
-	event.preventDefault();
+	// event.preventDefault();
 	// const form = document.querySelector('#signup-form');
 	const formData = jsonFromForm(popupId);
 	fetch('/api/users', {
@@ -886,7 +918,7 @@ function signup (event, popupId) {
 			}
 			else {
 				closePopup(event, popupId);
-				loginForm();
+				loginForm(event);
 				const form = document.getElementById('login-form-alert');
 				const alert = `
 					<h3>Account Successfully Created</h3>
@@ -899,8 +931,8 @@ function signup (event, popupId) {
 		})
 }
 
-function loginForm(str) {
-	if (event) event.preventDefault();
+function loginForm(event, str) {
+	// if (event) event.preventDefault();
 	const popupId = 'login-form';
 	const form = `
 		<h2>Login</h2>
@@ -909,8 +941,8 @@ function loginForm(str) {
 		<input name="username" type="text" placeholder="username" required>
 		<span class="required">* required</span>
 		<input name="password" type="password" placeholder="password" required>
-		<button onclick="login(event,'${popupId}')">Login</button>
-		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		<button onclick="run(event,login,[event,'${popupId}'])">Login</button>
+		<button onclick="run(event,closePopup,[event,'${popupId}'])">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
 	if (str === "demo-user") {
@@ -920,8 +952,8 @@ function loginForm(str) {
 }
 
 function signupForm () {
-	event.preventDefault();
-	event.stopPropagation();
+	// event.preventDefault();
+	// event.stopPropagation();
 	const popupId = 'signup-form';
 	const form = `
 		<h2>Signup</h2>
@@ -934,8 +966,8 @@ function signupForm () {
 		<input name="email" type="email" placeholder="email" required>
 		<span class="required">* required</span>
 		<input name="password" type="password" placeholder="password" required>
-		<button onclick="signup(event,'${popupId}')">Sign Up</button>
-		<button onclick="closePopup(event,'${popupId}')">Cancel</button>
+		<button onclick="run(event,signup,[event,'${popupId}'])">Sign Up</button>
+		<button onclick="run(event,closePopup[event,'${popupId}']">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
 }
@@ -952,6 +984,7 @@ function staticMapUrl(latlng) {
 }
 
 function viewObservation(event) {
+	// get src of clicked observation
 	const regExp = /\(([^)]+)\)/;
 	const src = regExp.exec(event.style.backgroundImage)[1].slice(1,-1);
 
@@ -963,7 +996,9 @@ function viewObservation(event) {
 	// })	
 	getObservation(id)
 		.then(res => {
-			displayObservation(res, src);
+			// displayObservation(res, src);
+			setTimeout((() => displayObservation(res, src)),250);
+			// displayObservation(res, src);
 			// console.log("res", res);
 		});
 }
@@ -991,8 +1026,8 @@ function newObservation() {
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="submitNewObservation(event)">Submit New Observation</button>
-			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
+			<button id="save-obs-submit" onclick="run(event,submitNewObservation,[event])">Submit New Observation</button>
+			<button onclick="run(event,getAndDisplayObservations,[event])">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 	form.insertAdjacentElement('beforeend', footer);
@@ -1037,7 +1072,7 @@ function loading(state, text) {
 
 //directly from HTML onclick event
 async function saveObservation(event, id) {
-	event.preventDefault();
+	// event.preventDefault();
 	loading(true, 'Saving Changes to Observation');
 	let form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
@@ -1068,7 +1103,7 @@ async function saveObservation(event, id) {
 }
 
 function submitNewObservation(event) {
-	event.preventDefault();
+	// event.preventDefault();
 	loading(true, 'Saving New Observation');
 	const form = document.querySelector('#new-observation');
 	let formData = new FormData(form);
@@ -1162,7 +1197,7 @@ function getDate(date) {
 }
 
 function deleteObservation(event, obsId) {
-	event.preventDefault();
+	// event.preventDefault();
 	loading(true, 'Deleting Observation');
 	fetch((URL + obsId), {
 		method: 'DELETE',
@@ -1173,7 +1208,7 @@ function deleteObservation(event, obsId) {
 		// 		.then((res) => res.json())
 		.then((res) => {
 			document.querySelector('section.edit.observation').innerHTML = "";
-			getAndDisplayObservations();
+			getAndDisplayObservations(event);
 			loading(false);
 		})
 		.catch(error => console.error('Error:', error))
@@ -1193,7 +1228,9 @@ async function populateFields(obs) {
 	const possibleNames = { obsTime, obsDate, id, userId, commonName, genus, species, nickname, lat, lng, address, featured };
 	for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 	for (let n in notes) if (notes[n]) document.getElementById(n).innerHTML = notes[n];
-	if (confidence) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
+	if (Number.isInteger(confidence)) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
+	const possibleSpans = [ 'address', 'lat', 'lng', 'genus', 'species' ];
+	for (let span of possibleSpans) if (possibleNames[span]) updateSpan(span, possibleNames[span]);
 	populateDatalists();
 // 	displaySection('.edit.observation');
 }
@@ -1215,16 +1252,16 @@ function populateThumbnail(file) {
 }
 
 function editObservation(event, obsId) {
-	event.preventDefault();
+	// event.preventDefault();
 	event.stopPropagation();
 	const header = "<h2>Edit Observation</h2>";
 	const newObs = document.querySelector('section.edit.observation');
 	const footer = document.createElement('div');
 		footer.classList.add('form-buttons');
 		footer.innerHTML = `
-			<button onclick="saveObservation(event, '${obsId}')">Save Changes</button>
-			<button onclick="deleteObservation(event, '${obsId}')">Delete Observation</button>
-			<button onclick="getAndDisplayObservations(event)">Cancel</button>`;
+			<button id="save-obs-submit" onclick="run(event,saveObservation,[event,'${obsId}'])">Save Changes</button>
+			<button onclick="run(event,deleteObservation,[event,'${obsId}'])">Delete Observation</button>
+			<button onclick="run(event,getAndDisplayObservations,[event])">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
 	const form = document.getElementById('new-observation');
 		form.insertAdjacentElement('beforeend', footer);
@@ -1242,7 +1279,7 @@ function editObservation(event, obsId) {
 
 function showInfo(event) {
 	// should be for touchscreen enabled devices only
-	event.preventDefault();
+	// event.preventDefault();
 	event.stopPropagation();
 	// define 
 	const details = event.target.parentElement.querySelector('.obs-details');
@@ -1264,13 +1301,13 @@ function renderObservation(obs, address) {
 		else thumbnail = obs.photos.files[0].url;
 	} else thumbnail = "media/mushroom.jpg";
 	let obsRender = `
-	<div style=background-image:url("${thumbnail}" class="obs-list-item" value='${obs.id}' onclick="run(viewObservation(this))">
+	<div style=background-image:url("${thumbnail}" class="obs-list-item" value='${obs.id}' onclick="run(event,viewObservation,[this])">
 		<input type="image" src="/media/info.png"
-			onclick="run(showInfo(event))"
+			onclick="run(event,showInfo,[event])"
 			class="show-info-button"
 			alt="Show more information" title="Show more information">
 		<input type="image" src="/media/edit.png" 
-			onclick="run(editObservation(event, '${obs.id}'))" 
+			onclick="run(event,editObservation,[event,'${obs.id}'])" 
 			class="obs-action edit"
 			alt="Edit Observation" title="Edit Observation">
 		<input type="image" src="/media/view.png" 
@@ -1328,23 +1365,28 @@ function getObservations(callback) {
 
 function validateMe() {
 	const content = `
-	<h2>Protected Resource</h2>
-	<p>The resource you are trying to access is protected</p>
-	<p>Please <a onclick="signupForm()">Sign Up</a> or <a onclick="loginForm()">Login</a> to continue</p>
-	`;
+		<h2>Protected Resource</h2>
+		<p>The resource you are trying to access is protected</p>
+		<p>Please <a onclick="run(event,signupForm)">Sign Up</a> or <a onclick="run(event,loginForm,[event])">Login</a> to continue</p>
+		`;
 	showPopup(content, 'protected-resource');
 }
 
-function sleep (ms) {
+function sleep(ms) {
 	return new Promise((res, rej) => {
 		setTimeout(() => res(), ms);
 	})
 }
 
+function genObsCallToAction() {
+	const callToAction = `
+		<div class="obs-list-item cta" onclick="run(event,newObservation,[event])">
+			<h2>Add New Observation</h2>
+		</div>`;
+	document.querySelector('#obs-list').innerHTML += callToAction;
+}
+
 async function displayObservations(res) {
-	// strategy
-		// start getAddress for each obs
-		
 	const observations = res;
 	let addressArr = [];
 	for (let obs of observations) {
@@ -1353,15 +1395,16 @@ async function displayObservations(res) {
 		else addressArr.push("Unknown Location");
 		await sleep(10);
 	};
+	if (observations.length<1) genObsCallToAction();
 	for (let i=0; i<observations.length; i++) {
 		const address = await addressArr[i];
 		renderObservation(observations[i], address);
-	}
+	};
 	displaySection('.observations');
 }
 
 function getAndDisplayObservations(event) {
-	if (event) event.preventDefault();
+	// if (event) event.preventDefault();
 	// clear out old observations
 	document.querySelector('#obs-list').innerHTML = "";
 	getObservations(displayObservations);
@@ -1369,7 +1412,7 @@ function getAndDisplayObservations(event) {
 
 function updateValue(name, value) {
 	const target = document.querySelector(`[name="${name}"]`);
-	target.setAttribute('value', value);
+	target.value = value;
 }
 
 function update(target, content) {
