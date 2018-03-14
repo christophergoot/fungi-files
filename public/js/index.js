@@ -18,6 +18,8 @@ const OBSERVATION_FORM = `
 <input type="hidden" name="address" id="address-input">
 <input type="hidden" name="lat" id="lat-input">
 <input type="hidden" name="lng" id="lng-input">
+<input type="hidden" name="genus" id="genus-input">
+<input type="hidden" name="species" id="species-input">
 <div  class="image area">
 		<button onclick="run(event,selectFiles,[event])">Add Images</button>
 		<input onchange="run(event,receiveFiles,[event])" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
@@ -63,11 +65,9 @@ const OBSERVATION_FORM = `
 				<span id="genus">Unknown</span>
 				<span class="inline label">species</span>
 				<span id="species">Unknown</span>
-				<input name="genus" id="genus-input" type="hidden">
-				<input name="species" id="species-input" type="hidden">
 			</div>
 			<div class="confidence">
-				<span class="label">Identification Confidence</span>
+				<span class="inline label">Identification Confidence</span>
 				<label class="input-container">
 					<input name="confidence" type="radio" value="0" title="I guarantee this is wrong">
 					<span class="checkmark">0</span>
