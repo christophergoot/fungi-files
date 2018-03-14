@@ -1,3 +1,5 @@
+
+
 const MUSHROOMS = [{ 'commonName': 'Aborted Entoloma', 'genus': 'Entoloma', 'species': 'Abortivum' }, { 'commonName': 'Admirable Bolete', 'genus': 'Boletus', 'species': 'Mirabilis' }, { 'commonName': 'Alcohol Inky Cap', 'genus': 'Coprinus', 'species': 'Atramentarius' }, { 'commonName': 'American Matsutake', 'genus': 'Tricholoma', 'species': 'Magnivelare' }, { 'commonName': 'Angels\' Wings', 'genus': 'Pleurocybella', 'species': 'Porrigens' }, { 'commonName': 'Anise-Scented', 'genus': 'Clitocybe', 'species': 'Odora' }, { 'commonName': 'Apricot Jelly Mushroom', 'genus': 'Phlogiotis', 'species': 'Helvelloides' }, { 'commonName': 'Aspen Scaber Stalk', 'genus': 'Leccinum', 'species': 'Insigne' }, { 'commonName': 'Bare-Toothed Russula', 'genus': 'Russula', 'species': 'Vesca' }, { 'commonName': 'Barrow\'s Bolete', 'genus': 'Boletus', 'species': 'Barrowsii' }, { 'commonName': 'Bay Bolete', 'genus': 'Boletus', 'species': 'Badius' }, { 'commonName': 'Bear\'s Head', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Belly-Button Mushroom', 'genus': 'Hydnum', 'species': 'Umbilicatum' }, { 'commonName': 'Black Chanterelle', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Black Forest Mushroom', 'genus': 'Lentinus', 'species': 'Edodes' }, { 'commonName': 'Black Fungus', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Black Kame', 'genus': 'Terfezia', 'species': 'Bouderi' }, { 'commonName': 'Black Saddle Mushroom', 'genus': 'Helvella', 'species': 'Lacunosa' }, { 'commonName': 'Blackening Russula', 'genus': 'Russula', 'species': 'Nigricans' }, { 'commonName': 'Bleeding Agaricus', 'genus': 'Agaricus', 'species': 'Fuscofibrillosus Haemorrhoidarius' }, { 'commonName': 'Bleeding Milky Cap', 'genus': 'Lactarius', 'species': 'Rubrilacteus' }, { 'commonName': 'Blewit', 'genus': 'Lepista', 'species': 'Nuda' }, { 'commonName': 'Blue Milky Cap', 'genus': 'Lactarius', 'species': 'Indigo' }, { 'commonName': 'Bracelet Cortinarius', 'genus': 'Cortinarius', 'species': 'Armillatus' }, { 'commonName': 'Brown Kame', 'genus': 'Terfezia', 'species': 'Claveryi' }, { 'commonName': 'Butter Bolete', 'genus': 'Boletus', 'species': 'Appendiculatus' }, { 'commonName': 'Butter Mushroom', 'genus': 'Pholiota', 'species': 'Aurivella' }, { 'commonName': 'Button Mushroom', 'genus': 'Agaricus', 'species': 'Brunnescens' }, { 'commonName': 'Candy Cap', 'genus': 'Lactarius', 'species': 'Fragilis' }, { 'commonName': 'Cauliflower Mushroom', 'genus': 'Sparassis', 'species': 'Crispa' }, { 'commonName': 'Cèpe', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Charcoal Burner', 'genus': 'Russula', 'species': 'Cyanoxantha' }, { 'commonName': 'Chicken Of The Woods', 'genus': 'Rozites', 'species': 'Caperata' }, { 'commonName': 'Cinnabar-Red Chanterelle', 'genus': 'Cantharellus', 'species': 'Cinnabarinus' }, { 'commonName': 'Cloud Ear Mushroom', 'genus': 'Auricularia', 'species': 'Auricula' }, { 'commonName': 'Clustered Blue Chanterelle', 'genus': 'Polyozellus', 'species': 'Multiplex' }, { 'commonName': 'Comb Tooth Mushroom', 'genus': 'Hericium', 'species': 'Ramosum' }, { 'commonName': 'Commercial Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus' }, { 'commonName': 'Common Store Mushroom', 'genus': 'Agaricus', 'species': 'Bisporus' }, { 'commonName': 'Coral Hericium', 'genus': 'Hericium', 'species': 'Coralloides' }, { 'commonName': 'Crocodile Agaricus', 'genus': 'Agaricus', 'species': 'Crocodilinus' }, { 'commonName': 'Death Cap', 'genus': 'Amanita', 'species': 'Phalloides' }, { 'commonName': 'Delicious Milky Cap', 'genus': 'Lactarius', 'species': 'Deliciosus' }, { 'commonName': 'Dotted-Stalk Suillus', 'genus': 'Suillus', 'species': 'Granulatus' }, { 'commonName': 'Drumstick Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes' }, { 'commonName': 'Egg Mushroom', 'genus': 'Cantharellus', 'species': 'Cibarius' }, { 'commonName': 'Enoki', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Fairy-Ring Mushroom', 'genus': 'Marasmius', 'species': 'Oreades' }, { 'commonName': 'Fawn Mushroom', 'genus': 'Pluteus', 'species': 'Cervinus' }, { 'commonName': 'Field Or Meadow Mushroom', 'genus': 'Agaricus', 'species': 'Campestris' }, { 'commonName': 'Fragrant Clitocybe', 'genus': 'Clitocybe', 'species': 'Fragrans' }, { 'commonName': 'French Black Truffle', 'genus': 'Tuber', 'species': 'Melanosporum' }, { 'commonName': 'Garlic Marasmius', 'genus': 'Marasmius', 'species': 'Scorodonius' }, { 'commonName': 'Golden Chanterelle', 'genus': 'Cantharellus', 'species': 'Cibarius' }, { 'commonName': 'Golden Needle', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Green-Spored Parasol', 'genus': 'Lepiota', 'species': 'Molybdites' }, { 'commonName': 'Green-Spored Parasol Mushroom', 'genus': 'Chlorophyllum', 'species': 'Molybdites' }, { 'commonName': 'Gypsy Mushroom', 'genus': 'Rozites', 'species': 'Caperata' }, { 'commonName': 'Hedgehog Mushroom', 'genus': 'Hydnum', 'species': 'Repandum' }, { 'commonName': 'Hen Of The Woods', 'genus': 'Polypilus', 'species': 'Frondosa' }, { 'commonName': 'Honey Or Oak Mushroom', 'genus': 'Armillaria', 'species': 'Mellea' }, { 'commonName': 'Horn Of Plenty', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Horse Mushroom', 'genus': 'Agaricus', 'species': 'Arvensis' }, { 'commonName': 'Inky Cap', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Italian White Truffle', 'genus': 'Tuber', 'species': 'Magnatum' }, { 'commonName': 'Judas\' Ear', 'genus': 'Auricularia', 'species': 'Auricula' }, { 'commonName': 'King Bolete', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Lawyer\'S Wig', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Man On Horseback', 'genus': 'Tricholoma', 'species': 'Flavovirens Equestre' }, { 'commonName': 'Manzanita Scaber Stalk', 'genus': 'Leccinum', 'species': 'Manzanitae' }, { 'commonName': 'Matsutake', 'genus': 'Armillaria', 'species': 'Matsutake' }, { 'commonName': 'Mica Cap', 'genus': 'Coprinus', 'species': 'Micaceus' }, { 'commonName': 'Monkey Head', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Morel', 'genus': 'Morchella', 'species': 'Esculenta' }, { 'commonName': 'Nameko', 'genus': 'Pholiota', 'species': 'Nameko' }, { 'commonName': 'Old Man Of The Woods', 'genus': 'Strobilomyces', 'species': 'Confusus' }, { 'commonName': 'Orange-Capped Scaber Stalk', 'genus': 'Leccinum', 'species': 'Aurantiacum' }, { 'commonName': 'Oregon White Truffle', 'genus': 'Tuber', 'species': 'Gibbosum' }, { 'commonName': 'Oyster Mushroom', 'genus': 'Pleurotus', 'species': 'Ostreatus' }, { 'commonName': 'Paddy Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea' }, { 'commonName': 'Painted Suillus', 'genus': 'Suillus', 'species': 'Pictus' }, { 'commonName': 'Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Procera' }, { 'commonName': 'Peck', 'genus': 'Agaricus', 'species': 'Rodmanii' }, { 'commonName': 'Pig\'s Ear', 'genus': 'Gomphus', 'species': 'Clavatus' }, { 'commonName': 'Pine Mushroom', 'genus': 'Tricholoma', 'species': 'Magnivelare' }, { 'commonName': 'Pom-Pom', 'genus': 'Hericium', 'species': 'Erinaceus' }, { 'commonName': 'Porcini', 'genus': 'Boletus', 'species': 'Edulis' }, { 'commonName': 'Puffball', 'genus': 'Calvatia', 'species': 'Gigantea' }, { 'commonName': 'Red-Tipped Coral Mushroom', 'genus': 'Ramaria', 'species': 'Botrytis' }, { 'commonName': 'Regal Bolete', 'genus': 'Boletus', 'species': 'Regius' }, { 'commonName': 'Russula Like Waxy Cap', 'genus': 'Hygrophorus', 'species': 'Russula' }, { 'commonName': 'Salt-Loving Mushroom', 'genus': 'Agaricus', 'species': 'Bernardii' }, { 'commonName': 'Scaber Stalk', 'genus': 'Leccinum', 'species': 'Scaber' }, { 'commonName': 'Shaggy Mane', 'genus': 'Coprinus', 'species': 'Comatus' }, { 'commonName': 'Shaggy Parasol Mushroom', 'genus': 'Lepiota', 'species': 'Rhacodes' }, { 'commonName': 'Shellfish-Scented Russula', 'genus': 'Russula', 'species': 'Xerampelina' }, { 'commonName': 'Shiitake', 'genus': 'Lentinus', 'species': 'Edodes' }, { 'commonName': 'Short-Stalked Slippery Cap', 'genus': 'Suillus', 'species': 'Brevipes' }, { 'commonName': 'Short-Stem Russula', 'genus': 'Russula', 'species': 'Delica' }, { 'commonName': 'Silver Ear Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Smooth Chanterelle', 'genus': 'Cantharellus', 'species': 'Lateritius' }, { 'commonName': 'Snow Mushroom', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Snowbank False Morel', 'genus': 'Gyromitra', 'species': 'Gigas' }, { 'commonName': 'Sponge', 'genus': 'Morchella', 'species': 'Esculenta' }, { 'commonName': 'Spring Agaricus', 'genus': 'Agaricus', 'species': 'Bitorquis' }, { 'commonName': 'Straw Mushroom', 'genus': 'Volvariella', 'species': 'Volvacea' }, { 'commonName': 'Summer Truffle', 'genus': 'Tuber', 'species': 'Aestivum' }, { 'commonName': 'Sweet Tooth', 'genus': 'Hydnum', 'species': 'Repandum' }, { 'commonName': 'Sweetbread Mushroom', 'genus': 'Clitopilus', 'species': 'Prunulus' }, { 'commonName': 'Tacky Green Russula', 'genus': 'Russula', 'species': 'Aeruginea' }, { 'commonName': 'Texas White Truffle', 'genus': 'Tuber', 'species': 'Texensis' }, { 'commonName': 'The Prince', 'genus': 'Agaricus', 'species': 'Augustus' }, { 'commonName': 'Tree Ear', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Tricholoma Magnivelare', 'genus': 'Armillaria', 'species': 'Ponderosa' }, { 'commonName': 'Trumpet Chanterelle', 'genus': 'Cantharellus', 'species': 'Tubaeformis' }, { 'commonName': 'Trumpet Of Death', 'genus': 'Craterellus', 'species': 'Cornucopioides' }, { 'commonName': 'Two-Colored Bolete', 'genus': 'Boletus', 'species': 'Bicolor' }, { 'commonName': 'Umbrella Polypore', 'genus': 'Polyporus', 'species': 'Umbellatus' }, { 'commonName': 'Variant Of B. Edulis', 'genus': 'Boletus', 'species': 'Pinicola' }, { 'commonName': 'Velvet Foot', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'White Chanterelle', 'genus': 'Cantharellus', 'species': 'Subalbidus' }, { 'commonName': 'White Jelly Fungus', 'genus': 'Tremella', 'species': 'Fuciformis' }, { 'commonName': 'Wine-Cap Stropharia', 'genus': 'Stropharia', 'species': 'Rugosoannulata' }, { 'commonName': 'Winter Mushroom', 'genus': 'Flammulina', 'species': 'Velutipes' }, { 'commonName': 'Wood Ear Mushroom', 'genus': 'Auricularia', 'species': 'Polytricha' }, { 'commonName': 'Zeller\'s Bolete', 'genus': 'Boletus', 'species': 'Zelleri' }];
 
 const GOOGLEMAPS_API_KEY = 'AIzaSyABVyjzmdlA8yrWGI73K62cMmqo5_bw7rs';
@@ -21,43 +23,30 @@ const OBSERVATION_FORM = `
 		<input onchange="run(event,receiveFiles,[event])" id="file-input" name="fileInput" type="file"  style="display:none;" multiple accept="image/*">
 		<div class="img-preview">
 		</div>
-	</div>
+</div>
+<div class="details area">
 	<div class="location area">
-		<div>
-			<div id="location-options" class="loc-opts">
-				<div class="input-wrapper">
-					<span class="inline label">Location</span>
-					<span id="address">Unknown</span>
-				</div>
-				<div class="address-blocking">
-					<div id="latlng">
-						<span class="inline label">lat</span>
-						<span id="lat">Unknown</span>
-						<span class="inline label">long</span>
-						<span id="lng">Unknown</span>
-					</div>
-					<div id="datetime">
-						<div>
-							<span class="inline label">Date</span>
-							<input name="obsDate" id="obs-date-input" type="date">
-						</div>
-						<div>
-							<span class="inline label">Time</span>
-							<input name="obsTime" id="obs-time-input" type="time">
-						</div>
-					</div>
-					<div class="address-buttons">
-						<button onclick="run(event,enterLocation)">Enter Location</button>
-						<button onclick="run(event,geolocate)">Use Current Location</button>
-						<button onclick="run(event,useCurrentTime)">Use Current Time</button>
-					</div>
-				</div>
-				<div>
-					<span id="location-text"></span>
-				</div>
-			</div>
+	<div class="address-span">
+			<span class="inline label">Location</span>
+			<span id="address">Unknown</span>
 		</div>
-	</div>
+		<div id="latlng" class="address-span">
+			<span class="inline label">lat</span>
+			<span id="lat">Unknown</span>
+			<span class="inline label">long</span>
+			<span id="lng">Unknown</span>
+		</div>
+		<div class="date-time">
+			<span class="floating label">Date</span>
+			<input name="obsDate" id="obs-date-input" type="date">
+		</div>
+		<div class="date-time">
+			<span class="floating label">Time</span>
+			<input name="obsTime" id="obs-time-input" type="time">
+		</div>
+		<span id="location-text"></span>
+		<button onclick="run(event,enterLocation)">Choose Location</button>
+		</div>
 	<div class="name area">
 		<div class="input-wrapper">
 				<input name="nickname" id="nickname-input" type="text">
@@ -68,7 +57,7 @@ const OBSERVATION_FORM = `
 				<input name="commonName" id="common-name-input" onchange="populateNames(event)" type="text" list="commonName-datalist">
 				<span class="floating label">Common Name</span>
 		</div>
-		<div class="classification-details">
+		<div class="classification-details hidden">
 			<div class="fungi">
 				<span class="inline label">genus</span>
 				<span id="genus">Unknown</span>
@@ -106,6 +95,7 @@ const OBSERVATION_FORM = `
 			</div>
 		</div>
 	</div>
+</div>
 </form>
 `;
 
@@ -150,16 +140,19 @@ async function useCurrentTime() {
 	const obsDate = await getDate(new Date());
 	updateValue('obsTime', obsTime);
 	updateValue('obsDate', obsDate);
+	closePopup(event,'address-opts');
 }
 
 function geolocate() {
-	// event.preventDefault();
+	loading(true, 'Getting Current Location');
 	navigator.geolocation.getCurrentPosition((position) => {
 		const coords = { 
 			'lat': position.coords.latitude, 
 			'lng': position.coords.longitude };
 		const obs = { 'location': coords };
 		updateLocation(obs, 'Current Location');
+		closePopup(event,'address-opts');
+		loading(false);
 	});
 }
 
@@ -187,16 +180,31 @@ function updateSpan(spanId,innerHTML) {
 function populateNames(event) {
 	const inputName = event.target.attributes.name.value;
 	const inputValue = event.target.value;
+	let mushroom;
 	for (let i = 0; i < MUSHROOMS.length; i++) {
 		if (inputValue == MUSHROOMS[i][inputName]) {
-			let { commonName, genus, species } = MUSHROOMS[i];
-			updateValue('commonName', commonName);
-			updateValue('genus', genus);
-			updateValue('species', species);
-			updateSpan('genus', genus);
-			updateSpan('species', species);
+			mushroom = MUSHROOMS[i];
 		};
 	};
+	if (mushroom) {
+		let { commonName, genus, species } = mushroom;
+		document.querySelector('.classification-details').classList.remove('hidden');
+		updateValue('commonName', commonName);
+		updateValue('genus', genus);
+		updateValue('species', species);
+		updateSpan('genus', genus);
+		updateSpan('species', species);
+	} else {
+		document.querySelector('.classification-details').classList.add('hidden');
+		updateValue('genus', '');
+		updateValue('species', '');
+		updateSpan('genus', '');
+		updateSpan('species', '');
+
+	}
+
+
+
 }
 
 function selectFiles(event) {
@@ -308,25 +316,33 @@ async function receiveFiles(event) {
 }
 
 async function resolveLocation(event) {
-	// event.preventDefault();
 	console.log(event);
-	const address = event.path[1]["0"].value;
-	const latlng = await `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${GOOGLEMAPS_API_KEY}`;
-	console.log('latlng', latlng);
-	alert('need to get latlng from', address);
-	closePopup(event, 'address-entry');
+	const address = event.target.previousElementSibling.value;
+	const formattedAddress = address.split(' ').join('+');
+	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${formattedAddress}&key=${GOOGLEMAPS_API_KEY}`;
+	const response = await fetch(url).then(res => res.json());
+	const {geometry} = response.results["0"];
+	updateLocation(geometry, 'Manual Entry');
+	closePopup(event, 'address-opts');
 }
 
 function enterLocation() {
-	// event.preventDefault();
-	// open form
 	const form = `
-		<form>
-			<input type="address" name="address-entry" id="address-entry" placeholder="Observation Location">
-			<button onclick="run(event,resolveLocation,[event])">Submit</button>
-		</form>
-		<p>right now it doesn't send the input anywhere</p>`;
-	showPopup(form, 'address-entry');
+		<div class="address-buttons">
+			<span class="floating label">Location Selection Options</span>
+			<div class="inline-form input-wrapper">
+				<span class="floating label">Manual Entry</span>
+				<input type="text" name="address-entry" id="address-entry" placeholder=" ">
+				<button onclick="run(event,resolveLocation,[event])">go</button>
+			</div>
+				<span class="inline label center">or</span>
+			<span class="address-span">select <img src="/media/uselocation.png" class="inline-img"> from an image thumbnail</span>
+				<span class="inline label center">or</span>
+			<button onclick="run(event,geolocate)">Use Current Location</button>
+			<button onclick="run(event,useCurrentTime)">Use Current Time</button>
+		</div>
+		<button onclick="run(event,closePopup,[event,'address-opts'])">Close</button>`;
+	showPopup(form, 'address-opts');
 	const input = document.getElementById('address-entry');
 	const autocomplete = new google.maps.places.Autocomplete(input);
 }
@@ -546,7 +562,7 @@ function dateString (dateObj, opt) {
 	const month = months[date.getMonth()];
 	const day = date.getDate();
 	const year = date.getFullYear();
-	const time = date.toLocaleTimeString('en-US');
+	const time = date.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})
 	if (opt) {
 		if (opt = "date") return `${dayname} ${month} ${day}, ${year}`;
 	} else return `${dayname} ${month} ${day}, ${year} at ${time}`;
@@ -594,52 +610,10 @@ function displayObservation(obs, src) {
 					onmouseover="run(event,makeHero,[event])"
 					>`;
 		}
-		obsRender += `</div>`;
+		obsRender += `</div>`; // .image.area
 	}
 
-	obsRender += `<div>`; // bloack wrapper
-
-	// fungi classification
-	if (obs.fungi.nickname || obs.fungi.commonName) 
-		obsRender += `<div class="classification">`;
-	if (obs.fungi.nickname) obsRender +=
-		`<span class="title">
-			<span class="inline label">
-				nickname
-			</span>
-			${obs.fungi.nickname}
-		</span>`;
-	if (obs.fungi.commonName) obsRender +=
-		`<span class="title">
-			<span class="inline label">
-				common name
-			</span>
-			${obs.fungi.commonName}
-		</span>`;
-	if (obs.fungi.genus) obsRender +=
-		`<span class="fungi">
-			<span class="inline label">
-				genus
-			</span>
-			${obs.fungi.genus} 
-			<span class="inline label">
-				species
-			</span>
-			${obs.fungi.species}
-		</span>`;
-	if (obs.fungi.confidence) obsRender += `
-		<div>
-			classified with ${obs.fungi.confidence * 20}% confidence
-		</div>`;
-	if (obs.notes.mushroomNotes) obsRender += `
-		<span class="label">
-			mushroom notes
-		</span>
-		<span class="notes">
-			${obs.notes.mushroomNotes}
-		</span>`;
-	if (obs.fungi.nickname || obs.fungi.commonName) 
-		obsRender += `</div>`; // .classification
+	obsRender += `<div>`; // block wrapper
 
 	// date and time		
 	if (obs.obsDate) {
@@ -672,6 +646,43 @@ function displayObservation(obs, src) {
 				</span>
 			</div>`;
 	};
+
+	// fungi classification
+	if (obs.fungi.nickname || obs.fungi.commonName) 
+		obsRender += `<div class="classification">`;
+	if (obs.fungi.nickname) obsRender +=
+		`<span class="title">
+			<span class="label red">
+				nickname
+			</span>
+			${obs.fungi.nickname}
+		</span>`;
+	if (obs.fungi.commonName) obsRender +=
+		`<span class="title">
+			<span class="label red">
+				identification
+			</span>
+			${obs.fungi.commonName}
+		</span>`;
+	if (obs.fungi.genus && obs.fungi.species) obsRender += `
+		<div>
+		<span class="fungi">
+			${obs.fungi.genus}  ${obs.fungi.species}
+		</span>
+		</div>`;
+	if (Number.isInteger(obs.fungi.confidence)) obsRender += `
+		<div class="confidence-report">
+			identified with ${obs.fungi.confidence * 20}% confidence
+		</div>`;
+	if (obs.notes.mushroomNotes) obsRender += `
+		<span class="label">
+			mushroom notes
+		</span>
+		<span class="notes">
+			${obs.notes.mushroomNotes}
+		</span>`;
+	if (obs.fungi.nickname || obs.fungi.commonName) 
+		obsRender += `</div>`; // .classification
 
 	obsRender += `</div>
 		<img src="${staticMapUrl(obs.location)}" class="static-map">
@@ -749,9 +760,9 @@ function refreshNavMenu() {
 	let menuItems = [];
 	if (JWT) {
 		menuItems = [
-			{li: "All Observations", onclick: "getAndDisplayObservations(event)"},
-			{li: "Add New Observation", onclick: "newObservation()"},
-			{li: "Settings", onclick: "settings()"},
+			{li: "View Observations", onclick: "getAndDisplayObservations(event)"},
+			{li: "Add Observation", onclick: "newObservation()"},
+			// {li: "Settings", onclick: "settings()"},
 			{li: "Logout", onclick: "run(event,logout)"}
 		];
 	} else {
@@ -774,9 +785,10 @@ function splashPage() {
 	const content = `
 	<h2>Hello</h2>
 	<p>And welcome, Fungi Enthusiast.</p>
-	<p>This is basic right now, but soon it shall</p>
-	<h2>SPLASH!</h2>
-	<p>In the meantime, you should</p>
+	<p><strong>Mushroom Journal</strong> is a photo-forward personal journal of fungal observations.</p>
+	<p>Please consider signing up for an account below, or poking around the demo.</p>
+	<p>And rest assured, we will <i>never</i> share the location of your observations without your consent.
+		We want to make sure that honey-hole of morels you found will be waiting for you again next year!</p>
 	<button onclick="run(event,loginForm,[event,'demo-user'])">LOGIN as Demo User</button>
 	<button onclick="run(event,loginForm)">LOGIN</button>
 	<button onclick="run(event,signupForm)">SIGN UP for an Account</button>
@@ -936,12 +948,12 @@ function loginForm(event, str) {
 	const popupId = 'login-form';
 	const form = `
 		<h2>Login</h2>
-		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
+		<form enctype="text/plain" method="post" onsubmit="run(event,login,[event,'${popupId}'])" id="${popupId}" class="alert-form">
 		<span class="required">* required</span>
 		<input name="username" type="text" placeholder="username" required>
 		<span class="required">* required</span>
 		<input name="password" type="password" placeholder="password" required>
-		<button onclick="run(event,login,[event,'${popupId}'])">Login</button>
+		<button type="submit">Login</button>
 		<button onclick="run(event,closePopup,[event,'${popupId}'])">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
@@ -957,7 +969,7 @@ function signupForm () {
 	const popupId = 'signup-form';
 	const form = `
 		<h2>Signup</h2>
-		<form enctype="text/plain" method="post" id="${popupId}" class="alert-form">
+		<form enctype="text/plain" method="post" onsubmit="run(event,signup,[event,'${popupId}'])" id="${popupId}" class="alert-form">
 		<input name="firstName" type="text" placeholder="first name">
 		<input name="lastName" type="text" placeholder="last name">
 		<span class="required">* required</span>
@@ -966,8 +978,8 @@ function signupForm () {
 		<input name="email" type="email" placeholder="email" required>
 		<span class="required">* required</span>
 		<input name="password" type="password" placeholder="password" required>
-		<button onclick="run(event,signup,[event,'${popupId}'])">Sign Up</button>
-		<button onclick="run(event,closePopup[event,'${popupId}']">Cancel</button>
+		<button type="submit">Sign Up</button>
+		<button onclick="run(event,closePopup,[event,'${popupId}'])">Cancel</button>
 		</form>`;
 	showPopup(form, popupId);
 }
@@ -1029,11 +1041,13 @@ function newObservation() {
 			<button id="save-obs-submit" onclick="run(event,submitNewObservation,[event])">Submit New Observation</button>
 			<button onclick="run(event,getAndDisplayObservations,[event])">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
-	const form = document.getElementById('new-observation');
+	// const form = document.getElementById('new-observation');
+	const form = document.querySelector('div.details.area');
 	form.insertAdjacentElement('beforeend', footer);
 	globalFileHolder = [];
 	populateDatalists();
-	// displaySection('.new.observation');
+	// const input = document.getElementById('address-entry');
+	// const autocomplete = new google.maps.places.Autocomplete(input);
 	document.querySelector('.new.observation').classList.remove('hidden');
 	document.querySelector('#form-popup').classList.remove('hidden');
 }
@@ -1053,17 +1067,23 @@ function dateFromDateTime(date, time) {
 
 function loading(state, text) {
 	if (state) {
+		const loadingShade = document.createElement('div');
+			loadingShade.classList.add('popup');
+			loadingShade.id = 'loading-shade';
 		const loadingScreen = document.createElement('div');
-		loadingScreen.classList.add('popup.alert');
-		loadingScreen.id = 'loading-screen';
+			loadingScreen.classList.add('popup-alert');
+			loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
 			<div class="popup-alert loading">
 				<img src="media/loading.gif" class="loading-img">
 				<span class="loading-text">${text}<span>
 			</div>`;
+		document.querySelector('body').insertAdjacentElement('beforeend', loadingShade);
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
-	} 
+		} 
 	else if (!state) {
+		const loadingShade = document.getElementById('loading-shade');
+		loadingShade.parentNode.removeChild(loadingShade);
 		const loadingScreen = document.getElementById('loading-screen');
 		loadingScreen.parentNode.removeChild(loadingScreen);
 	}
@@ -1231,6 +1251,7 @@ async function populateFields(obs) {
 	if (Number.isInteger(confidence)) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
 	const possibleSpans = [ 'address', 'lat', 'lng', 'genus', 'species' ];
 	for (let span of possibleSpans) if (possibleNames[span]) updateSpan(span, possibleNames[span]);
+	if (obs.fungi.species && obs.fungi.genus) document.querySelector('.classification-details').classList.remove('hidden');
 	populateDatalists();
 // 	displaySection('.edit.observation');
 }
@@ -1263,8 +1284,9 @@ function editObservation(event, obsId) {
 			<button onclick="run(event,deleteObservation,[event,'${obsId}'])">Delete Observation</button>
 			<button onclick="run(event,getAndDisplayObservations,[event])">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
-	const form = document.getElementById('new-observation');
-		form.insertAdjacentElement('beforeend', footer);
+	// const form = document.getElementById('new-observation');
+	const form = document.querySelector('div.details.area');
+	form.insertAdjacentElement('beforeend', footer);
 	getObservation(obsId).then(async res => {
 		await populateFields(res);
 		res.photos.files.forEach(file => populateThumbnail(file));
@@ -1272,6 +1294,8 @@ function editObservation(event, obsId) {
 	});
 	globalFileHolder = [];
 	populateDatalists();
+	// const input = document.getElementById('address-entry');
+	// const autocomplete = new google.maps.places.Autocomplete(input);
 	document.querySelector('.edit.observation').classList.remove('hidden');
 	document.getElementById('form-popup').classList.remove('hidden');
 // 	displaySection('.edit.observation');
@@ -1322,9 +1346,9 @@ function renderObservation(obs, address) {
 	obsRender +=
 		`<div class="obs-details">`
 	if (obs.fungi.nickname) obsRender +=
-			`<span class="title"><span class="label">nickname: </span>"${obs.fungi.nickname}"</span>`;
+			`<span class="title"><span class="label">nickname</span>"${obs.fungi.nickname}"</span>`;
 	if (obs.fungi.commonName) obsRender +=
-			`<span class="title"><span class="label">common name: </span>${obs.fungi.commonName}</span>`;
+			`<span class="title"><span class="label">common name</span>${obs.fungi.commonName}</span>`;
 	if (obs.fungi.genus) obsRender +=
 			`<span class="fungi">
 				${obs.fungi.genus}  ${obs.fungi.species}
@@ -1381,6 +1405,12 @@ function sleep(ms) {
 function genObsCallToAction() {
 	const callToAction = `
 		<div class="obs-list-item cta" onclick="run(event,newObservation,[event])">
+			<p>Welcome to your new account</p>
+			<p>Mushroom Journal is a photo-forward 
+			<br>personal journal of fungal observations</p>
+			<p>So ready your smartphone camera
+			<br>or gather up some photos
+			<br>and</p>
 			<h2>Add New Observation</h2>
 		</div>`;
 	document.querySelector('#obs-list').innerHTML += callToAction;
