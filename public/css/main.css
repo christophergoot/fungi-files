@@ -320,6 +320,7 @@ h2 {
 	overflow-y:  auto;
 	z-index: 20;
 	display: block;
+	/* margin-top: 20px; */
 }
 
 .obs-detail {

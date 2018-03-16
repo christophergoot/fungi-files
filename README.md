@@ -7,7 +7,7 @@
 ### Front End
 - HTML5
 - CSS3
-- Vanila JavaScript
+- Vanilla JavaScript
 ### Back End
 - Node.js + Express.js (web server)
 - AWS S3 (image hosting)
@@ -16,7 +16,7 @@
 - Continuous integration and deployment with Travis CI
 ### Security
 - JSON Web Tokens (user authentication)
-- BCryptJS
+- BCryptJS (password hashing)
 
 ## API
 Endpoint | Method | Description
@@ -27,13 +27,15 @@ Endpoint | Method | Description
 “/observations/:id” | PUT | Update individual observation
 “/detete/:id/:filename” | DELETE | Delete single file
 "/delete/:id" | DELETE | Delete entire observation
-
+"/users" | POST | New account signup
+"/auth/login" | POST | User login
+"/auth/refresh" | POST | JSON Web Token refresh
 
 ## Attribution
 ### [Pica](https://github.com/nodeca/pica)
 - Image Resize in Browser
 ### Google Maps API
-- Geocoding & Reverse
+- Geocoding & Reverse Geocoding
 - Address Autocomplete
 - Static Maps
 ### Icons
