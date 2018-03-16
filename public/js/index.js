@@ -114,7 +114,7 @@ const MUSHROOM_NOTES = `
 	</div>
 	`;
 
-function run(event, passthrough, params=[]) {
+function run(event, passthrough, params = []) {
 	event.preventDefault();
 	return passthrough(...params, event);
 }
@@ -140,18 +140,19 @@ async function useCurrentTime() {
 	const obsDate = await getDate(new Date());
 	updateValue('obsTime', obsTime);
 	updateValue('obsDate', obsDate);
-	closePopup(event,'address-opts');
+	closePopup(event, 'address-opts');
 }
 
 function geolocate() {
 	loading(true, 'Getting Current Location');
 	navigator.geolocation.getCurrentPosition((position) => {
-		const coords = { 
-			'lat': position.coords.latitude, 
-			'lng': position.coords.longitude };
+		const coords = {
+			'lat': position.coords.latitude,
+			'lng': position.coords.longitude
+		};
 		const obs = { 'location': coords };
 		updateLocation(obs, 'Current Location');
-		closePopup(event,'address-opts');
+		closePopup(event, 'address-opts');
 		loading(false);
 	});
 }
@@ -170,7 +171,7 @@ function updateExif(string, status) {
 	};
 }
 
-function updateSpan(spanId,innerHTML) {
+function updateSpan(spanId, innerHTML) {
 	// if (event) event.preventDefault;
 	const span = document.getElementById(spanId);
 	span.innerHTML = innerHTML;
@@ -243,7 +244,7 @@ function dataURLtoBlob(dataurl) {
 	const size = binaryString.length;
 	const byteArray = new Uint8Array(size);
 
-	for(let i = 0; i < size; i++)
+	for (let i = 0; i < size; i++)
 		byteArray[i] = binaryString.charCodeAt(i);
 
 	return new Blob([byteArray], {
@@ -278,12 +279,12 @@ function previewFile(file, filename, url) {
 	const featured = document.getElementsByName('featured')[0];
 	// const reader = new FileReader();
 	// reader.onloadend = function (event) {
-		const previewImg = document.getElementById(`${filename}-thumb`);
-		previewImg.src = url;
-		// if no currently featured image, make current image featured
-		if (!featured.value) {
-			featured.value = filename;
-			previewImg.classList.add('featured-image');
+	const previewImg = document.getElementById(`${filename}-thumb`);
+	previewImg.src = url;
+	// if no currently featured image, make current image featured
+	if (!featured.value) {
+		featured.value = filename;
+		previewImg.classList.add('featured-image');
 		// }
 	};
 	// reader.readAsDataURL(file);
@@ -321,7 +322,7 @@ async function resolveLocation(event) {
 	const formattedAddress = address.split(' ').join('+');
 	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${formattedAddress}&key=${GOOGLEMAPS_API_KEY}`;
 	const response = await fetch(url).then(res => res.json());
-	const {geometry} = response.results["0"];
+	const { geometry } = response.results["0"];
 	updateLocation(geometry, 'Manual Entry');
 	closePopup(event, 'address-opts');
 }
@@ -356,13 +357,13 @@ async function updateLocation(obs, locationSource) {
 	updateSpan('lng', obs.location.lng.toFixed(6));
 	updateSpan('address', addressString);
 	updateExif("Location extracted from " + locationSource, "no error");
-	if(obs.date) {
+	if (obs.date) {
 		const date = new Date(obs.date);
 		const year = date.getFullYear(),
 			month = ("0" + (date.getMonth() + 1)).slice(-2),
 			day = ("0" + date.getDate()).slice(-2);
 		const obsDate = `${year}-${month}-${day}`;
-		const obsTime = date.toTimeString().substring(0,5) ;
+		const obsTime = date.toTimeString().substring(0, 5);
 		updateValue('obsDate', obsDate);
 		updateValue('obsTime', obsTime);
 		updateExif("Time, Date and Location extracted from photo", "no error");
@@ -372,12 +373,14 @@ async function updateLocation(obs, locationSource) {
 
 function locationFromThumbnail(event) {
 	// event.preventDefault();
-	const obs = { 
+	const obs = {
 		'filename': event.currentTarget.dataset.filename,
 		'date': new Date(event.currentTarget.dataset.date),
-		'location': { 
+		'location': {
 			'lat': Number(event.currentTarget.dataset.lat),
-			'lng': Number(event.currentTarget.dataset.lng) } };
+			'lng': Number(event.currentTarget.dataset.lng)
+		}
+	};
 	updateLocation(obs, 'photo');
 }
 
@@ -439,10 +442,10 @@ function makeFeatured(event) {
 	document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('featured-image'));
 	newFeatured.classList.add('featured-image');
 	featured.value = filename;
-// 	updateValue('featured', filename);
+	// 	updateValue('featured', filename);
 }
 
-function addGpsAction (lat, lng, filename, date) {
+function addGpsAction(lat, lng, filename, date) {
 	const target = document.getElementById(`${filename}-div`);
 	const button = `<input type="image"
 					src="/media/uselocation.png" 
@@ -472,8 +475,10 @@ function exifFromFile(file, filename) {
 				const str = this.exifdata.DateTime.split(" ");
 				const obsDate = str[0].replace(/:/g, "-");
 				const obsTime = str[1];
-				const obs = { 'location': coords,
-								'date': new Date(obsDate + ' ' + obsTime) };
+				const obs = {
+					'location': coords,
+					'date': new Date(obsDate + ' ' + obsTime)
+				};
 				// add button to thumbnail
 				addGpsAction(coords.lat, coords.lng, filename, obs.date);
 				if (!document.getElementsByName('lat')[0].value) {
@@ -484,7 +489,7 @@ function exifFromFile(file, filename) {
 	};
 }
 
-function annimateObservation(event,id) {
+function annimateObservation(event, id) {
 	// const id = event.attributes.value;
 	const startRect = event.getBoundingClientRect();
 	const viewSection = document.querySelector('section#view-observation');
@@ -500,7 +505,7 @@ function annimateObservation(event,id) {
 	viewSection.innerHTML = `<div ${startBox}>${startContent}</div>`;
 	const observationDiv = document.querySelector('#observation-detail');
 	requestAnimationFrame(() => {
-		observationDiv.setAttribute("style", 
+		observationDiv.setAttribute("style",
 			`position:fixed;
 			top: ${startRect.y}px;
 			left: ${startRect.x}px;
@@ -524,19 +529,19 @@ function payloadFromToken(token) {
 }
 
 function getObservation(targetId) {
-	return fetch(URL + targetId, { 
+	return fetch(URL + targetId, {
 		method: 'GET',
 		headers: {
 			'Authorization': 'Bearer ' + JWT,
 		}
-})
+	})
 		.then((res) => res.json());
 }
 
-function makeHero(event){
+function makeHero(event) {
 	// event.preventDefault();
-	const {dataset, currentSrc} = event.currentTarget;
-	const {filename, url} = dataset;
+	const { dataset, currentSrc } = event.currentTarget;
+	const { filename, url } = dataset;
 	const hero = document.querySelector('.obs-hero');
 	hero.src = currentSrc;
 	hero.src = url;
@@ -545,30 +550,30 @@ function makeHero(event){
 	event.currentTarget.classList.add('featured-image');
 }
 
-function closeObservation (){
+function closeObservation() {
 	// if (event) event.preventDefault();
 	// // event.preventDefault();
 	const viewSection = document.querySelector('section#view-observation');
 	const popup = document.getElementById('popup');
-		popup.classList.add('hidden');
-		viewSection.classList.add('hidden');
+	popup.classList.add('hidden');
+	viewSection.classList.add('hidden');
 }
 
-function dateString (dateObj, opt) {
+function dateString(dateObj, opt) {
 	const date = new Date(dateObj);
 	const daynames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-	const months = ['January',	'February',	'March',	'April',	'May',	'June',	'July',	'August',	'September',	'October',	'November',	'December'];
+	const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 	const dayname = daynames[date.getDay()];
 	const month = months[date.getMonth()];
 	const day = date.getDate();
 	const year = date.getFullYear();
-	const time = date.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})
+	const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 	if (opt) {
 		if (opt = "date") return `${dayname} ${month} ${day}, ${year}`;
 	} else return `${dayname} ${month} ${day}, ${year} at ${time}`;
 }
 
-function editFromViewObservation (event, id) {
+function editFromViewObservation(event, id) {
 	// if (event) event.preventDefault();
 	closeObservation();
 	editObservation(event, id);
@@ -582,17 +587,17 @@ function displayObservation(obs, src) {
 			<input type="image" src="/media/close.png" title="Close Observation" alt="Close Observation" onclick="run(event,closeObservation)" class="obs-view-action close">
 		</div>
 		<div class="obs-detail" value='${obs.id}'>`;
-	
+
 	// hero image
 	// start with thumbnail src
 	let hero = src;
 	obsRender += `<img class="obs-hero" src="${hero}">`;
 
 	// image carousel
-	if (obs.photos.files.length>0) {
+	if (obs.photos.files.length > 0) {
 		obsRender += `<div class="obs-carousel">`;
-		for (let [i,file] of obs.photos.files.entries()) {
-			if (i === 0) 
+		for (let [i, file] of obs.photos.files.entries()) {
+			if (i === 0)
 				obsRender += `<img 
 					class="img-button featured-image" 
 					src="${file.thumbnail}"
@@ -648,7 +653,7 @@ function displayObservation(obs, src) {
 	};
 
 	// fungi classification
-	if (obs.fungi.nickname || obs.fungi.commonName) 
+	if (obs.fungi.nickname || obs.fungi.commonName)
 		obsRender += `<div class="classification">`;
 	if (obs.fungi.nickname) obsRender +=
 		`<span class="title">
@@ -681,7 +686,7 @@ function displayObservation(obs, src) {
 		<span class="notes">
 			${obs.notes.mushroomNotes}
 		</span>`;
-	if (obs.fungi.nickname || obs.fungi.commonName) 
+	if (obs.fungi.nickname || obs.fungi.commonName)
 		obsRender += `</div>`; // .classification
 
 	obsRender += `</div>
@@ -696,7 +701,7 @@ function displayObservation(obs, src) {
 		</div>
 		`;
 
-		// closing wrapper and sending html
+	// closing wrapper and sending html
 	obsRender += `</div>`;
 	document.querySelector('#observation-detail').innerHTML = obsRender;
 
@@ -710,7 +715,7 @@ function displayObservation(obs, src) {
 
 }
 
-function closePopup (event, popupId) {
+function closePopup(event, popupId) {
 	// if (event) event.preventDefault();
 	const popup = document.getElementById(`${popupId}-popup`);
 	const alert = document.getElementById(`${popupId}-alert`);
@@ -719,7 +724,7 @@ function closePopup (event, popupId) {
 	page.removeChild(alert);
 }
 
-function showPopup (content, popupId) {
+function showPopup(content, popupId) {
 	// if (event) {
 	// 	event.preventDefault();
 	// 	event.stopPropagation();
@@ -735,12 +740,12 @@ function showPopup (content, popupId) {
 	page.insertAdjacentElement('beforeend', popup);
 	page.insertAdjacentElement('beforeend', alert);
 	popup.onclick = (event) => {
-		popup.onclick = closePopup(event,popupId);
+		popup.onclick = closePopup(event, popupId);
 	};
 	popup.onkeydown = (event) => {
-		if ( event.keyCode == 27 ) {
+		if (event.keyCode == 27) {
 			console.log('esc pressed');
-			closePopup(event,popupId);
+			closePopup(event, popupId);
 		}
 	};
 }
@@ -760,15 +765,15 @@ function refreshNavMenu() {
 	let menuItems = [];
 	if (JWT) {
 		menuItems = [
-			{li: "View Observations", onclick: "getAndDisplayObservations(event)"},
-			{li: "Add Observation", onclick: "newObservation()"},
+			{ li: "View Observations", onclick: "getAndDisplayObservations(event)" },
+			{ li: "Add Observation", onclick: "newObservation()" },
 			// {li: "Settings", onclick: "settings()"},
-			{li: "Logout", onclick: "run(event,logout)"}
+			{ li: "Logout", onclick: "run(event,logout)" }
 		];
 	} else {
 		menuItems = [
-			{li: "Login", onclick: "loginForm(event)"},
-			{li: "Sign Up", onclick: "signupForm()"}
+			{ li: "Login", onclick: "loginForm(event)" },
+			{ li: "Sign Up", onclick: "signupForm()" }
 		]
 	}
 	const nav = document.querySelector('ul.nav-menu');
@@ -841,25 +846,25 @@ function jsonFromForm(formId) {
 	return JSON.stringify(obj);
 }
 
-function refreshToken () {
+function refreshToken() {
 	const token = JWT;
 	fetch('./api/auth/refresh', {
 		method: 'POST',
-// 		body: formData,
+		// 		body: formData,
 		headers: {
 			'content-type': 'application/json',
 			'Authorization': 'Bearer ' + JWT
-		  }
+		}
 	})
-	.then(res => res.json())
-	.then(authToken => {
-		localStorage.setItem('JWT', authToken.authToken);
-		JWT = authToken.authToken;
-	})
-	.catch(error => console.error('Error', error));
+		.then(res => res.json())
+		.then(authToken => {
+			localStorage.setItem('JWT', authToken.authToken);
+			JWT = authToken.authToken;
+		})
+		.catch(error => console.error('Error', error));
 }
 
-function login(event,popupId) {
+function login(event, popupId) {
 	// event.preventDefault();
 	const formData = jsonFromForm(popupId);
 	fetch('./api/auth/login', {
@@ -867,28 +872,28 @@ function login(event,popupId) {
 		body: formData,
 		headers: {
 			'content-type': 'application/json',
-		  }
+		}
 	})
-	.then(res => {
-		if (!res.ok) {
-			res.json()
-				.then(res => {
-					const { message } = res;
-					displayFormError(message);
-				})
-		} else { 
-			res.json()
-				.then(res => {
-					// assign JWT to localStorage
-					localStorage.setItem('JWT', res.authToken);
-					JWT = res.authToken;
-					closePopup(event, popupId);
-					refreshNavMenu();
-					goHome();
-				})
-		};
-	})
-	.catch(error => console.error('Error:', error));
+		.then(res => {
+			if (!res.ok) {
+				res.json()
+					.then(res => {
+						const { message } = res;
+						displayFormError(message);
+					})
+			} else {
+				res.json()
+					.then(res => {
+						// assign JWT to localStorage
+						localStorage.setItem('JWT', res.authToken);
+						JWT = res.authToken;
+						closePopup(event, popupId);
+						refreshNavMenu();
+						goHome();
+					})
+			};
+		})
+		.catch(error => console.error('Error:', error));
 }
 
 function displayFormError(message, location) {
@@ -898,17 +903,17 @@ function displayFormError(message, location) {
 	document.querySelectorAll('span.error')
 		.forEach(el => el.remove());
 	const html = `<span class="error">${message}</span>`;
-		if (location) {
-			const input = document.querySelector(`input[name=${location}]`);
-			input.insertAdjacentHTML('afterend', html);
-			input.classList.add('input-error');
-		} else {
-			const inputs = document.querySelectorAll('form');
-			inputs[inputs.length-1].insertAdjacentHTML('beforebegin', html);
-		}
+	if (location) {
+		const input = document.querySelector(`input[name=${location}]`);
+		input.insertAdjacentHTML('afterend', html);
+		input.classList.add('input-error');
+	} else {
+		const inputs = document.querySelectorAll('form');
+		inputs[inputs.length - 1].insertAdjacentHTML('beforebegin', html);
+	}
 }
 
-function signup (event, popupId) {
+function signup(event, popupId) {
 	// event.preventDefault();
 	// const form = document.querySelector('#signup-form');
 	const formData = jsonFromForm(popupId);
@@ -917,7 +922,7 @@ function signup (event, popupId) {
 		body: formData,
 		headers: {
 			'content-type': 'application/json'
-		  }
+		}
 	})
 		.then(res => {
 			if (!res.ok) {
@@ -936,7 +941,7 @@ function signup (event, popupId) {
 					<h3>Account Successfully Created</h3>
 					<p>Please Login below to continue</p>`;
 				form.insertAdjacentHTML('afterBegin', alert);
-				}
+			}
 		})
 		.catch(error => {
 			console.error('Error:', error);
@@ -958,12 +963,12 @@ function loginForm(event, str) {
 		</form>`;
 	showPopup(form, popupId);
 	if (str === "demo-user") {
-		const cred = {username: "demo-user", password: "demopassword"};
-		for(let name in cred) updateValue(name, cred[name]);
+		const cred = { username: "demo-user", password: "demopassword" };
+		for (let name in cred) updateValue(name, cred[name]);
 	}
 }
 
-function signupForm () {
+function signupForm() {
 	// event.preventDefault();
 	// event.stopPropagation();
 	const popupId = 'signup-form';
@@ -998,7 +1003,7 @@ function staticMapUrl(latlng) {
 function viewObservation(event) {
 	// get src of clicked observation
 	const regExp = /\(([^)]+)\)/;
-	const src = regExp.exec(event.style.backgroundImage)[1].slice(1,-1);
+	const src = regExp.exec(event.style.backgroundImage)[1].slice(1, -1);
 
 	const id = event.attributes.value.value;
 	// const src = event.style.backgroundImage //"url("https://fungi-files-observation-images.s3.amazonaws.com/5a97071c6a9dce2774b5ea4e/1519847208985.jpg")"
@@ -1009,7 +1014,7 @@ function viewObservation(event) {
 	getObservation(id)
 		.then(res => {
 			// displayObservation(res, src);
-			setTimeout((() => displayObservation(res, src)),250);
+			setTimeout((() => displayObservation(res, src)), 250);
 			// displayObservation(res, src);
 			// console.log("res", res);
 		});
@@ -1036,8 +1041,8 @@ function newObservation() {
 	const header = "<h2>Add New Observation</h2>";
 	const newObs = document.querySelector('section.new.observation');
 	const footer = document.createElement('div');
-		footer.classList.add('form-buttons');
-		footer.innerHTML = `
+	footer.classList.add('form-buttons');
+	footer.innerHTML = `
 			<button id="save-obs-submit" onclick="run(event,submitNewObservation,[event])">Submit New Observation</button>
 			<button onclick="run(event,getAndDisplayObservations,[event])">Cancel</button>`;
 	newObs.innerHTML = header + OBSERVATION_FORM;
@@ -1068,11 +1073,11 @@ function dateFromDateTime(date, time) {
 function loading(state, text) {
 	if (state) {
 		const loadingShade = document.createElement('div');
-			loadingShade.classList.add('popup');
-			loadingShade.id = 'loading-shade';
+		loadingShade.classList.add('popup');
+		loadingShade.id = 'loading-shade';
 		const loadingScreen = document.createElement('div');
-			loadingScreen.classList.add('popup-alert');
-			loadingScreen.id = 'loading-screen';
+		loadingScreen.classList.add('popup-alert');
+		loadingScreen.id = 'loading-screen';
 		loadingScreen.innerHTML = `
 			<div class="popup-alert loading">
 				<img src="media/loading.gif" class="loading-img">
@@ -1080,7 +1085,7 @@ function loading(state, text) {
 			</div>`;
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingShade);
 		document.querySelector('body').insertAdjacentElement('beforeend', loadingScreen);
-		} 
+	}
 	else if (!state) {
 		const loadingShade = document.getElementById('loading-shade');
 		loadingShade.parentNode.removeChild(loadingShade);
@@ -1100,7 +1105,7 @@ async function saveObservation(event, id) {
 	globalFileHolder.forEach(file => formData.append('newFiles', file, file.name));
 	globalFileHolder = [];
 	const filesToBeDeleted = document.getElementsByName("filesToBeDeleted")[0].value;
-	
+
 	if (filesToBeDeleted) {
 		let arr = filesToBeDeleted.split(',')
 			.filter((val) => {
@@ -1109,15 +1114,15 @@ async function saveObservation(event, id) {
 			});
 		// arr.forEach(filename => deleteFileUponSave(id, filename));
 		for (let filename of arr) await deleteFileUponSave(id, filename);
-		};
+	};
 
 	return new Promise(res => {
 		updateObservation(id, formData)
 	})
-	.then(res => {
-		document.querySelector('section.edit.observation').innerHTML = "";	
-		loading(false);
-	});
+		.then(res => {
+			document.querySelector('section.edit.observation').innerHTML = "";
+			loading(false);
+		});
 
 
 }
@@ -1138,10 +1143,10 @@ function submitNewObservation(event) {
 	publishNewObservation(formData)
 }
 
-window.onkeydown = function( event ) {
-    if ( event.keyCode == 27 ) {
-        closeObservation();
-    }
+window.onkeydown = function (event) {
+	if (event.keyCode == 27) {
+		closeObservation();
+	}
 };
 
 function handleObservationChange(res) {
@@ -1152,18 +1157,18 @@ function handleObservationChange(res) {
 				displayFormError(message, location);
 				loading(false);
 			})
-	} else { 
+	} else {
 		res.json()
 			.then(res => {
-				document.querySelector('section.new.observation').innerHTML = "";	
+				document.querySelector('section.new.observation').innerHTML = "";
 				goHome();
-				document.querySelector('section.new.observation').innerHTML = "";	
+				document.querySelector('section.new.observation').innerHTML = "";
 				loading(false);
 			})
 			.catch(error => {
 				loading(false);
 				console.error('Error:', error);
-				});
+			});
 	};
 }
 
@@ -1175,10 +1180,10 @@ function updateObservation(id, formData) {
 			'Authorization': 'Bearer ' + JWT
 		}
 	})
-	.then((res) => {
-		handleObservationChange(res);
-	})
-	.catch(error => console.error('Error:', error));
+		.then((res) => {
+			handleObservationChange(res);
+		})
+		.catch(error => console.error('Error:', error));
 }
 
 function publishNewObservation(formData) {
@@ -1189,10 +1194,10 @@ function publishNewObservation(formData) {
 			'Authorization': 'Bearer ' + JWT,
 		}
 	})
-	.then(res => {
-		handleObservationChange(res);
-	})
-	.catch(error => console.error('Error:', error));
+		.then(res => {
+			handleObservationChange(res);
+		})
+		.catch(error => console.error('Error:', error));
 }
 
 function getTime(date) {
@@ -1249,11 +1254,11 @@ async function populateFields(obs) {
 	for (let n in possibleNames) if (possibleNames[n]) updateValue(n, possibleNames[n]);
 	for (let n in notes) if (notes[n]) document.getElementById(n).innerHTML = notes[n];
 	if (Number.isInteger(confidence)) for (let i of document.querySelectorAll(`[name="confidence"]`)) if (i.value == confidence) i.checked = true;
-	const possibleSpans = [ 'address', 'lat', 'lng', 'genus', 'species' ];
+	const possibleSpans = ['address', 'lat', 'lng', 'genus', 'species'];
 	for (let span of possibleSpans) if (possibleNames[span]) updateSpan(span, possibleNames[span]);
 	if (obs.fungi.species && obs.fungi.genus) document.querySelector('.classification-details').classList.remove('hidden');
 	populateDatalists();
-// 	displaySection('.edit.observation');
+	// 	displaySection('.edit.observation');
 }
 
 function populateThumbnail(file) {
@@ -1278,8 +1283,8 @@ function editObservation(event, obsId) {
 	const header = "<h2>Edit Observation</h2>";
 	const newObs = document.querySelector('section.edit.observation');
 	const footer = document.createElement('div');
-		footer.classList.add('form-buttons');
-		footer.innerHTML = `
+	footer.classList.add('form-buttons');
+	footer.innerHTML = `
 			<button id="save-obs-submit" onclick="run(event,saveObservation,[event,'${obsId}'])">Save Changes</button>
 			<button onclick="run(event,deleteObservation,[event,'${obsId}'])">Delete Observation</button>
 			<button onclick="run(event,getAndDisplayObservations,[event])">Cancel</button>`;
@@ -1298,7 +1303,7 @@ function editObservation(event, obsId) {
 	// const autocomplete = new google.maps.places.Autocomplete(input);
 	document.querySelector('.edit.observation').classList.remove('hidden');
 	document.getElementById('form-popup').classList.remove('hidden');
-// 	displaySection('.edit.observation');
+	// 	displaySection('.edit.observation');
 }
 
 function showInfo(event) {
@@ -1338,19 +1343,19 @@ function renderObservation(obs, address) {
 			class="obs-action view"
 			alt="View Observation" title="View Observation"> `;
 	// obsRender += 
-		// `<div class="obs-thumb"	style=background-image:url("${thumbnail}">`;
-	if (obs.photos.files.length>1) obsRender +=
-			`<span class="photo-count">
-				+ ${obs.photos.files.length-1} more photos
+	// `<div class="obs-thumb"	style=background-image:url("${thumbnail}">`;
+	if (obs.photos.files.length > 1) obsRender +=
+		`<span class="photo-count">
+				+ ${obs.photos.files.length - 1} more photos
 			</span>`;
 	obsRender +=
 		`<div class="obs-details">`
 	if (obs.fungi.nickname) obsRender +=
-			`<span class="title"><span class="label">nickname</span>"${obs.fungi.nickname}"</span>`;
+		`<span class="title"><span class="label">nickname</span>"${obs.fungi.nickname}"</span>`;
 	if (obs.fungi.commonName) obsRender +=
-			`<span class="title"><span class="label">common name</span>${obs.fungi.commonName}</span>`;
+		`<span class="title"><span class="label">common name</span>${obs.fungi.commonName}</span>`;
 	if (obs.fungi.genus) obsRender +=
-			`<span class="fungi">
+		`<span class="fungi">
 				${obs.fungi.genus}  ${obs.fungi.species}
 			</span>`;
 	if (obs.obsDate) {
@@ -1358,26 +1363,26 @@ function renderObservation(obs, address) {
 		const dateStr = dateString(date, 'date');
 		obsRender +=
 			`<span><span class="label">observed </span>${dateStr}`
-		};
-	if (obs.location.address) obsRender += 
-			`<span class="label">around </span><span id="list-address">${obs.location.address}</span></span>`;
-	obsRender += 
+	};
+	if (obs.location.address) obsRender +=
+		`<span class="label">around </span><span id="list-address">${obs.location.address}</span></span>`;
+	obsRender +=
 		`</div>
 	</div>`;
 	document.querySelector('#obs-list').innerHTML += obsRender;
 }
 
 function getObservations(callback) {
-	fetch(URL, { 
+	fetch(URL, {
 		method: 'GET',
 		headers: {
 			'Authorization': 'Bearer ' + JWT,
-			}
-		})
+		}
+	})
 		.then((res) => {
-			
+
 			return res.json();
-			})
+		})
 		.then((res) => {
 			callback(res);
 		})
@@ -1425,8 +1430,8 @@ async function displayObservations(res) {
 		else addressArr.push("Unknown Location");
 		await sleep(10);
 	};
-	if (observations.length<1) genObsCallToAction();
-	for (let i=0; i<observations.length; i++) {
+	if (observations.length < 1) genObsCallToAction();
+	for (let i = 0; i < observations.length; i++) {
 		const address = await addressArr[i];
 		renderObservation(observations[i], address);
 	};

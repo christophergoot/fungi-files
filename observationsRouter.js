@@ -23,7 +23,7 @@ router.use(jwtAuth);
 function getAllObservations(userId) {
 	return Observation
 		.find({ 'userId': userId })
-		.sort({obsDate: -1})
+		.sort({ obsDate: -1 })
 		// .find({}, null, {sort: 'obsDate'})
 		.then(obs => obs.map(obs => obs.serialize()))
 }
@@ -38,16 +38,16 @@ router.get('/', (req, res) => {
 		});
 });
 
-function getOneObservation (userId, obsId) {
+function getOneObservation(userId, obsId) {
 	return Observation
 		.findOne({ 'userId': userId, '_id': obsId })
 		.then(obs => obs.serialize());
 }
 
 router.get('/:id', async (req, res) => {
-	const {userId} = req.user;
-	const {id} = req.params;
-	getOneObservation(userId,id)
+	const { userId } = req.user;
+	const { id } = req.params;
+	getOneObservation(userId, id)
 		.then(obs => res.json(obs))
 		.catch(err => {
 			console.error(err);
@@ -127,13 +127,13 @@ async function updateObservation(req, res, id) {
 		reason: 'ValidationError',
 		message: 'Observation date is required',
 		location: 'obsDate'
-	  });
-	  if (!req.body.obsTime) return res.status(422).json({
+	});
+	if (!req.body.obsTime) return res.status(422).json({
 		code: 422,
 		reason: 'ValidationError',
 		message: 'Observation time is required',
 		location: 'obsTime'
-	  });
+	});
 	observation.obsDate = new Date(req.body.obsDate + " " + req.body.obsTime);
 	const userId = observation.userId;
 	const files = req.files;
@@ -163,21 +163,21 @@ async function updateObservation(req, res, id) {
 		for (let file of newFiles) obs.photos.files.push(file);
 		await obs.save();
 	};
-	
+
 	if (observation.featured) {
 		const obs = await Observation.findById(id);
 		if (obs.photos.files[0].filename !== observation.featured) {
 			let featuredIndex = "";
 			// for (let i=0; i<obs.photos.files.length; i++) {
-			for (let [i,file] of obs.photos.files.entries()) {
+			for (let [i, file] of obs.photos.files.entries()) {
 				if (file.filename === observation.featured) featuredIndex = i;
 			}
-			const featuredFile = obs.photos.files.splice(featuredIndex,1);
+			const featuredFile = obs.photos.files.splice(featuredIndex, 1);
 			obs.photos.files.unshift(featuredFile[0]);
 			await obs.save();
 		};
 	};
-// update the other input fields
+	// update the other input fields
 	Observation
 		.findByIdAndUpdate(id, { $set: observation })
 		.then(obs => res.status(201).json(obs.serialize()), )

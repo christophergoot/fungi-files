@@ -9,7 +9,7 @@ const router = express.Router();
 const jsonParser = bodyParser.json();
 
 const validator = require("email-validator");
- 
+
 // Post to register a new user
 router.post('/', jsonParser, async (req, res) => {
   const requiredFields = ['username', 'email', 'password'];
@@ -111,39 +111,39 @@ router.post('/', jsonParser, async (req, res) => {
       message: 'a valid email is required',
       location: 'email'
     });
- 
+
   }
 
 
   const countUser = await User.find({ username })
     .count();
-    // .then(count => {
-      if (countUser > 0) {
-        // There is an existing user with the same username
-          return res.status(422).json({
-          code: 422,
-          reason: 'ValidationError',
-          message: 'Username already taken',
-          location: 'username'
-        });
-      };
-    // });
-  
- const countEmail = await User.find({ email })
-        .count();
-        // .then(count => {
-          if (countEmail > 0) {
-            // There is an existing user with the same email
-            return res.status(422).json({
-              code: 422,
-              reason: 'ValidationError',
-              message: 'An account with given email already exists',
-              location: 'email'
-            });
-          };
-        // });
-  
-      // If there is no existing user or email, hash the password
+  // .then(count => {
+  if (countUser > 0) {
+    // There is an existing user with the same username
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'Username already taken',
+      location: 'username'
+    });
+  };
+  // });
+
+  const countEmail = await User.find({ email })
+    .count();
+  // .then(count => {
+  if (countEmail > 0) {
+    // There is an existing user with the same email
+    return res.status(422).json({
+      code: 422,
+      reason: 'ValidationError',
+      message: 'An account with given email already exists',
+      location: 'email'
+    });
+  };
+  // });
+
+  // If there is no existing user or email, hash the password
   return User.hashPassword(password)
     .then(hash => {
       return User.create({

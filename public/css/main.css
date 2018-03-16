@@ -1,6 +1,5 @@
 body {
 	box-sizing: border-box;
-	/* min-height: 100%; */
 	background-color: rgba(19, 19, 19, 1);
 	font-family: 'Roboto', sans-serif;
 	background-image: url(../media/background-image.jpg);
@@ -8,11 +7,6 @@ body {
 	background-position:  center;
 	background-repeat: no-repeat;
 	color: #080f0f;
-}
-
-.splash-page>p {
-    max-width: 350px;
-    margin: 15px auto;
 }
 
 header {
@@ -53,14 +47,8 @@ header>ul>li:hover {
 	transition: .25s all;
 }
 
-
 main {
-	/* background-color: #3c003c; */
-	/* max-width: 800px; */
 	text-align: center;
-	/* background-image: linear-gradient(rgba(19, 19, 19, 1), rgba(0, 0, 0, 0.5)), url(../media/background-image.jpg); */
-	/* background-size: cover; */
-	/* background-repeat: no-repeat; */
 }
 
 .classification-details>.fungi>#genus {
@@ -79,7 +67,6 @@ main {
 
 .classification-details {
     margin-top: 15px;
-    /* display: none; */
 }
 
 span#location-text {
@@ -101,20 +88,14 @@ h1 {
 a {
 	cursor: pointer;
 	text-decoration: none;
-	/* color: white; */
 }
 
 button {
-	/* background-color: hsl(0, 0%, 100%); */
-	/* background-image: linear-gradient(to bottom, #c6a987, rgb(78, 71, 61)); */
 	background-color: white;
 	margin: 5px 5px;
 	padding: 5px;
 	border-radius:  5px;
 	border: none;
-	/* color: rgb(228, 203, 173); */
-	/* color: black; */
-	/* width: 25%; */
 }
 
 .obs-buttons>button {
@@ -126,12 +107,16 @@ section.observation>button {
     background-color: green;
 }
 
+section.splash-page>p {
+    max-width: 350px;
+    margin: 15px auto;
+}
+
 section.splash-page>button {
     min-width: 75%;
 }
 
 button:hover {
-	/* background-image: linear-gradient(to bottom, #8f7961, #1a1a1a); */
 	background-color: #debe90;
 }
 
@@ -152,17 +137,15 @@ button:hover {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	}
+}
   
-  /* Hide the browser's default checkbox */
-  .input-container input {
+.input-container input {
 	position: absolute;
 	opacity: 0;
 	cursor: pointer;
-  }
-  
-  /* Create a custom checkbox */
-  .checkmark {
+}
+
+.checkmark {
 	position: absolute;
 	border-radius: 2px;
 	vertical-align: baseline;
@@ -172,49 +155,31 @@ button:hover {
 	height: 20px;
 	width: 25px;
 	background-color: #FFFFFF;
-	}
+}
   
-  /* On mouse-over, add a grey background color */
-  .input-container:hover input ~ .checkmark {
+.input-container:hover input ~ .checkmark {
 	background-color: #debe90;
-  }
+}
   
-  /* When the checkbox is checked, add a blue background */
-  .input-container input:checked ~ .checkmark {
+.input-container input:checked ~ .checkmark {
 	background-color: #5d8565;
-	}
+}
   
-  /* Create the checkmark/indicator (hidden when not checked) */
-  .checkmark:after {
+.checkmark:after {
 	content: "";
 	position: absolute;
 	display: none;
-  }
+}
   
-  /* Show the checkmark when checked */
-  .input-container input:checked ~ .checkmark:after {
+.input-container input:checked ~ .checkmark:after {
 	display: block;
-  }
+}
   
-  /* Style the checkmark/indicator */
-   /* .input-container .checkmark:after {
-	left: 9px;
-	top: 5px;
-	width: 5px;
-	height: 10px;
-	border: solid white;
-	border-width: 0 3px 3px 0;
-	-webkit-transform: rotate(45deg);
-	-ms-transform: rotate(45deg);
-	transform: rotate(45deg);
-  }  */
-
 .notes {
 	height: 75px;
 	transition: height .25s ease;
 	resize: none;
 	max-width: 75%;
-	/* margin: 0 auto; */
 }
 
 .area {
@@ -225,23 +190,17 @@ button:hover {
 }
 
 .map.area {
-    /* grid-column: 1; */
-    /* grid-row-start: 2; */
     background-color: #ffffff00;
 }
 
 .name.area {
-    /* grid-column-start: 2; */
-    /* grid-row-start: 2; */
     grid-area: name;
 }
 
 .location.area {
 	grid-column: 2;
 	grid-area: location;
-	}
-
-
+}
 
 h3 {
 	margin-top: 5px;
@@ -276,18 +235,15 @@ textarea {
 	transition: height .25s ease;
 	height: 20px;
 	overflow: hidden;
-	/* margin-top: 5px; */
 }
 
 h2 {
 	margin: 10px;
 	grid-area: header;
 	display: block;
-	/* position: sticky; */
 	font-family: 'Bungee', cursive;
 	font-size: 1.5em;
 	color: #c6a987;
-	/* mix-blend-mode: screen; */
 }
 
 #obs-list {
@@ -305,8 +261,6 @@ h2 {
 	height: 250px;
 	min-width: 250px;
 	max-width: 400px;
-	/* max-height: 100%; */
-	/* width: 350px; */
 	overflow:  hidden;
 	background-size:  cover;
 	background-position: center;
@@ -328,7 +282,6 @@ h2 {
 	position: relative;
 	background-size:  cover;
 	z-index: 1;
-	/* border: 5px black dashed; */
 }
 
 .obs-thumb>image {
@@ -337,37 +290,19 @@ h2 {
 	max-height: 100px;
 	float: left;
 	padding-right: 10px;
-	/* display: block; */
-	/* position: relative; */
 }
 
 
 .obs-img {
-	/* border: 2px black solid; */
 	transition: all .75s ease-out;
 	max-width: 100%;
 	max-height: 1;
 	float: left;
 	padding-right: 10px;
 	max-height: 75%;
-	/* height: 500px; */
 	padding-right:  0;
-	/* display: block; */
-	/* max-width:230px; */
-	/* max-height:95px; */
 	width: auto;
-	/* height: auto; */
 	}
-
-/* 
-#observation-detail
-from index.js
-	position:fixed;
-	top: ${startRect.y}px;
-	left: ${startRect.x}px;
-	width: ${startRect.width}px;
-	height: ${startRect.height}px;
-	background-color: black`); */
 
 .observationBox {
 	transition: all .5s cubic-bezier(0, 0, 0.51, 1.51);
@@ -375,15 +310,12 @@ from index.js
 	top: 0;
 	right: 0;
 	left: 0;
-	/* width: 100vw; */
 	max-width: 600px;
-	/* height: 100vw; */
 	height: 100%;
 	background-color: #f2e6da;
 	margin: 0 auto 40px auto;
 	text-align: left;
 	padding: 15px;
-	/* padding-bottom: 50px; */
 	border-radius: 3px;
 	overflow-y:  auto;
 	z-index: 20;
@@ -392,11 +324,15 @@ from index.js
 
 .obs-detail {
     display: grid;
-    /* grid-auto-rows: auto; */
     grid-template-rows: auto;
-    /* grid-template-rows: min-content; */
     grid-template-columns: 1fr 210px;
-    grid-template-areas: "hero hero" "carousel carousel" "classification static-map" "location static-map" "date-time static-map" "buttons buttons";
+	grid-template-areas: 
+		"hero hero" 
+		"carousel carousel" 
+		"classification static-map" 
+		"location static-map" 
+		"date-time static-map" 
+		"buttons buttons";
 }
 
 .obs-buttons {
@@ -416,8 +352,6 @@ from index.js
     text-align: left;
 }
 
-button {}
-
 .inline-img {
     height: 20px;
     vertical-align: bottom;
@@ -431,9 +365,6 @@ span#lat {
 .static-map {
 	max-width: 200px;
 	max-height: 200px;
-	/* float: right; */
-	/* top: 0; */
-	/* position: absolute; */
 	grid-area: static-map;
 	margin: 10px;
 }
@@ -455,9 +386,7 @@ span#lat {
 }
 
 .thumb-img {
-	/* height: 100px; */
 	max-width: 100%;
-	/* position:  relative; */
 }
 
 .img-action {
@@ -498,7 +427,6 @@ span#lat {
 .photo-count {
 	position: absolute;
 	text-align: right;
-	/* padding-right:  100px; */
 	right: 2px;
 	top: 2px;
 	color: white;
@@ -507,12 +435,10 @@ span#lat {
 }
 
 .grayed {
-	/* background-color: gray; */
 	opacity: .5;
 }
 
 .featured-image {
-	/* border: 3px solid white; */
 	box-shadow: 0 0 0 3px #f2e6da, 0 0 0 6px #5d8565;
 }
 
@@ -520,20 +446,17 @@ span#lat {
 	width: 800px;
 	max-width: 100%;
 	grid-area: hero;
-	/* box-shadow: 2px 2px 3px 0px #00000080; */
 }
 
 .obs-carousel {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	/* justify-content: space-evenly; */
 	grid-area: carousel;
 }
 
 .img-button {
 	height: 75px;
-	/* width: 18%; */
 	margin: 10px;
 	margin-left: 0;
 }
@@ -547,7 +470,6 @@ span#lat {
 	padding: 20px;
 	align-items: center;
 	z-index: 19;
-	/* display:  flex; */
 	flex-direction:  row;
 	box-shadow: 3px 3px 5px 1px #00000087;
 	border-radius: 4px;
@@ -560,7 +482,6 @@ span#lat {
 
 .popup-alert>form {
     display: block;
-    /* color: red; */
 }
 
 span.required {
@@ -568,26 +489,16 @@ span.required {
     position: absolute;
     margin-top: 14px;
     right: 24px;
-    /* top: 15px; */
     font-size: .8em;
 }
 
 .loading-img {
-	/* width: 100%; */
 	z-index: 1003;
-	/* display: block; */
 	height: 100px;
-	/* width:  100px; */
-	/* float: left; */
 }
 
 .loading-text {
-	/* position: fixed; */
 	display: block;
-	/* color: lightgray; */
-	/* top: 56%; */
-	/* left: 25%; */
-	/* right: 25%; */
 	font-size: 1.25em;
 }
 
@@ -629,7 +540,6 @@ section#form-popup {
 	margin-top: 0px;
 	font-size: .8em;
 	display: block;
-	/* bottom: -2px; */
 }
 
 span.inline.label.red {
@@ -666,7 +576,6 @@ span.inline.label.red {
 	top: 0;
 	margin: 2px;
 	filter: drop-shadow(1px 1px 0 white)     drop-shadow(-1px 1px 0 white)         invert(100%) hue-rotate(-42deg);
-	/* z-index: 1; */
 }
 
 input.obs-view-action.edit {
@@ -684,15 +593,9 @@ input.obs-view-action.edit {
 	position: absolute;
 	height: 32px;
 	right: -40px;
-	/* top: 20px; */
 	margin: 2px;
-	/* filter: drop-shadow(1px 1px 0 white) 
-			drop-shadow(-1px 1px 0 white)  
-			invert(100%); */
 	filter: drop-shadow(1px 1px 0 white)     drop-shadow(-1px 1px 0 white)         invert(100%) hue-rotate(-42deg);
-	/* mix-blend-mode: screen; */
 	z-index: 9;
-	/* display: none; */
 }
 
 .obs-action.edit {
@@ -727,16 +630,12 @@ input.obs-view-action.edit {
 	position: absolute;
 	text-align: right;
 	width: 100%;
-	/* height:  100%; */
 	overflow:  hidden;
 	padding: 5px;
 	font-size: 1em;
-	/* color: white; */
 	color: #f2e6da;
 	bottom: -300px;
-	/* bottom: 0; */
 	right: 0;
-	/* text-shadow: 1px 1px black; */
 	background-color: rgba(8, 15, 15, .5);
 } 
 
@@ -762,52 +661,41 @@ input.obs-view-action.edit {
 	transition: all .25s;
 	bottom: 0px;
 }
-/* 
-.obs-list-item:hover .obs-action {
-	display: block;
-} */
 
 .observation {
 	background-color: rgba(0, 0, 0, 0.50);
-	/* background-color: #f2e6da; */
 	max-width: 880px;
-	/* max-width: 100%; */
 	margin: 0 auto 40px auto;
 	z-index: 16;
 	position: fixed;
-	/* position: absolute; */
 	height: 100%;
 	top: 0;
 	right: 0;
 	left: 0;
 	border-radius: 3px;
-	/* padding: 0 15px; */
 	overflow-y: auto;
 }
 
 .grid.wrapper {
     display: grid;
-    /* grid-auto-rows: auto; */
     grid-template-rows: auto;
 	grid-template-columns: 100%;
-	grid-template-areas: "images" "location" "name" "form-buttons";
+	grid-template-areas: 
+		"images" 
+		"location" 
+		"name" 
+		"form-buttons";
 	grid-gap: 10px;
-    /* left: 0; */
-    /* right: 0; */
     align-items: left;
-    /* margin-bottom: 40px; */
 }
 
 .image.area {
-    /* grid-row-end:  3; */
     align-items: right;
-    /* width: 100%; */
     width: fit-content;
     margin: 0 auto;
     padding-left:  20px;
     padding-right: 20px;
 }
-
 
 .notes {
 	background-color: #00000052;
@@ -815,9 +703,7 @@ input.obs-view-action.edit {
 	font-size: .85em;
 	opacity: 1;
 	font-style: italic;
-	/* padding: 30px; */
 	padding: 5px;
-	/* margin: 5px; */
 }
 
 .reveal>textarea {
@@ -844,8 +730,6 @@ span.floating.label {
     position: absolute;
     top: -6px;
     left: 9px;
-    /* text-align: left; */
-    /* margin-right: auto; */
     background-color: #f2e6da;
 }
 
@@ -854,7 +738,6 @@ span.inline.label {
     text-align: left;
     margin-right: 5px;
     color: #5d8565;
-    /* width: 92px; */
     vertical-align: middle;
 }
 
@@ -876,7 +759,6 @@ input[type=text], input[type=number], textarea, input[type=date], input[type=tim
 	padding: 12px;
 	font-size: .9em;
 	margin: 0 0 10px 0;
-	/* min-width:  300px; */
 	border-radius: 3px;
 	display: block;
 	background-color: #f2e6da;
@@ -907,12 +789,10 @@ input#obs-date-input, input#obs-time-input {
 	display: flex;
 	justify-content: space-evenly;
 	flex-direction: row;
-	/* color: white; */
 }
 
 input.coord, #genus-input, #species-input {
     width: 85%;
-    /* width: 104px; */
 }
 
 .confidence-report {
@@ -928,20 +808,16 @@ div.fungi {
 }
 
 span.fungi {
-    /* margin-left: 10px; */
     font-size: .9em;
     font-style: italic;
     color: #f2e6da;
 }
 
 .obs-details>span.fungi {
-    /* margin-left: auto; */
-    /* left: 0; */
     display: block;
 }
 
 #latlng, #datetime, .address-buttons, .fungi {
-	/* display: inline-flex; */
 	width: 100%;
 	justify-content: end;
 }
@@ -949,9 +825,7 @@ span.fungi {
 .address-buttons {
 	flex-direction: column;
 	margin-top: 4px;
-	/* max-width: 250px; */
 	align-content: center;
-	/* background-color: #debe90; */
 	border: #debe90 1px solid;
 	border-radius: 3px;
 	padding: 5px;
@@ -976,10 +850,7 @@ span.fungi {
 	margin: 2px;
 }
 
-
-
 @media (min-width: 520px) {
-
 	.grid.wrapper {
 		/* grid-template-columns: 100%;
 		grid-template-areas: "images" "location" "name" "form-buttons"; */
@@ -987,14 +858,12 @@ span.fungi {
 		grid-template-areas: "images location"         "images name"          "images form-buttons";
 		/* grid-gap: 20px; */
 	}
-
 	.observation {
 		/* margin-top: 20px; */
 		padding: 0 5px;
 	}
 	.area {
 		padding: 5px;
-		
 	}
 	header>ul {
 		flex-direction: row;
@@ -1028,7 +897,6 @@ span.fungi {
 	.area {
 	    padding: 10px;
 	}
-
 	.observation {
 		top: 40px;
 		/* margin-top: 40px; */
